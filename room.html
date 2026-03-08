@@ -352,6 +352,7 @@ video {
 <div class="popup" id="joinPopup"></div>
 
 <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+<script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
 
 <script type="module">
 import {db,ref,onValue,update,push,onChildAdded} from "./firebase.js"
@@ -405,32 +406,50 @@ showPopup(j.name+" joined room")
 }
 })
 
-/* Load video source ONLY - No forced syncing */
+/* Load video source ONLY (Fixed Sound System) */
 onValue(ref(db,"rooms/"+room),(snap)=>{
+
 const data=snap.val()
 if(!data) return
 
 const url=atob(data.src)
 
 if(!sourceLoaded){
-video.src=url
-video.load()
-sourceLoaded=true
+
+player.source = {
+type: "video",
+sources: [
+{
+src: url,
+type: "video/mp4"
 }
-// Sync logic completely removed from here
+]
+}
+
+// ensure clean audio output
+video.muted=false
+video.volume=1
+
+player.on('ready',()=>{
+video.muted=false
+video.volume=1
 })
 
-// Event listeners for play, pause, and seeked have been removed completely
-// Everyone now watches independently!
+sourceLoaded=true
+}
+
+})
 
 /* chat */
-window.handleKeyPress = function(e) {
-  if (e.key === "Enter") {
-    sendMsg();
-  }
+
+window.handleKeyPress=function(e){
+if(e.key==="Enter"){
+sendMsg()
+}
 }
 
 window.sendMsg=function(){
+
 const text=document.getElementById("msg").value
 if(!text) return
 
@@ -441,9 +460,11 @@ time:Date.now()
 })
 
 document.getElementById("msg").value=""
+
 }
 
 onChildAdded(ref(db,"rooms/"+room+"/chat"),(snap)=>{
+
 const m=snap.val()
 const box=document.getElementById("messages")
 const div=document.createElement("div")
@@ -451,7 +472,7 @@ const div=document.createElement("div")
 const isMe=m.name===username
 
 if(!isMe){
-  msgSound.play().catch(e => console.log("Sound autoplay blocked by browser until user interacts"));
+msgSound.play().catch(e=>console.log("Sound autoplay blocked by browser"))
 }
 
 div.className="msg "+(isMe?"right":"left")
@@ -462,18 +483,23 @@ div.innerHTML=`
 ${m.text}
 </div>
 `
+
 box.appendChild(div)
 box.scrollTop=box.scrollHeight
+
 })
 
 function showPopup(text){
+
 const p=document.getElementById("joinPopup")
+
 p.innerText=text
 p.style.display="block"
 
 setTimeout(()=>{
 p.style.display="none"
 },3000)
+
 }
 </script>
 
