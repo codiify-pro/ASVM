@@ -647,7 +647,8 @@ body {
 import {db,ref,set} from "/firebase.js"
 
 window.createRoom=function(){
-  const video=document.getElementById("video").value
+
+  const video=document.getElementById("video").value.trim()
 
   if(!video){
     alert("Please enter a valid video link.")
@@ -656,11 +657,20 @@ window.createRoom=function(){
 
   const room=Math.random().toString(36).substring(2,7)
 
+  // detect source type
+  let type="video"
+
+  if(video.includes("youtube.com") || video.includes("youtu.be")){
+    type="youtube"
+  }
+
   // encode link
   const encoded=btoa(video)
 
+  // save to firebase
   set(ref(db,"rooms/"+room),{
     src:encoded,
+    type:type,
     state:{
       playing:false,
       time:0
