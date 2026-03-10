@@ -24,666 +24,537 @@
 <meta property="og:url" content="https://www.asvm.fun">
 <meta property="og:image" content="https://www.asvm.fun/preview.png">
 
-  
 <style>
-/* Ultra-Modern SaaS Variables */
+/* Modern SaaS Dark Mode Variables */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+*:focus {
+  outline: none;
+}
+
 :root {
-  --bg-base: #030303;
-  --bg-panel: rgba(15, 15, 18, 0.6);
+  --bg-base: #050505;
+  --bg-panel: rgba(24, 24, 27, 0.6);
   --border-color: rgba(255, 255, 255, 0.08);
-  --text-main: #ffffff;
-  --text-muted: #8a8a93;
-  
-  --accent-mint: #00dc82;
-  --accent-rose: #f43f5e;
-  --accent-blue: #3b82f6;
-  --accent-purple: #8b5cf6;
-  
+  --text-main: #f4f4f5;
+  --text-muted: #a1a1aa;
+  --accent-mint: #00dc82; 
+  --accent-mint-hover: #00b368;
   --radius-xl: 24px;
   --radius-lg: 16px;
   --radius-md: 12px;
-  
-  --transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-html {
-  scroll-behavior: smooth;
+  --transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 body {
-  margin: 0;
+  font-family: 'Inter', sans-serif;
   background: var(--bg-base);
-  font-family: 'Inter', -apple-system, sans-serif;
   color: var(--text-main);
   -webkit-font-smoothing: antialiased;
-  position: relative;
   overflow-x: hidden;
 }
 
-/* Dynamic Animated Background (Fixed to scroll behind content) */
-.ambient-bg {
-  position: fixed;
-  top: 0; left: 0; width: 100vw; height: 100vh;
-  overflow: hidden;
-  z-index: -2;
-  pointer-events: none;
-}
-
-.orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.5;
-  animation: float 12s infinite alternate ease-in-out;
-}
-
-.orb-1 {
-  width: 400px; height: 400px;
-  background: rgba(0, 220, 130, 0.15); /* Mint */
-  top: -10%; left: 10%;
-}
-
-.orb-2 {
-  width: 500px; height: 500px;
-  background: rgba(59, 130, 246, 0.12); /* Blue */
-  bottom: -20%; right: -10%;
-  animation-delay: -5s;
-}
-
-.orb-3 {
-  width: 350px; height: 350px;
-  background: rgba(244, 63, 94, 0.12); /* Rose */
-  top: 40%; left: 40%;
-  animation-duration: 18s;
-}
-
 /* Custom Scrollbar */
-::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
 
+/* Background Glows */
+.ambient-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  z-index: -1;
+  opacity: 0.2;
+  pointer-events: none;
+}
+.glow-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--accent-mint); }
+.glow-2 { bottom: 20%; right: -10%; width: 40vw; height: 40vw; background: #3b82f6; }
+
 /* ---------------- HEADER ---------------- */
 .navbar {
-  background: rgba(3, 3, 3, 0.6);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  padding: 18px 5%;
+  position: fixed;
+  top: 0; width: 100%;
+  background: rgba(5, 5, 5, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 1000;
+  box-sizing: border-box;
+  padding: 16px 5%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid var(--border-color);
-  position: fixed;
-  width: 100%;
-  top: 0;
-  z-index: 1000;
-  box-sizing: border-box;
 }
 
 .logo {
   font-size: 24px;
   font-weight: 800;
   letter-spacing: 1px;
-  background: linear-gradient(to right, #ffffff, #a1a1aa);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
-.logo span {
-  background: linear-gradient(135deg, var(--accent-mint), #0ea5e9);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+.logo span { color: var(--accent-mint); }
 
-.nav-links { display: flex; gap: 32px; }
+.nav-links { display: flex; gap: 30px; }
 .nav-links a {
   color: var(--text-muted);
   text-decoration: none;
   font-weight: 500;
-  font-size: 14px;
-  transition: color 0.2s;
+  font-size: 15px;
+  transition: color var(--transition);
 }
-.nav-links a:hover { color: white; }
+.nav-links a:hover { color: var(--text-main); }
 
 /* ---------------- HERO SECTION ---------------- */
 .hero {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
+  padding: 140px 5% 80px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 60px;
   align-items: center;
-  padding: 80px 20px 20px;
-  box-sizing: border-box;
-  width: 100%;
+  min-height: 80vh;
 }
 
-.app-container {
-  width: 100%;
-  max-width: 480px;
-  z-index: 10;
-  animation: scaleIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.hero-text h1 {
+  font-size: 56px;
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 0 0 20px 0;
+  letter-spacing: -0.03em;
 }
-
-.card {
-  background: var(--bg-panel);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  padding: 50px 40px;
-  border-radius: var(--radius-xl);
-  border: 1px solid rgba(255,255,255,0.06);
-  box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
-  text-align: center;
-}
-
-.card h1 {
-  font-size: 26px;
-  font-weight: 700;
-  margin: 0 0 12px 0;
-  letter-spacing: -0.02em;
-}
-
-.card p {
+.hero-text p {
+  font-size: 18px;
   color: var(--text-muted);
-  font-size: 15px;
-  margin: 0 0 32px 0;
-  line-height: 1.5;
+  line-height: 1.6;
+  margin: 0 0 30px 0;
 }
 
-/* Inputs */
-.input-wrapper {
-  position: relative;
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.input-icon {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #666;
-  transition: color 0.3s;
-}
-
-.card input {
-  width: 100%;
-  padding: 16px 20px 16px 48px;
-  background: rgba(0,0,0,0.3);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: white;
-  border-radius: var(--radius-lg);
-  box-sizing: border-box;
-  font-family: inherit;
-  font-size: 15px;
-  transition: all 0.3s;
-}
-
-.card input:focus {
-  outline: none;
-  border-color: var(--accent-mint);
-  background: rgba(0, 220, 130, 0.03);
-}
-
-.card input:focus + .input-icon {
-  color: var(--accent-mint);
-}
-
-/* Button */
-.btn-generate {
-  width: 100%;
-  padding: 16px;
-  background: linear-gradient(135deg, var(--accent-mint), #059669);
-  border: none;
-  color: #000;
-  border-radius: var(--radius-lg);
-  font-weight: 700;
-  font-size: 16px;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  font-family: inherit;
+/* Streaming Icon Badges */
+.badges {
   display: flex;
-  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+.badge {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
   align-items: center;
   gap: 8px;
+  color: var(--text-main);
+  transition: transform 0.2s, border-color 0.2s;
 }
-
-.btn-generate:hover {
+.badge:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(0, 220, 130, 0.3);
+  border-color: var(--accent-mint);
+  background: rgba(0, 220, 130, 0.05);
 }
 
-.btn-generate svg {
-  stroke: #000;
+.badge.yt svg { color: #ff0000; fill: #ff0000; }
+.badge.mp4 svg { color: #3b82f6; }
+.badge.live svg { color: var(--accent-mint); }
+
+/* Create Card */
+.create-card {
+  background: var(--bg-panel);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-color);
+  padding: 40px;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 24px 50px rgba(0,0,0,0.5);
+  text-align: center;
+  position: relative;
+  box-sizing: border-box;
 }
 
-/* Result Box */
-#result {
+.create-card h2 {
+  margin: 0 0 24px 0;
+  font-size: 24px;
+}
+
+.input-wrapper {
+  position: relative;
+  text-align: left;
+}
+.input-wrapper label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.create-card input {
+  width: 100%;
+  padding: 16px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: white;
+  border-radius: var(--radius-lg);
+  font-size: 15px;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: all var(--transition);
+}
+.create-card input:focus {
+  outline: none;
+  border-color: var(--accent-mint);
+  background: rgba(0, 220, 130, 0.05);
+}
+
+.create-card button {
   margin-top: 24px;
+  width: 100%;
+  padding: 16px;
+  background: var(--accent-mint);
+  border: none;
+  color: #000;
+  font-weight: 700;
+  font-size: 16px;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  transition: all var(--transition);
+}
+.create-card button:hover {
+  background: var(--accent-mint-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 220, 130, 0.3);
 }
 
 .result-box {
-  background: rgba(0, 220, 130, 0.08);
+  margin-top: 20px;
+  background: rgba(0, 220, 130, 0.1);
   border: 1px dashed rgba(0, 220, 130, 0.4);
-  padding: 18px;
+  padding: 16px;
   border-radius: var(--radius-md);
-  text-align: center;
   animation: fadeUp 0.4s ease forwards;
 }
-
 .result-box span {
+  display: block;
   font-size: 12px;
-  color: var(--accent-mint);
+  color: var(--text-muted);
+  margin-bottom: 8px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  font-weight: 700;
-  display: block;
-  margin-bottom: 8px;
 }
-
 .result-box a {
-  display: block;
-  color: white;
-  font-size: 15px;
+  color: var(--accent-mint);
+  font-weight: 600;
   word-break: break-all;
   text-decoration: none;
-  font-weight: 500;
-  background: rgba(0,0,0,0.3);
-  padding: 10px;
-  border-radius: 8px;
-  transition: background 0.2s;
+}
+.result-box a:hover { text-decoration: underline; }
+
+/* Recent Room Section */
+.recent-room {
+  margin-top: 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: fadeUp 0.6s ease forwards;
+}
+.recent-room span {
+  color: var(--text-muted);
+  font-size: 13px;
+  text-align: left;
+}
+.recent-room a {
+  background: rgba(0, 220, 130, 0.1);
+  color: var(--accent-mint);
+  padding: 8px 16px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid rgba(0, 220, 130, 0.2);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.recent-room a:hover {
+  background: var(--accent-mint);
+  color: #000;
 }
 
-.result-box a:hover {
-  background: rgba(255,255,255,0.1);
-}
-
-/* ---------------- COMMON SECTIONS ---------------- */
+/* ---------------- SECTIONS ---------------- */
 .section {
   padding: 100px 5%;
   max-width: 1200px;
   margin: 0 auto;
-  position: relative;
-  z-index: 5;
 }
-
-.section-header {
+.section-title {
   text-align: center;
-  margin-bottom: 70px;
-}
-
-.section-header h2 {
   font-size: 40px;
-  margin: 0 0 16px 0;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  margin-bottom: 60px;
 }
 
-.section-header p {
+/* Center Content & Full Width Images */
+.center-section {
+  text-align: center;
+  max-width: 900px; /* Limits text width for readability */
+  margin: 0 auto 100px auto;
+}
+
+.center-section h2 {
+  font-size: 36px;
+  margin: 0 0 20px 0;
+  font-weight: 800;
+}
+
+.center-section p {
   color: var(--text-muted);
   font-size: 18px;
-  max-width: 600px;
-  margin: 0 auto;
-  line-height: 1.6;
+  line-height: 1.7;
+  margin-bottom: 40px;
 }
 
-/* ---------------- ABOUT ---------------- */
-.about-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 80px;
-  align-items: center;
-}
-
-.about-content h3 {
-  font-size: 32px;
-  margin-bottom: 24px;
-  background: linear-gradient(135deg, #fff, var(--text-muted));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.about-content p {
-  color: var(--text-muted);
-  line-height: 1.8;
-  font-size: 16px;
-  margin-bottom: 20px;
-}
-
-.about-visual {
-  background: var(--bg-panel);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.06);
+/* Full Width Image Styling */
+.full-image {
+  width: 100%;
   border-radius: var(--radius-xl);
-  padding: 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+  display: block;
 }
 
-/* ---------------- FEATURES ---------------- */
+/* Features Grid */
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
 }
-
-.feature-card {
-  background: var(--bg-panel);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  padding: 40px 32px;
+.feature {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border-color);
+  padding: 40px 30px;
   border-radius: var(--radius-xl);
-  border: 1px solid rgba(255,255,255,0.06);
-  transition: all var(--transition);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  transition: transform var(--transition);
 }
-
-.feature-card:hover {
-  transform: translateY(-5px);
-  border-color: rgba(255,255,255,0.15);
-  background: rgba(25, 25, 30, 0.7);
-}
-
+.feature:hover { transform: translateY(-5px); background: rgba(255,255,255,0.04); }
 .feature-icon {
-  width: 56px;
-  height: 56px;
+  width: 60px; height: 60px;
+  background: rgba(0, 220, 130, 0.1);
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--accent-mint);
   margin-bottom: 24px;
 }
-
-.icon-1 { background: rgba(244, 63, 94, 0.1); color: var(--accent-rose); }
-.icon-2 { background: rgba(0, 220, 130, 0.1); color: var(--accent-mint); }
-.icon-3 { background: rgba(139, 92, 246, 0.1); color: var(--accent-purple); }
-
-.feature-card h4 {
-  font-size: 20px;
-  margin: 0 0 12px 0;
-  font-weight: 600;
-}
-
-.feature-card p {
-  color: var(--text-muted);
-  line-height: 1.6;
-  margin: 0;
-  font-size: 15px;
-}
-
-/* ---------------- SPEED SECTION ---------------- */
-.speed-section {
-  border-top: 1px solid var(--border-color);
-  background: linear-gradient(180deg, transparent 0%, rgba(59, 130, 246, 0.05) 100%);
-  padding-bottom: 100px;
-}
-
-.speed-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.speed-badge {
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--accent-blue);
-  padding: 6px 16px;
-  border-radius: 30px;
-  font-size: 13px;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 24px;
-  border: 1px solid rgba(59, 130, 246, 0.2);
-}
-
-.speed-stats {
-  display: flex;
-  gap: 60px;
-  margin-top: 50px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.stat-item h2 {
-  font-size: 56px;
-  color: white;
-  margin: 0;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-}
-
-.stat-item p {
-  color: var(--text-muted);
-  margin: 8px 0 0 0;
-  font-weight: 500;
-  font-size: 14px;
-}
+.feature h3 { font-size: 22px; margin: 0 0 12px 0; }
+.feature p { color: var(--text-muted); line-height: 1.6; margin: 0; }
 
 /* ---------------- FOOTER ---------------- */
 .footer {
+  background: rgba(255,255,255,0.02);
+  border-top: 1px solid var(--border-color);
   padding: 40px 5%;
   text-align: center;
-  border-top: 1px solid var(--border-color);
-  background: rgba(0,0,0,0.5);
-  backdrop-filter: blur(10px);
-  position: relative;
-  z-index: 5;
+  margin-top: 80px;
 }
-
-.footer-logo {
-  font-size: 20px;
-  font-weight: 800;
-  color: white;
-  margin-bottom: 16px;
-  letter-spacing: 1px;
-}
-.footer-logo span { color: var(--accent-mint); }
-
-.footer p {
-  color: var(--text-muted);
-  font-size: 14px;
-  margin: 0;
-}
+.footer p { color: var(--text-muted); margin: 0; font-size: 14px; }
 
 /* Animations */
-@keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.95) translateY(20px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
-}
-
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
+  from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes float {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(30px, -50px) scale(1.1); }
-}
-
-/* Mobile Fixes */
-@media(max-width: 768px) {
-  .about-grid { grid-template-columns: 1fr; gap: 40px; }
+/* Responsive */
+@media(max-width: 900px) {
+  .hero { grid-template-columns: 1fr; text-align: center; padding-top: 120px; gap: 40px; }
+  .hero-text p { margin: 0 auto 30px auto; }
+  .badges { justify-content: center; }
   .nav-links { display: none; }
-  .speed-stats { gap: 40px; flex-direction: column; }
-  .card { padding: 40px 24px; }
-  .section-header h2 { font-size: 32px; }
+  .create-card { padding: 30px 20px; }
+  .center-section h2 { font-size: 28px; }
+  .center-section p { font-size: 16px; }
 }
 </style>
 </head>
 
 <body>
 
-<div class="ambient-bg">
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-  <div class="orb orb-3"></div>
-</div>
+<div class="ambient-glow glow-1"></div>
+<div class="ambient-glow glow-2"></div>
 
 <header class="navbar">
   <div class="logo">ASVM<span>.</span></div>
   <div class="nav-links">
-    <a href="#about">About</a>
+    <a href="#formats">Supported Media</a>
     <a href="#features">Features</a>
-    <a href="#speed">Infrastructure</a>
   </div>
 </header>
 
 <section class="hero">
-  <div class="app-container">
-    <div class="card">
-      
-      <h1>Host a Watch Party</h1>
-      <p>Paste your video link below to create a secure, synchronized room instantly.</p>
-
-      <div class="input-wrapper">
-        <input id="video" placeholder="Paste direct video URL (.mp4)" autocomplete="off">
-        <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-        </svg>
+  <div class="hero-text">
+    <h1>Host the Ultimate Watch Party.</h1>
+    <p>Grab a link, invite your friends, and start watching together. Experience high-quality synchronized streaming with a built-in real-time chat room.</p>
+    
+    <div class="badges">
+      <div class="badge yt">
+        <svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="#000"></polygon></svg>
+        YouTube
       </div>
+      <div class="badge mp4">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
+        Direct Media (MP4)
+      </div>
+      <div class="badge live">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 3"></path></svg>
+        Live Streams (M3U8)
+      </div>
+    </div>
+  </div>
 
-      <button class="btn-generate" onclick="createRoom()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="5 3 19 12 5 21 5 3"></polygon>
-        </svg>
-        Create Room
-      </button>
-
-      <div id="result"></div>
-
+  <div class="create-card">
+    <h2>Create Room</h2>
+    <div class="input-wrapper">
+      <label>Media Source URL</label>
+      <input id="video" placeholder="Paste YouTube / .mp4 / .m3u8 link" autocomplete="off">
+    </div>
+    <button onclick="createRoom()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+      Generate Private Room
+    </button>
+    <div id="result"></div>
+    
+    <div id="recentRoomContainer" class="recent-room" style="display: none;">
+      <span>Last Visited Room:</span>
+      <a id="recentRoomLink" href="#">Join Room</a>
     </div>
   </div>
 </section>
 
-<section id="about" class="section">
-  <div class="about-grid">
-    <div class="about-visual">
-      <svg width="180" height="180" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke="var(--text-muted)"></rect>
-        <line x1="8" y1="21" x2="16" y2="21" stroke="var(--accent-mint)" stroke-width="2"></line>
-        <line x1="12" y1="17" x2="12" y2="21" stroke="var(--text-muted)"></line>
-        <polygon points="10 7 15 10 10 13 10 7" fill="var(--accent-mint)" stroke="var(--accent-mint)"></polygon>
-      </svg>
-    </div>
-    <div class="about-content">
-      <h3>Redefining Co-Watching.</h3>
-      <p>ASVM Watch Party is designed to eliminate the frustrations of traditional synced streaming. We removed forced server syncing so that you and your friends can enjoy buttery-smooth video playback based entirely on your own local internet speeds.</p>
-      <p>Watch together, independently. No more buffering because someone else's connection dropped. Just pure, uninterrupted entertainment paired with lightning-fast chat.</p>
-    </div>
+<section id="formats" class="section">
+  
+  <div class="center-section">
+    <h2>Chat While You Watch</h2>
+    <p>ASVM comes equipped with an ultra-fast, zero-latency real-time chat system. React to plot twists, discuss live events, and share moments with your friends without ever leaving the video screen.</p>
+    <img src="https://www.asvm.fun/20260311_012157.jpg" alt="Chat UI Preview" class="full-image">
   </div>
+
+  <div class="center-section">
+    <h2>Any Video. Any Format.</h2>
+    <p>We built ASVM to be completely unrestricted. Whether you want to watch the latest YouTube drop, stream a direct MP4 file from your server, or load up an HLS live stream (.m3u8), our advanced embedded player handles it natively.</p>
+    <img src="https://www.asvm.fun/20260311_013356.jpg" alt="Video Player Preview" class="full-image">
+  </div>
+
 </section>
 
 <section id="features" class="section">
-  <div class="section-header">
-    <h2>Engineered for Performance</h2>
-    <p>Everything you need for the perfect remote movie night, designed with privacy and speed in mind.</p>
-  </div>
-
+  <h2 class="section-title">Why Choose ASVM?</h2>
   <div class="features-grid">
-    <div class="feature-card">
-      <div class="feature-icon icon-1">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+    <div class="feature">
+      <div class="feature-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
       </div>
-      <h4>Independent Playback</h4>
-      <p>Play, pause, and skip on your own terms. Your video stream won't affect or be affected by anyone else in the room.</p>
+      <h3>Real-Time Chat</h3>
+      <p>Engage with your room instantly. Features include reply threading, unread message alerts, and notification sounds.</p>
+    </div>
+    
+    <div class="feature">
+      <div class="feature-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+      </div>
+      <h3>Independent Playback</h3>
+      <p>Play, pause, and seek without affecting others. Enjoy the movie at your own pace while staying connected in chat.</p>
     </div>
 
-    <div class="feature-card">
-      <div class="feature-icon icon-2">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+    <div class="feature">
+      <div class="feature-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
       </div>
-      <h4>Secure Encryption</h4>
-      <p>Your video URLs are securely encoded before being stored in our database, keeping your sources private and safe.</p>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon icon-3">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-      </div>
-      <h4>Modern Interface</h4>
-      <p>A premium dark-mode dashboard with crisp UI elements and satisfying pop notifications for incoming messages.</p>
-    </div>
-  </div>
-</section>
-
-<section id="speed" class="section speed-section">
-  <div class="speed-container">
-    <div class="speed-badge">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline></svg>
-      High-Performance Infrastructure
-    </div>
-    <h2>Zero-Latency Chat Architecture</h2>
-    <p style="color: var(--text-muted); max-width: 600px; margin: 20px auto 0; font-size: 18px; line-height: 1.6;">
-      While your video plays independently, your room's chat is instantly synchronized globally. Experience messaging that feels instantaneous, ensuring your reactions drop exactly when the plot twist happens.
-    </p>
-
-    <div class="speed-stats">
-      <div class="stat-item">
-        <h2>&lt;100ms</h2>
-        <p>Global Latency</p>
-      </div>
-      <div class="stat-item">
-        <h2>100%</h2>
-        <p>Message Delivery</p>
-      </div>
-      <div class="stat-item">
-        <h2>Live</h2>
-        <p>Presence Tracking</p>
-      </div>
+      <h3>Secure & Private</h3>
+      <p>Your video links are encoded before hitting our database, ensuring your media sources remain entirely private.</p>
     </div>
   </div>
 </section>
 
 <footer class="footer">
-  <div class="footer-logo">ASVM<span>.</span></div>
-  <p>&copy; 2026 ASVM | All Rights Reserved.</p>
+  <div class="logo" style="margin-bottom: 16px;">ASVM<span>.</span></div>
+  <p>&copy; 2026 ASVM Watch Party Platform. All rights reserved.</p>
 </footer>
 
 <script type="module">
-import {db,ref,set} from "/firebase.js"
+import {db,ref,set} from "./firebase.js"
+
+function setCookie(name, value, days) {
+  let expires = "";
+  if (days) {
+    let date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
+
+function getCookie(name) {
+  let nameEQ = name + "=";
+  let ca = document.cookie.split(';');
+  for(let i=0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0)==' ') c = c.substring(1,c.length);
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+  }
+  return null;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const lastRoom = getCookie("asvm_last_room");
+  if (lastRoom) {
+    const container = document.getElementById("recentRoomContainer");
+    const linkBtn = document.getElementById("recentRoomLink");
+    linkBtn.href = location.origin + "/room.html?room=" + lastRoom;
+    linkBtn.innerText = "Join " + lastRoom;
+    container.style.display = "flex"; 
+  }
+});
 
 window.createRoom=function(){
-
   const video=document.getElementById("video").value.trim()
 
   if(!video){
-    alert("Please enter a valid video link.")
+    alert("Please enter a valid video link to continue.")
     return
   }
 
   const room=Math.random().toString(36).substring(2,7)
-
-  // detect source type
-  let type="video"
-
-  if(video.includes("youtube.com") || video.includes("youtu.be")){
-    type="youtube"
-  }
-
-  // encode link
   const encoded=btoa(video)
 
-  // save to firebase
   set(ref(db,"rooms/"+room),{
     src:encoded,
-    type:type,
-    state:{
-      playing:false,
-      time:0
-    }
+    state:{ playing:false, time:0 }
   })
 
-  const link=location.origin+"/room?room="+room
+  setCookie("asvm_last_room", room, 30)
+
+  const link=location.origin+"/room.html?room="+room
 
   document.getElementById("result").innerHTML=
   `<div class="result-box">
-     <span>Room Successfully Created</span>
-     <a href="${link}" target="_blank">${link}</a>
-   </div>`
+    <span>Room Successfully Created</span>
+    <a href="${link}" target="_blank">${link}</a>
+  </div>`
+  
+  document.getElementById("recentRoomContainer").style.display = "none";
 }
 </script>
 
