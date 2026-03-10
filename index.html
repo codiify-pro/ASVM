@@ -522,7 +522,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (lastRoom) {
     const container = document.getElementById("recentRoomContainer");
     const linkBtn = document.getElementById("recentRoomLink");
-    linkBtn.href = location.origin + "/room.html?room=" + lastRoom;
+    linkBtn.href = location.origin + "/room?room=" + lastRoom;
     linkBtn.innerText = "Join " + lastRoom;
     container.style.display = "flex"; 
   }
@@ -546,7 +546,7 @@ window.createRoom=function(){
 
   setCookie("asvm_last_room", room, 30)
 
-  const link=location.origin+"/room.html?room="+room
+  const link=location.origin+"/room?room="+room
 
   document.getElementById("result").innerHTML=
   `<div class="result-box">
