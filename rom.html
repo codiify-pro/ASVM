@@ -1,186 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>ASVM - Sync Video Meeting Room</title>
+<title>ASVM - Sync Video Meeting Room v2.0</title>
 <link rel="icon" type="image/png" href="https://www.asvm.fun/20260310_010041.jpg">
 <link rel="shortcut icon" href="https://www.asvm.fun/20260310_010041.jpg" type="image/png">
 <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+<meta name="description" content="ASVM v2.0 - Premium watch party platform.">
+
 <style>
-/* Same UI Styles with version upgrades for smoothness */
-* { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-*:focus { outline: none; }
+/* Modernized SaaS Variables */
 :root {
-  --bg-base: #050505;
-  --bg-panel: rgba(24, 24, 27, 0.4);
-  --bg-panel-hover: rgba(39, 39, 42, 0.6);
-  --border-color: rgba(255, 255, 255, 0.08);
+  --bg-base: #020202;
+  --bg-panel: rgba(20, 20, 22, 0.6);
+  --bg-panel-hover: rgba(35, 35, 38, 0.7);
+  --border-color: rgba(255, 255, 255, 0.06);
   --text-main: #ffffff;
-  --text-muted: #a1a1aa;
-  --accent-mint: #00dc82; 
-  --accent-mint-dim: rgba(0, 220, 130, 0.15);
-  --radius-xl: 24px;
-  --radius-lg: 16px;
+  --text-muted: #94a3b8;
+  --accent-mint: #00f593; 
+  --accent-mint-dim: rgba(0, 245, 147, 0.1);
+  --radius-xl: 28px;
+  --radius-lg: 18px;
   --radius-md: 12px;
-  --transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  --plyr-color-main: #00dc82;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --plyr-color-main: #00f593;
 }
 
+* { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 body {
-  margin: 0;
-  background: var(--bg-base);
-  font-family: 'Inter', sans-serif;
-  color: var(--text-main);
-  overflow: hidden;
-  height: 100dvh;
-  display: flex;
-  flex-direction: column;
+  margin: 0; background: var(--bg-base);
+  font-family: 'Inter', sans-serif; color: var(--text-main);
+  overflow: hidden; height: 100dvh; display: flex; flex-direction: column;
 }
 
-/* Ambient Glows */
-.ambient-glow-1 { position: fixed; top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--accent-mint-dim), transparent 70%); filter: blur(120px); z-index: -1; opacity: 0.4; }
+/* Ambient BG */
+.ambient-glow {
+  position: fixed; width: 60vw; height: 60vw; border-radius: 50%;
+  filter: blur(140px); z-index: -1; opacity: 0.15; pointer-events: none;
+}
+.glow-1 { top: -20%; left: -10%; background: var(--accent-mint); }
 
+/* Topbar */
 .topbar {
-  background: rgba(5, 5, 5, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  padding: 0 5%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--border-color);
-  height: 64px; 
-  flex-shrink: 0; 
+  height: 68px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px; background: rgba(0,0,0,0.4); backdrop-filter: blur(15px);
+  border-bottom: 1px solid var(--border-color); z-index: 100;
 }
-
-.logo { font-size: 22px; font-weight: 800; letter-spacing: 1px; }
+.logo { font-size: 24px; font-weight: 800; }
 .logo span { color: var(--accent-mint); }
 
+/* Main Layout */
 .main-container {
-  max-width: 1100px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  flex: 1;
-  min-height: 0;
+  max-width: 1100px; width: 100%; margin: 0 auto; padding: 15px;
+  display: flex; flex-direction: column; flex: 1; min-height: 0; gap: 12px;
 }
 
-/* Video Player Container */
 .playerWrap {
-  width: 100%;
-  background: #000;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-  border: 1px solid var(--border-color);
-  flex-shrink: 0;
-  position: relative;
+  width: 100%; aspect-ratio: 16/9; background: #000;
+  border-radius: var(--radius-lg); overflow: hidden;
+  border: 1px solid var(--border-color); flex-shrink: 0;
 }
 
-/* Chat UI */
+/* Resizer */
+.resizer {
+  height: 12px; cursor: ns-resize; display: flex; align-items: center; justify-content: center;
+}
+.resizer-line { width: 50px; height: 4px; background: #333; border-radius: 10px; }
+
+/* Chat Box */
 .chatBox {
-  flex: 1;
-  min-height: 0;
-  background: var(--bg-panel);
-  backdrop-filter: blur(24px);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.chatHeader {
-  padding: 14px 20px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(255,255,255,0.02);
-  border-bottom: 1px solid var(--border-color);
-}
-
-.live-dot { width: 8px; height: 8px; background: var(--accent-mint); border-radius: 50%; box-shadow: 0 0 10px var(--accent-mint); animation: pulse 2s infinite; }
-
-#messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
-
-/* System/Welcome Message Style */
-.system-msg {
-  align-self: center;
-  background: var(--accent-mint-dim);
-  color: var(--accent-mint);
-  padding: 8px 16px;
-  border-radius: 30px;
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 10px;
-  border: 1px solid rgba(0,220,130,0.2);
-}
-
-/* Standard Message Bubble */
-.msg { display: flex; width: 100%; align-items: flex-end; animation: msgFade 0.3s ease; }
-.left { justify-content: flex-start; }
-.right { justify-content: flex-end; }
-
-.msgBox {
-  max-width: 80%;
-  padding: 10px 14px;
-  border-radius: 18px;
-  font-size: 14px;
+  flex: 1; min-height: 0; background: var(--bg-panel);
+  backdrop-filter: blur(20px); border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg); display: flex; flex-direction: column;
   position: relative;
 }
+.chatHeader {
+  padding: 15px 20px; border-bottom: 1px solid var(--border-color);
+  display: flex; align-items: center; gap: 10px; font-weight: 600;
+}
+.live-dot { width: 8px; height: 8px; background: var(--accent-mint); border-radius: 50%; box-shadow: 0 0 10px var(--accent-mint); }
 
-.left .msgBox { background: var(--bg-panel-hover); border: 1px solid var(--border-color); border-bottom-left-radius: 4px; }
+#messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+
+/* Message Styling */
+.msg { display: flex; width: 100%; animation: msgIn 0.3s ease-out; }
+.msgBox { max-width: 80%; padding: 12px 16px; border-radius: 18px; position: relative; font-size: 14px; }
+.left { justify-content: flex-start; }
+.left .msgBox { background: var(--bg-panel-hover); border: 1px solid var(--border-color); }
+.right { justify-content: flex-end; }
 .right .msgBox { background: var(--accent-mint); color: #000; font-weight: 500; border-bottom-right-radius: 4px; }
 
-.name { font-size: 11px; font-weight: 700; margin-bottom: 3px; opacity: 0.7; text-transform: uppercase; }
+.name { font-size: 11px; font-weight: 700; margin-bottom: 4px; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.5px; }
 
 /* Input Area */
 .chatInput {
-  display: flex;
-  padding: 12px;
-  gap: 10px;
-  background: rgba(0,0,0,0.3);
-  border-top: 1px solid var(--border-color);
+  padding: 15px; background: rgba(0,0,0,0.3); border-top: 1px solid var(--border-color);
+  display: flex; gap: 10px; align-items: center;
 }
-
 .chatInput input {
-  flex: 1;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 12px 16px;
-  color: white;
+  flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);
+  padding: 12px 18px; border-radius: 30px; color: #fff; font-family: inherit;
 }
-
+.chatInput input:focus { border-color: var(--accent-mint); outline: none; }
 .send-btn {
-  background: var(--accent-mint);
-  border: none;
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: var(--accent-mint); border: none; width: 45px; height: 45px;
+  border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
 }
 
-@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-@keyframes msgFade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes msgIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Quality Selector Styling */
-.plyr--full-ui input[type=range] { color: var(--accent-mint); }
-.plyr__control--overlaid { background: rgba(0, 220, 130, 0.8); }
+/* Badge & Utility */
+.room-badge { background: var(--accent-mint-dim); color: var(--accent-mint); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: 600; }
 </style>
 </head>
 
 <body>
-<div class="ambient-glow-1"></div>
+<div class="ambient-glow glow-1"></div>
 
 <div class="topbar">
   <div class="logo">ASVM<span>.</span></div>
@@ -192,19 +129,23 @@ body {
     <video id="player" controls playsinline></video>
   </div>
 
+  <div class="resizer" id="resizer"><div class="resizer-line"></div></div>
+
   <div class="chatBox">
-    <div class="chatHeader">
-      <div class="live-dot"></div>
-      <span>Live Chat</span>
-    </div>
+    <div class="chatHeader"><div class="live-dot"></div><span>Room Chat</span></div>
     <div id="messages">
-        <div class="system-msg">Hey! Welcome to ASVM Player</div>
+        <div class="msg right">
+            <div class="msgBox">
+                <div class="name">ASVM</div>
+                Hey! Welcome to ASVM Player 👋
+            </div>
+        </div>
     </div>
     
     <div class="chatInput">
       <input id="msg" placeholder="Write something..." autocomplete="off">
-      <button class="send-btn" onclick="sendMsg()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+      <button class="send-btn" id="sendBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
       </button>
     </div>
   </div>
@@ -217,69 +158,22 @@ body {
 import {db,ref,onValue,push,onChildAdded} from "./firebase.js"
 
 const params = new URLSearchParams(location.search);
-const room = params.get("room") || "default";
+const room = params.get("room") || "Global";
 document.getElementById("roomId").innerText = "Room: " + room;
 
-const video = document.querySelector('#player');
+const video = document.getElementById("player");
+let player = new Plyr(video);
+let sourceLoaded = false;
+let username = localStorage.getItem("asvm_name") || prompt("Enter name:") || "Guest";
+localStorage.setItem("asvm_name", username);
+
 const msgInput = document.getElementById("msg");
 const msgContainer = document.getElementById("messages");
 
-// Username setup
-let username = localStorage.getItem("asvm_name") || prompt("Enter your name:") || "Guest";
-localStorage.setItem("asvm_name", username);
-
-// Plyr Options with Quality Selector
-const player = new Plyr(video, {
-    controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
-    settings: ['quality', 'speed'],
-    quality: { default: 720, options: [1080, 720, 480, 360, 240] }
-});
-
-let hls;
-
-// Load Video & Handle Quality
-onValue(ref(db, "rooms/" + room), snap => {
-    const data = snap.val();
-    if (!data) return;
-    const url = atob(data.src);
-
-    if (url.includes(".m3u8")) {
-        if (Hls.isSupported()) {
-            if (hls) hls.destroy();
-            hls = new Hls();
-            hls.loadSource(url);
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
-                // Add quality levels to Plyr
-                const availableQualities = hls.levels.map((l) => l.height);
-                player.settings = ['quality', 'speed'];
-                player.config.quality = {
-                    default: availableQualities[0],
-                    options: availableQualities,
-                    forced: true,
-                    onChange: (q) => updateQuality(q),
-                };
-            });
-        }
-    } else if (url.includes("youtube.com") || url.includes("youtu.be")) {
-        player.source = { type: 'video', sources: [{ src: url, provider: 'youtube' }] };
-    } else {
-        player.source = { type: 'video', sources: [{ src: url, type: 'video/mp4' }] };
-    }
-});
-
-function updateQuality(newQuality) {
-    if (hls) {
-        hls.levels.forEach((level, levelIndex) => {
-            if (level.height === newQuality) hls.currentLevel = levelIndex;
-        });
-    }
-}
-
-// Chat Functions
+// Send Message Function
 window.sendMsg = () => {
     const text = msgInput.value.trim();
-    if (!text) return;
+    if(!text) return;
     push(ref(db, "rooms/" + room + "/chat"), {
         name: username,
         text: text,
@@ -288,28 +182,49 @@ window.sendMsg = () => {
     msgInput.value = "";
 };
 
-msgInput.addEventListener("keypress", (e) => { if(e.key === "Enter") sendMsg(); });
+document.getElementById("sendBtn").onclick = sendMsg;
+msgInput.onkeypress = (e) => { if(e.key === "Enter") sendMsg(); };
 
-onChildAdded(ref(db, "rooms/" + room + "/chat"), snap => {
+// Load Messages
+onChildAdded(ref(db, "rooms/" + room + "/chat"), (snap) => {
     const m = snap.val();
     const div = document.createElement("div");
     const isMe = m.name === username;
-    div.className = `msg ${isMe ? 'right' : 'left'}`;
-    
+    div.className = "msg " + (isMe ? "right" : "left");
     div.innerHTML = `
         <div class="msgBox">
-            <div class="name" style="color: ${isMe ? '#000' : 'var(--accent-mint)'}">${m.name}</div>
-            <div class="text">${m.text}</div>
+            <div class="name">${m.name}</div>
+            ${m.text}
         </div>
     `;
     msgContainer.appendChild(div);
     msgContainer.scrollTop = msgContainer.scrollHeight;
 });
 
-// Sound effect for new messages
-const msgSound = new Audio("https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3");
-onChildAdded(ref(db, "rooms/" + room + "/chat"), snap => {
-    if(snap.val().name !== username) msgSound.play().catch(()=>{});
+// Resizer Logic (Modified for Version Upgrade)
+const resizer = document.getElementById("resizer");
+const playerCont = document.getElementById("playerContainer");
+resizer.onmousedown = (e) => {
+    document.onmousemove = (e) => {
+        let h = e.clientY - 100;
+        if(h > 150 && h < 500) playerCont.style.height = h + "px";
+    };
+    document.onmouseup = () => document.onmousemove = null;
+};
+
+// Video Sync Data (Existing)
+onValue(ref(db, "rooms/" + room), snap => {
+    const data = snap.val();
+    if(!data || sourceLoaded) return;
+    const url = atob(data.src);
+    sourceLoaded = true;
+    if(url.includes(".m3u8")) {
+        const hls = new Hls();
+        hls.loadSource(url);
+        hls.attachMedia(video);
+    } else {
+        player.source = { type: 'video', sources: [{ src: url }] };
+    }
 });
 </script>
 </body>
