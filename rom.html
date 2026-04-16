@@ -20,8 +20,6 @@
 <meta property="og:url" content="https://www.asvm.fun">
 <meta property="og:image" content="https://www.asvm.fun/preview.png">
 
-<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css"/>
-
 <style>
 /* Ultra-Modern SaaS Variables (Green/Mint Tone) */
 * {
@@ -47,12 +45,10 @@
   
   --transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   
-  /* Plyr Theme Override to match ASVM Mint */
   --plyr-color-main: #00dc82;
   --plyr-video-background: #000000;
 }
 
-/* App-like fixed layout */
 body {
   margin: 0;
   background: var(--bg-base);
@@ -65,7 +61,6 @@ body {
   flex-direction: column;
 }
 
-/* Ambient Background Glows */
 .ambient-glow-1, .ambient-glow-2 {
   position: fixed; 
   border-radius: 50%;
@@ -444,13 +439,6 @@ body {
   animation: fadeUp 0.3s forwards;
 }
 
-@keyframes flashHighlight {
-  0% { box-shadow: 0 0 0 0 transparent; transform: scale(1); }
-  20% { box-shadow: 0 0 20px 5px var(--accent-mint); transform: scale(1.02); }
-  100% { box-shadow: 0 0 0 0 transparent; transform: scale(1); }
-}
-.highlight-anim { animation: flashHighlight 1.5s ease; }
-
 .popup {
   position: fixed;
   top: 80px;
@@ -510,12 +498,11 @@ body {
 </div>
 
 <div class="main-container">
-  
   <div class="playerWrap" id="playerContainer">
     <video id="player" controls playsinline></video>
   </div>
 
-  <div class="resizer" id="resizer" title="Drag to resize video and chat">
+  <div class="resizer" id="resizer" title="Drag to resize">
     <div class="resizer-line"></div>
   </div>
 
@@ -524,37 +511,21 @@ body {
       <div class="live-dot"></div>
       <span>Room Chat</span>
     </div>
-
     <div id="messages"></div>
-    
     <div class="new-msg-dot" id="newMsgDot" onclick="scrollToBottom()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
       New Messages
     </div>
-
     <div class="reply-preview" id="replyPreview">
-      <div class="reply-preview-text">
-        Replying to <strong id="replyName"></strong>: <span id="replyText"></span>
-      </div>
-      <div class="cancel-reply" onclick="cancelReply()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-      </div>
+      <div class="reply-preview-text">Replying to <strong id="replyName"></strong>: <span id="replyText"></span></div>
+      <div class="cancel-reply" onclick="cancelReply()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div>
     </div>
-
     <div class="chatInput">
-      <button class="emoji-btn" id="emojiButton">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
-      </button>
+      <button class="emoji-btn" id="emojiButton"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg></button>
       <input id="msg" placeholder="Type a message..." autocomplete="off" onkeypress="handleKeyPress(event)">
-      <button class="send-btn" onclick="sendMsg()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="22" y1="2" x2="11" y2="13"></line>
-          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-        </svg>
-      </button>
+      <button class="send-btn" onclick="sendMsg()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></button>
     </div>
   </div>
-
 </div>
 
 <div class="popup" id="joinPopup"></div>
@@ -568,264 +539,144 @@ import {db,ref,onValue,push,onChildAdded} from "./firebase.js"
 
 const params=new URLSearchParams(location.search)
 const room=params.get("room")
-
 document.getElementById("roomId").innerText="Room: "+room
 
 const video=document.getElementById("player")
 let player=new Plyr(video)
-
 const msgSound = new Audio("https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3");
 
-let sourceLoaded=false
 let username=localStorage.getItem("asvm_name")
 
-if(!username){
-  username=prompt("Enter your name to join the room:")
-  if(username){
-    localStorage.setItem("asvm_name",username)
-  } else {
-    username = "Anonymous"
+// --- NAME RESTRICTION LOGIC ---
+function askName() {
+  let name = prompt("Enter your name to join the room:");
+  if (name) {
+    let cleanName = name.trim().toLowerCase();
+    if (cleanName === "asvm") {
+      alert("Sorry, the name 'asvm' is reserved for system. Please choose another name.");
+      return askName(); // Recursive call until a valid name is entered
+    }
+    localStorage.setItem("asvm_name", name.trim());
+    return name.trim();
   }
+  return "Anonymous";
 }
 
-/* User Join Notification Logic */
-push(ref(db,"rooms/"+room+"/joins"),{
-  name:username,
-  time:Date.now()
-})
+if(!username || username.toLowerCase() === "asvm"){
+  username = askName();
+}
 
+/* User Join Notification */
+push(ref(db,"rooms/"+room+"/joins"),{ name:username, time:Date.now() })
 onChildAdded(ref(db,"rooms/"+room+"/joins"),(snap)=>{
   const j=snap.val()
-  if(j.name!==username){
-    showPopup(j.name+" joined the room")
-  }
+  if(j.name!==username) showPopup(j.name+" joined the room")
 })
 
 function showPopup(text){
-  const p=document.getElementById("joinPopup")
-  p.innerText=text
-  p.style.display="block"
-  setTimeout(()=>{
-    p.style.display="none"
-  },3000)
+  const p=document.getElementById("joinPopup"); p.innerText=text; p.style.display="block";
+  setTimeout(()=>{ p.style.display="none" },3000)
 }
 
 /* Load Video Logic */
+let sourceLoaded = false;
 onValue(ref(db,"rooms/"+room),snap=>{
-  const data=snap.val()
-  if(!data) return
-
-  const url=atob(data.src)
-
-  if(sourceLoaded) return
-  sourceLoaded=true
+  const data=snap.val(); if(!data) return;
+  const url=atob(data.src);
+  if(sourceLoaded) return; sourceLoaded=true;
 
   if(url.includes("youtube.com") || url.includes("youtu.be")){
     const ytId = getYoutubeID(url);
-    if(ytId) {
-      player.source = {
-        type: 'video',
-        sources: [{ src: ytId, provider: 'youtube' }]
-      };
-    }
-  }
-  else if(url.includes(".m3u8")){
-    if(Hls.isSupported()){
-      const hls=new Hls()
-      hls.loadSource(url)
-      hls.attachMedia(video)
-    }
-  }
-  else{
-    player.source={
-      type:"video",
-      sources:[{ src:url, type:"video/mp4" }]
-    }
+    if(ytId) player.source = { type: 'video', sources: [{ src: ytId, provider: 'youtube' }] };
+  } else if(url.includes(".m3u8")){
+    if(Hls.isSupported()){ const hls=new Hls(); hls.loadSource(url); hls.attachMedia(video); }
+  } else {
+    player.source={ type:"video", sources:[{ src:url, type:"video/mp4" }] }
   }
 })
 
-function getYoutubeID(url){
-  let reg=/((youtu.be\/)|(v=))([^#&?]*)/
-  let match=url.match(reg)
-  return(match&&match[4])?match[4]:null
-}
+function getYoutubeID(url){ let reg=/((youtu.be\/)|(v=))([^#&?]*)/; let match=url.match(reg); return(match&&match[4])?match[4]:null }
 
-/* Share Logic */
-window.shareRoom = function() {
-  const url = window.location.href;
-  if (navigator.share) {
-    navigator.share({
-      title: 'ASVM Watch Room',
-      text: 'Join my watch party on ASVM!',
-      url: url,
-    })
-    .catch((error) => console.log('Error sharing', error));
-  } else {
-    navigator.clipboard.writeText(url);
-    showPopup("Room link copied to clipboard!");
-  }
-}
-
-
-/* ---------------- SLIDER (RESIZER) LOGIC ---------------- */
+/* Resizer Logic */
 const resizer = document.getElementById("resizer");
 const playerContainer = document.getElementById("playerContainer");
 const mainContainer = document.querySelector(".main-container");
-
 let isResizing = false;
-let startY = 0;
-let startHeight = 0;
 
-resizer.addEventListener("mousedown", initDrag, false);
-resizer.addEventListener("touchstart", initDrag, {passive: false});
+resizer.addEventListener("mousedown", initDrag);
+resizer.addEventListener("touchstart", initDrag);
 
 function initDrag(e) {
   isResizing = true;
-  startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
-  startHeight = playerContainer.getBoundingClientRect().height;
-  playerContainer.style.transition = 'none';
-  document.documentElement.addEventListener("mousemove", doDrag, false);
-  document.documentElement.addEventListener("touchmove", doDrag, {passive: false});
-  document.documentElement.addEventListener("mouseup", stopDrag, false);
-  document.documentElement.addEventListener("touchend", stopDrag, false);
+  document.documentElement.addEventListener("mousemove", doDrag);
+  document.documentElement.addEventListener("touchmove", doDrag);
+  document.documentElement.addEventListener("mouseup", stopDrag);
+  document.documentElement.addEventListener("touchend", stopDrag);
 }
 
 function doDrag(e) {
   if (!isResizing) return;
-  if(e.cancelable) e.preventDefault(); 
   let clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-  let newHeight = startHeight + (clientY - startY);
-  let minHeight = 100; 
-  let maxHeight = mainContainer.clientHeight - 250; 
-  if (newHeight >= minHeight && newHeight <= maxHeight) {
-    playerContainer.style.aspectRatio = 'auto'; 
+  let newHeight = clientY - playerContainer.getBoundingClientRect().top;
+  if (newHeight >= 100 && newHeight <= mainContainer.clientHeight - 200) {
     playerContainer.style.height = newHeight + "px";
   }
 }
 
-function stopDrag(e) {
-  isResizing = false;
-  document.documentElement.removeEventListener("mousemove", doDrag, false);
-  document.documentElement.removeEventListener("touchmove", doDrag, false);
-  document.documentElement.removeEventListener("mouseup", stopDrag, false);
-  document.documentElement.removeEventListener("touchend", stopDrag, false);
-}
+function stopDrag() { isResizing = false; }
 
-
-/* ---------------- CHAT, REPLY & EMOJI LOGIC ---------------- */
+/* Chat Logic */
 let messagesMap = {}; 
 let replyingTo = null;
 const msgInput = document.getElementById("msg");
 const msgBoxEl = document.getElementById("messages");
 
-// --- ADDED: WELCOME MESSAGE ---
+// --- SYSTEM WELCOME MESSAGE (Same style as normal chat) ---
 function addWelcomeMessage() {
-  const welcomeDiv = document.createElement("div");
-  welcomeDiv.className = "msg left";
-  welcomeDiv.innerHTML = `
-    <div class="msgBox" style="background: var(--accent-mint-dim); border: 1px solid var(--accent-mint); color: var(--accent-mint);">
-      <div class="name" style="color: var(--accent-mint);">asvm</div>
+  const div = document.createElement("div");
+  div.className = "msg left";
+  div.innerHTML = `
+    <div class="msgBox">
+      <div class="name">asvm</div>
       Welcome to asvm player
     </div>
   `;
-  msgBoxEl.appendChild(welcomeDiv);
+  msgBoxEl.appendChild(div);
 }
-addWelcomeMessage(); // Run immediately on load
-// -----------------------------
+addWelcomeMessage();
 
 const picker = new EmojiButton({ theme: 'dark', position: 'top-start' });
-const emojiBtn = document.getElementById('emojiButton');
+picker.on('emoji', emoji => { msgInput.value += emoji; msgInput.focus(); });
+document.getElementById('emojiButton').addEventListener('click', () => picker.togglePicker(document.getElementById('emojiButton')));
 
-picker.on('emoji', emoji => {
-  msgInput.value += emoji;
-  msgInput.focus();
-});
-
-emojiBtn.addEventListener('click', () => {
-  picker.togglePicker(emojiBtn);
-});
-
-window.handleKeyPress=function(e){
-  if(e.key==="Enter"){
-    sendMsg()
-  }
-}
-
-window.initReply = function(msgId) {
-  const m = messagesMap[msgId];
-  if(!m) return;
-  replyingTo = { id: msgId, name: m.name, text: m.text };
+window.handleKeyPress = e => { if(e.key==="Enter") sendMsg() };
+window.initReply = id => {
+  const m = messagesMap[id]; if(!m) return;
+  replyingTo = { id, name: m.name, text: m.text };
   document.getElementById("replyPreview").style.display = "flex";
   document.getElementById("replyName").innerText = m.name;
-  let snippet = m.text.length > 30 ? m.text.substring(0, 30) + "..." : m.text;
-  document.getElementById("replyText").innerText = snippet;
+  document.getElementById("replyText").innerText = m.text.substring(0, 30);
   msgInput.focus();
 }
+window.cancelReply = () => { replyingTo = null; document.getElementById("replyPreview").style.display = "none"; }
 
-window.cancelReply = function() {
-  replyingTo = null;
-  document.getElementById("replyPreview").style.display = "none";
+window.sendMsg = () => {
+  const text=msgInput.value; if(!text) return;
+  push(ref(db,"rooms/"+room+"/chat"),{ name:username, text, time:Date.now(), reply: replyingTo });
+  msgInput.value=""; cancelReply();
 }
 
-window.sendMsg=function(){
-  const text=msgInput.value
-  if(!text) return
-  push(ref(db,"rooms/"+room+"/chat"),{
-    name:username,
-    text:text,
-    time:Date.now(),
-    reply: replyingTo 
-  })
-  msgInput.value=""
-  cancelReply(); 
-}
-
-window.scrollToMsg = function(id) {
-  const el = document.getElementById("msg-" + id);
-  if(el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    el.querySelector('.msgBox').classList.remove("highlight-anim");
-    void el.offsetWidth;
-    el.querySelector('.msgBox').classList.add("highlight-anim");
-  }
-}
-
-const newMsgDot = document.getElementById("newMsgDot");
-msgBoxEl.addEventListener("scroll", () => {
-  if(msgBoxEl.scrollHeight - msgBoxEl.scrollTop - msgBoxEl.clientHeight < 50) {
-    newMsgDot.style.display = "none";
-  }
-});
-
-window.scrollToBottom = function() {
-  msgBoxEl.scrollTop = msgBoxEl.scrollHeight;
-  newMsgDot.style.display = "none";
-}
+window.scrollToBottom = () => { msgBoxEl.scrollTop = msgBoxEl.scrollHeight; document.getElementById("newMsgDot").style.display = "none"; }
 
 onChildAdded(ref(db,"rooms/"+room+"/chat"),snap=>{
-  const m=snap.val()
-  const msgId = snap.key;
-  messagesMap[msgId] = m; 
-  const div=document.createElement("div")
-  div.id = "msg-" + msgId;
+  const m=snap.val(); messagesMap[snap.key] = m;
+  const div=document.createElement("div");
   const isMe = m.name===username;
-  div.className="msg "+(isMe?"right":"left")
-  const isScrolledUp = msgBoxEl.scrollHeight - msgBoxEl.scrollTop - msgBoxEl.clientHeight > 50;
+  div.className="msg "+(isMe?"right":"left");
+  
+  if(!isMe) msgSound.play().catch(e => {});
 
-  if(!isMe){
-    msgSound.play().catch(e => {});
-  }
-
-  let quoteHTML = "";
-  if(m.reply) {
-    let snippet = m.reply.text.length > 50 ? m.reply.text.substring(0,50) + "..." : m.reply.text;
-    quoteHTML = `
-      <div class="quote-block" onclick="scrollToMsg('${m.reply.id}')">
-        <div class="quote-name">${m.reply.name}</div>
-        <div>${snippet}</div>
-      </div>
-    `;
-  }
+  let quoteHTML = m.reply ? `<div class="quote-block"><div class="quote-name">${m.reply.name}</div><div>${m.reply.text}</div></div>` : "";
 
   div.innerHTML=`
     <div class="msgBox">
@@ -833,19 +684,19 @@ onChildAdded(ref(db,"rooms/"+room+"/chat"),snap=>{
       <div class="name">${m.name}</div>
       ${m.text}
     </div>
-    <button class="reply-btn" onclick="initReply('${msgId}')" title="Reply">
+    <button class="reply-btn" onclick="initReply('${snap.key}')">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path></svg>
     </button>
-  `
-  msgBoxEl.appendChild(div)
-  if(!isScrolledUp) {
-    msgBoxEl.scrollTop = msgBoxEl.scrollHeight;
-  } else {
-    newMsgDot.style.display = "flex"; 
-  }
+  `;
+  msgBoxEl.appendChild(div);
+  msgBoxEl.scrollTop = msgBoxEl.scrollHeight;
 })
 
+window.shareRoom = () => {
+  const url = window.location.href;
+  if (navigator.share) navigator.share({ title: 'ASVM', url });
+  else { navigator.clipboard.writeText(url); showPopup("Link copied!"); }
+}
 </script>
-
 </body>
 </html>
