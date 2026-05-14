@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Disconnected - ASVM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fafafa;
+            --grid-color: rgba(0, 0, 0, 0.03);
+            --card-bg: #ffffff;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --accent-red: #ef4444;
+            --border: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Subtle Developer Grid Background */
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 0;
+            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+        }
+
+        /* Canvas for floating emotional 'dust' */
+        #dust-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* Main Bento Layout Card */
+        .wrapper {
+            position: relative;
+            z-index: 2;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 3rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+            opacity: 0;
+            transform: scale(0.95);
+            animation: popIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes popIn {
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: #fef2f2;
+            border: 1px solid #fee2e2;
+            border-radius: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent-red);
+            margin-bottom: 2rem;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--accent-red);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-red);
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* SVG Repo Style Illustration */
+        .svg-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            color: #9ca3af;
+        }
+
+        .svg-container svg {
+            width: 80px;
+            height: 80px;
+            stroke-width: 1.2;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--text-main);
+            margin-bottom: 1rem;
+            letter-spacing: -0.03em;
+        }
+
+        /* Terminal/Code styled text box for the sad message */
+        .terminal-box {
+            background: #f9fafb;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: left;
+            position: relative;
+        }
+
+        .terminal-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+            min-height: 4.5rem;
+        }
+
+        .terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 14px;
+            background-color: var(--text-muted);
+            vertical-align: middle;
+            animation: blink 1s step-end infinite;
+            margin-left: 4px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="grid-bg"></div>
+    <canvas id="dust-canvas"></canvas>
+
+    <div class="wrapper">
+        <div class="status-badge">
+            <div class="dot"></div>
+            SYSTEM_OFFLINE
+        </div>
+
+        <div class="svg-container">
+            <!-- SVGREPO Style: Shattered Hourglass / Disconnected Concept -->
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Top & Bottom bases -->
+                <path d="M5 3H19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 21H19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Left glass contour -->
+                <path d="M7 3V5.5C7 8 8.5 10 10 11L10.5 11.3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Right glass contour -->
+                <path d="M17 3V5.5C17 8 15.5 10 14 11L13.5 11.3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Bottom glass contour -->
+                <path d="M8 13.5C7 14.5 7 16 7 18V21" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16 13.5C17 14.5 17 16 17 18V21" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Shattered / Disconnected pieces in the middle -->
+                <path d="M12 11V13" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 2"/>
+                <path d="M9 16L10 17" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M15 15L14 16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- A single falling 'tear' or drop of sand -->
+                <circle cx="12" cy="18" r="1" fill="currentColor"/>
+            </svg>
+        </div>
+
+        <h1>End of the line.</h1>
+        
+        <div class="terminal-box">
+            <span id="typed-text" class="terminal-text"></span><span class="terminal-cursor"></span>
+        </div>
+    </div>
+
+    <script>
+        // 1. Text Typing Effect
+        const message = "> Please find an alternative platform.\n> It seems ASVM will no longer be available.";
+        const textElement = document.getElementById('typed-text');
+        let i = 0;
+
+        function typeWriter() {
+            if (i < message.length) {
+                // Handle new lines for the HTML rendering
+                if (message.charAt(i) === '\n') {
+                    textElement.innerHTML += '<br>';
+                } else {
+                    textElement.innerHTML += message.charAt(i);
+                }
+                i++;
+                // Randomize typing speed for realism
+                let speed = Math.random() * 50 + 30;
+                setTimeout(typeWriter, speed);
+            }
+        }
+
+        // Start typing after initial card animation
+        setTimeout(typeWriter, 1200);
+
+        // 2. Floating Dust Particle Effect (Melancholic atmosphere)
+        const canvas = document.getElementById('dust-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.speedY = Math.random() * 0.3 + 0.1; // Slow falling
+                this.speedX = (Math.random() - 0.5) * 0.2; // Gentle drifting
+                this.opacity = Math.random() * 0.5;
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                
+                // Reset to top if it falls off screen
+                if (this.y > canvas.height) {
+                    this.y = -10;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+            draw() {
+                ctx.fillStyle = `rgba(107, 114, 128, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Initialize particles
+        for (let i = 0; i < 50; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateDust() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateDust);
+        }
+        
+        animateDust();
+    </script>
+</body>
+</html>
