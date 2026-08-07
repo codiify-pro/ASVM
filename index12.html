@@ -1,292 +1,642 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Service Disconnected - ASVM</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #fafafa;
-            --grid-color: rgba(0, 0, 0, 0.03);
-            --card-bg: #ffffff;
-            --text-main: #111827;
-            --text-muted: #6b7280;
-            --accent-red: #ef4444;
-            --border: #e5e7eb;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ASVM – Watch Videos Together Online</title>
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta name="description" content="ASVM is a free watch party platform to stream YouTube, MP4, and live videos together with friends while chatting in real-time.">
+<link rel="icon" type="image/png" href="https://www.asvm.fun/20260310_010041.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-        body {
-            background-color: var(--bg-color);
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
-            position: relative;
-        }
+<style>
+/* Modern SaaS Dark Mode Variables */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
 
-        /* Subtle Developer Grid Background */
-        .grid-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
-                linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
-            background-size: 40px 40px;
-            z-index: 0;
-            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
-            -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
-        }
+*:focus {
+  outline: none;
+}
 
-        /* Canvas for floating emotional 'dust' */
-        #dust-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-            opacity: 0.6;
-        }
+:root {
+  --bg-base: #050505;
+  --bg-panel: rgba(24, 24, 27, 0.6);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --text-main: #f4f4f5;
+  --text-muted: #a1a1aa;
+  --accent-mint: #00dc82; 
+  --accent-mint-hover: #00b368;
+  --radius-xl: 24px;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-        /* Main Bento Layout Card */
-        .wrapper {
-            position: relative;
-            z-index: 2;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 3rem;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
-            opacity: 0;
-            transform: scale(0.95);
-            animation: popIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-base);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
 
-        @keyframes popIn {
-            to { opacity: 1; transform: scale(1); }
-        }
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
 
-        /* Status Badge */
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 12px;
-            background: #fef2f2;
-            border: 1px solid #fee2e2;
-            border-radius: 20px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem;
-            color: var(--accent-red);
-            margin-bottom: 2rem;
-        }
+/* Background Glows */
+.ambient-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  z-index: -1;
+  opacity: 0.2;
+  pointer-events: none;
+}
+.glow-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--accent-mint); }
+.glow-2 { bottom: 20%; right: -10%; width: 40vw; height: 40vw; background: #3b82f6; }
 
-        .dot {
-            width: 6px;
-            height: 6px;
-            background-color: var(--accent-red);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--accent-red);
-            animation: pulse-dot 2s infinite;
-        }
+/* ---------------- HEADER ---------------- */
+.navbar {
+  position: fixed;
+  top: 0; width: 100%;
+  background: rgba(5, 5, 5, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 1000;
+  box-sizing: border-box;
+  padding: 16px 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-        @keyframes pulse-dot {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.5); opacity: 0.5; }
-            100% { transform: scale(1); opacity: 1; }
-        }
+.logo {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+.logo span { color: var(--accent-mint); }
 
-        /* SVG Repo Style Illustration */
-        .svg-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 2rem;
-            color: #9ca3af;
-        }
+.nav-links { display: flex; gap: 30px; }
+.nav-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: color var(--transition);
+}
+.nav-links a:hover { color: var(--text-main); }
 
-        .svg-container svg {
-            width: 80px;
-            height: 80px;
-            stroke-width: 1.2;
-            animation: float 6s ease-in-out infinite;
-        }
+/* ---------------- HERO SECTION ---------------- */
+.hero {
+  padding: 140px 5% 80px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 60px;
+  align-items: center;
+  min-height: 80vh;
+}
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
+.hero-text h1 {
+  font-size: 56px;
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 0 0 20px 0;
+  letter-spacing: -0.03em;
+}
+.hero-text p {
+  font-size: 18px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0 0 30px 0;
+}
 
-        h1 {
-            font-size: 1.5rem;
-            font-weight: 500;
-            color: var(--text-main);
-            margin-bottom: 1rem;
-            letter-spacing: -0.03em;
-        }
+/* Streaming Icon Badges */
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+.badge {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-main);
+  transition: transform 0.2s, border-color 0.2s;
+}
+.badge:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-mint);
+  background: rgba(0, 220, 130, 0.05);
+}
 
-        /* Terminal/Code styled text box for the sad message */
-        .terminal-box {
-            background: #f9fafb;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1.5rem;
-            text-align: left;
-            position: relative;
-        }
+.badge.yt svg { color: #ff0000; fill: #ff0000; }
+.badge.mp4 svg { color: #3b82f6; }
+.badge.live svg { color: var(--accent-mint); }
 
-        .terminal-text {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.8;
-            min-height: 4.5rem;
-        }
+/* Create Card */
+.create-card {
+  background: var(--bg-panel);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-color);
+  padding: 40px;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 24px 50px rgba(0,0,0,0.5);
+  text-align: center;
+  position: relative;
+  box-sizing: border-box;
+}
 
-        .terminal-cursor {
-            display: inline-block;
-            width: 8px;
-            height: 14px;
-            background-color: var(--text-muted);
-            vertical-align: middle;
-            animation: blink 1s step-end infinite;
-            margin-left: 4px;
-        }
+.create-card h2 {
+  margin: 0 0 24px 0;
+  font-size: 24px;
+}
 
-    </style>
+.input-wrapper {
+  position: relative;
+  text-align: left;
+  margin-bottom: 20px;
+}
+.input-wrapper label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.create-card input {
+  width: 100%;
+  padding: 16px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: white;
+  border-radius: var(--radius-lg);
+  font-size: 15px;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: all var(--transition);
+}
+.create-card input:focus {
+  outline: none;
+  border-color: var(--accent-mint);
+  background: rgba(0, 220, 130, 0.05);
+}
+
+/* Room Type Selector */
+.type-selector {
+  display: flex;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  gap: 4px;
+}
+.type-btn {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.type-btn.active {
+  background: var(--accent-mint);
+  color: #000;
+  box-shadow: 0 4px 10px rgba(0, 220, 130, 0.2);
+}
+.type-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 10px;
+  line-height: 1.5;
+  min-height: 36px;
+}
+
+.create-card button {
+  margin-top: 10px;
+  width: 100%;
+  padding: 16px;
+  background: var(--accent-mint);
+  border: none;
+  color: #000;
+  font-weight: 700;
+  font-size: 16px;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  transition: all var(--transition);
+}
+.create-card button:hover {
+  background: var(--accent-mint-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 220, 130, 0.3);
+}
+
+.result-box {
+  margin-top: 20px;
+  background: rgba(0, 220, 130, 0.1);
+  border: 1px dashed rgba(0, 220, 130, 0.4);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  animation: fadeUp 0.4s ease forwards;
+}
+.result-box span {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.result-box a {
+  color: var(--accent-mint);
+  font-weight: 600;
+  word-break: break-all;
+  text-decoration: none;
+}
+.result-box a:hover { text-decoration: underline; }
+
+/* Recent Room Section */
+.recent-room {
+  margin-top: 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: fadeUp 0.6s ease forwards;
+}
+.recent-room span {
+  color: var(--text-muted);
+  font-size: 13px;
+  text-align: left;
+}
+.recent-room a {
+  background: rgba(0, 220, 130, 0.1);
+  color: var(--accent-mint);
+  padding: 8px 16px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid rgba(0, 220, 130, 0.2);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.recent-room a:hover {
+  background: var(--accent-mint);
+  color: #000;
+}
+
+/* ---------------- SECTIONS ---------------- */
+.section {
+  padding: 100px 5%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.section-title {
+  text-align: center;
+  font-size: 40px;
+  font-weight: 800;
+  margin-bottom: 60px;
+}
+
+/* Center Content & Full Width Images */
+.center-section {
+  text-align: center;
+  max-width: 900px; 
+  margin: 0 auto 100px auto;
+}
+
+.center-section h2 {
+  font-size: 36px;
+  margin: 0 0 20px 0;
+  font-weight: 800;
+}
+
+.center-section p {
+  color: var(--text-muted);
+  font-size: 18px;
+  line-height: 1.7;
+  margin-bottom: 40px;
+}
+
+.full-image {
+  width: 100%;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+  display: block;
+}
+
+/* Features Grid */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+.feature {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border-color);
+  padding: 40px 30px;
+  border-radius: var(--radius-xl);
+  transition: transform var(--transition);
+}
+.feature:hover { transform: translateY(-5px); background: rgba(255,255,255,0.04); }
+.feature-icon {
+  width: 60px; height: 60px;
+  background: rgba(0, 220, 130, 0.1);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-mint);
+  margin-bottom: 24px;
+}
+.feature h3 { font-size: 22px; margin: 0 0 12px 0; }
+.feature p { color: var(--text-muted); line-height: 1.6; margin: 0; }
+
+/* ---------------- FOOTER ---------------- */
+.footer {
+  background: rgba(255,255,255,0.02);
+  border-top: 1px solid var(--border-color);
+  padding: 40px 5%;
+  text-align: center;
+  margin-top: 80px;
+}
+.footer p { color: var(--text-muted); margin: 0; font-size: 14px; }
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media(max-width: 900px) {
+  .hero { grid-template-columns: 1fr; text-align: center; padding-top: 120px; gap: 40px; }
+  .hero-text p { margin: 0 auto 30px auto; }
+  .badges { justify-content: center; }
+  .nav-links { display: none; }
+  .create-card { padding: 30px 20px; }
+  .center-section h2 { font-size: 28px; }
+  .center-section p { font-size: 16px; }
+}
+</style>
 </head>
+
 <body>
 
-    <div class="grid-bg"></div>
-    <canvas id="dust-canvas"></canvas>
+<div class="ambient-glow glow-1"></div>
+<div class="ambient-glow glow-2"></div>
 
-    <div class="wrapper">
-        <div class="status-badge">
-            <div class="dot"></div>
-            SYSTEM_OFFLINE
-        </div>
+<header class="navbar">
+  <div class="logo">ASVM<span>.</span></div>
+  <div class="nav-links">
+    <a href="#formats">Supported Media</a>
+    <a href="#features">Features</a>
+  </div>
+</header>
 
-        <div class="svg-container">
-            <!-- SVGREPO Style: Shattered Hourglass / Disconnected Concept -->
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- Top & Bottom bases -->
-                <path d="M5 3H19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M5 21H19" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                <!-- Left glass contour -->
-                <path d="M7 3V5.5C7 8 8.5 10 10 11L10.5 11.3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                <!-- Right glass contour -->
-                <path d="M17 3V5.5C17 8 15.5 10 14 11L13.5 11.3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                <!-- Bottom glass contour -->
-                <path d="M8 13.5C7 14.5 7 16 7 18V21" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M16 13.5C17 14.5 17 16 17 18V21" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                <!-- Shattered / Disconnected pieces in the middle -->
-                <path d="M12 11V13" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 2"/>
-                <path d="M9 16L10 17" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M15 15L14 16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                <!-- A single falling 'tear' or drop of sand -->
-                <circle cx="12" cy="18" r="1" fill="currentColor"/>
-            </svg>
-        </div>
+<section class="hero">
+  <div class="hero-text">
+    <h1>Host the Ultimate Watch Party.</h1>
+    <p>Grab a link, invite your friends, and start watching together. Experience high-quality synchronized streaming with a built-in real-time chat room.</p>
+    
+    <div class="badges">
+      <div class="badge yt">
+        <svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="#000"></polygon></svg>
+        YouTube
+      </div>
+      <div class="badge mp4">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
+        Direct Media (MP4)
+      </div>
+      <div class="badge live">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 3"></path></svg>
+        Live Streams (M3U8)
+      </div>
+    </div>
+  </div>
 
-        <h1>End of the line.</h1>
-        
-        <div class="terminal-box">
-            <span id="typed-text" class="terminal-text"></span><span class="terminal-cursor"></span>
-        </div>
+  <div class="create-card">
+    <h2>Create Room</h2>
+    
+    <div class="input-wrapper">
+      <label>Media Source URL</label>
+      <input id="video" placeholder="Paste YouTube / .mp4 / .m3u8 link" autocomplete="off">
     </div>
 
-    <script>
-        // 1. Text Typing Effect
-        const message = "> Please find an alternative platform.\n> It seems ASVM will no longer be available.";
-        const textElement = document.getElementById('typed-text');
-        let i = 0;
+    <!-- NEW: Room Type Selector -->
+    <div class="input-wrapper">
+      <label>Select Room Mode</label>
+      <div class="type-selector">
+        <div class="type-btn active" onclick="selectRoomType('simple', this)">Simple</div>
+        <div class="type-btn" onclick="selectRoomType('complex', this)">Complex</div>
+        <div class="type-btn" onclick="selectRoomType('complexp', this)">ComplexP</div>
+      </div>
+      <div class="type-desc" id="typeDesc">Independent playback. Everyone controls their own video locally.</div>
+    </div>
 
-        function typeWriter() {
-            if (i < message.length) {
-                // Handle new lines for the HTML rendering
-                if (message.charAt(i) === '\n') {
-                    textElement.innerHTML += '<br>';
-                } else {
-                    textElement.innerHTML += message.charAt(i);
-                }
-                i++;
-                // Randomize typing speed for realism
-                let speed = Math.random() * 50 + 30;
-                setTimeout(typeWriter, speed);
-            }
-        }
+    <!-- NEW: Hidden PIN Input for ComplexP -->
+    <div class="input-wrapper" id="pinWrapper" style="display: none;">
+      <label>Set 4-Digit Admin PIN</label>
+      <input id="roomPin" type="password" maxlength="4" placeholder="e.g. 1234" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+    </div>
 
-        // Start typing after initial card animation
-        setTimeout(typeWriter, 1200);
+    <button onclick="createRoom()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+      Generate Private Room
+    </button>
+    
+    <div id="result"></div>
+    
+    <div id="recentRoomContainer" class="recent-room" style="display: none;">
+      <span>Last Visited Room:</span>
+      <a id="recentRoomLink" href="#">Join Room</a>
+    </div>
+  </div>
+</section>
 
-        // 2. Floating Dust Particle Effect (Melancholic atmosphere)
-        const canvas = document.getElementById('dust-canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
+<section id="formats" class="section">
+  
+  <div class="center-section">
+    <h2>Chat While You Watch</h2>
+    <p>ASVM comes equipped with an ultra-fast, zero-latency real-time chat system. React to plot twists, discuss live events, and share moments with your friends without ever leaving the video screen.</p>
+    <img src="https://www.asvm.fun/20260311_012157.jpg" alt="Chat UI Preview" class="full-image">
+  </div>
 
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
+  <div class="center-section">
+    <h2>Any Video. Any Format.</h2>
+    <p>We built ASVM to be completely unrestricted. Whether you want to watch the latest YouTube drop, stream a direct MP4 file from your server, or load up an HLS live stream (.m3u8), our advanced embedded player handles it natively.</p>
+    <img src="https://www.asvm.fun/20260311_013356.jpg" alt="Video Player Preview" class="full-image">
+  </div>
 
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 1.5 + 0.5;
-                this.speedY = Math.random() * 0.3 + 0.1; // Slow falling
-                this.speedX = (Math.random() - 0.5) * 0.2; // Gentle drifting
-                this.opacity = Math.random() * 0.5;
-            }
-            update() {
-                this.y += this.speedY;
-                this.x += this.speedX;
-                
-                // Reset to top if it falls off screen
-                if (this.y > canvas.height) {
-                    this.y = -10;
-                    this.x = Math.random() * canvas.width;
-                }
-            }
-            draw() {
-                ctx.fillStyle = `rgba(107, 114, 128, ${this.opacity})`;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
+</section>
 
-        // Initialize particles
-        for (let i = 0; i < 50; i++) {
-            particles.push(new Particle());
-        }
+<section id="features" class="section">
+  <h2 class="section-title">Why Choose ASVM?</h2>
+  <div class="features-grid">
+    <div class="feature">
+      <div class="feature-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+      </div>
+      <h3>Real-Time Chat</h3>
+      <p>Engage with your room instantly. Features include reply threading, unread message alerts, and notification sounds.</p>
+    </div>
+    
+    <div class="feature">
+      <div class="feature-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+      </div>
+      <h3>Advanced Playback Modes</h3>
+      <p>Choose between Simple independent streaming, or fully Synchronized Complex rooms hosted by a single user.</p>
+    </div>
 
-        function animateDust() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-            requestAnimationFrame(animateDust);
-        }
-        
-        animateDust();
-    </script>
+    <div class="feature">
+      <div class="feature-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      </div>
+      <h3>Secure & Private</h3>
+      <p>Your video links are encoded and PIN protections are strictly enforced. All chat data is ephemeral and securely managed.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="logo" style="margin-bottom: 16px;">ASVM<span>.</span></div>
+  <p>&copy; 2026 ASVM Watch Party Platform. All rights reserved.</p>
+</footer>
+
+<script type="module">
+import {db,ref,set} from "./firebase.js"
+
+function setCookie(name, value, days) {
+  let expires = "";
+  if (days) {
+    let date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
+
+function getCookie(name) {
+  let nameEQ = name + "=";
+  let ca = document.cookie.split(';');
+  for(let i=0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0)==' ') c = c.substring(1,c.length);
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+  }
+  return null;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const lastRoom = getCookie("asvm_last_room");
+  if (lastRoom) {
+    const container = document.getElementById("recentRoomContainer");
+    const linkBtn = document.getElementById("recentRoomLink");
+    linkBtn.href = location.origin + "/room.html?room=" + lastRoom;
+    linkBtn.innerText = "Join " + lastRoom;
+    container.style.display = "flex"; 
+  }
+});
+
+// --- Handle Room Type Selection ---
+window.currentRoomType = 'simple';
+
+window.selectRoomType = function(type, el) {
+  window.currentRoomType = type;
+  
+  // Update Active Class
+  document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
+  el.classList.add('active');
+  
+  // Update Descriptions and Inputs
+  const desc = document.getElementById("typeDesc");
+  const pinWrapper = document.getElementById("pinWrapper");
+  
+  if(type === 'simple') {
+    desc.innerText = "Independent playback. Everyone controls their own video locally.";
+    pinWrapper.style.display = "none";
+  } else if (type === 'complex') {
+    desc.innerText = "Synchronized playback. The first user to join becomes the Host and controls the video for everyone.";
+    pinWrapper.style.display = "none";
+  } else if (type === 'complexp') {
+    desc.innerText = "PIN Protected Sync. Only the user who enters the 4-digit PIN gets video controls.";
+    pinWrapper.style.display = "block";
+  }
+}
+
+// --- Create Room Function ---
+window.createRoom=function(){
+  const video=document.getElementById("video").value.trim()
+
+  if(!video){
+    alert("Please enter a valid video link to continue.")
+    return
+  }
+  
+  // Handle ComplexP PIN requirement
+  let pin = null;
+  if (window.currentRoomType === 'complexp') {
+    pin = document.getElementById("roomPin").value;
+    if (!/^\d{4}$/.test(pin)) {
+      alert("Please enter a valid 4-digit PIN to secure this ComplexP room.");
+      return;
+    }
+  }
+
+  const room=Math.random().toString(36).substring(2,7)
+  const encoded=btoa(video)
+
+  // Save structure with new configurations
+  set(ref(db,"rooms/"+room),{
+    src: encoded,
+    type: window.currentRoomType,
+    pin: pin,
+    host: null, // Reserved to assign host dynamically on join
+    state: { playing:false, time:0 }
+  })
+
+  setCookie("asvm_last_room", room, 30)
+
+  const link=location.origin+"/room.html?room="+room
+
+  document.getElementById("result").innerHTML=
+  `<div class="result-box">
+    <span>Room Successfully Created</span>
+    <a href="${link}" target="_blank">${link}</a>
+  </div>`
+  
+  document.getElementById("recentRoomContainer").style.display = "none";
+}
+</script>
+
 </body>
 </html>
