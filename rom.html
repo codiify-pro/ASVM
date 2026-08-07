@@ -9,19 +9,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <meta name="description" content="ASVM is a free watch party platform to stream videos together with friends. Create rooms, sync playback, and chat live from any device.">
-
 <meta name="keywords" content="ASVM, watch videos together, sync video online, watch movies together, online watch party, ASVM">
-
 <meta name="author" content="ASVM">
-  
-  <meta property="og:title" content="ASVM – Watch Videos Together Online">
+<meta property="og:title" content="ASVM – Watch Videos Together Online">
 <meta property="og:description" content="Create a room and watch videos together with friends using ASVM watch party platform.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.asvm.fun">
 <meta property="og:image" content="https://www.asvm.fun/preview.png">
 
 <style>
-/* Ultra-Modern SaaS Variables (Green/Mint Tone) */
+/* Ultra-Modern SaaS Variables */
 * {
   -webkit-tap-highlight-color: transparent;
 }
@@ -38,15 +35,13 @@
   
   --accent-mint: #00dc82; 
   --accent-mint-dim: rgba(0, 220, 130, 0.15);
+  --accent-rose: #ef4444;
   
   --radius-xl: 24px;
   --radius-lg: 16px;
   --radius-md: 12px;
   
   --transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  
-  --plyr-color-main: #00dc82;
-  --plyr-video-background: #000000;
 }
 
 body {
@@ -84,93 +79,129 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
 
-/* ---------------- TOPBAR (NEW PREMIUM FLOATING DESIGN) ---------------- */
+/* ---------------- TOPBAR (NEW SLEEK DESIGN) ---------------- */
 .topbar {
-  background: linear-gradient(135deg, rgba(20, 20, 24, 0.8) 0%, rgba(5, 5, 5, 0.8) 100%);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
+  background: rgba(15, 15, 18, 0.6);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
   margin: 16px auto 0 auto;
   width: calc(100% - 32px);
   max-width: 1000px;
-  padding: 0 20px;
+  padding: 0 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid rgba(0, 220, 130, 0.3);
-  border-radius: 50px;
-  box-shadow: 0 10px 30px rgba(0, 220, 130, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 2px solid rgba(0, 220, 130, 0.4);
+  border-radius: 18px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
   z-index: 1000;
-  height: 70px; 
+  height: 64px; 
   flex-shrink: 0;
   box-sizing: border-box;
 }
 
 .logo {
-  font-size: 24px;
-  font-weight: 900;
-  letter-spacing: 1.5px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 1px;
   color: white;
-  text-transform: uppercase;
   display: flex;
   align-items: center;
-  gap: 4px;
 }
 .logo span { 
   color: var(--accent-mint); 
-  text-shadow: 0 0 12px rgba(0, 220, 130, 0.6);
+  text-shadow: 0 0 10px rgba(0, 220, 130, 0.5);
 }
 
-.topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.room-badge {
-  background: rgba(0, 0, 0, 0.4);
-  color: #fff;
-  padding: 8px 18px;
-  border-radius: 30px;
-  font-size: 13px;
-  font-weight: 700;
-  border: 1px dashed rgba(255, 255, 255, 0.2);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  letter-spacing: 0.5px;
-}
-.room-badge::before {
-  content: "";
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  background-color: var(--accent-mint);
-  border-radius: 50%;
-  box-shadow: 0 0 8px var(--accent-mint);
-  animation: pulse 2s infinite;
-}
-
-.share-btn {
-  background: var(--accent-mint);
-  color: #000;
+.menu-btn {
+  background: transparent;
   border: none;
-  padding: 8px 18px;
-  border-radius: 30px;
-  font-size: 14px;
-  font-weight: 700;
+  color: var(--text-main);
   cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 8px;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 15px rgba(0, 220, 130, 0.3);
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+.menu-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--accent-mint);
 }
 
-.share-btn:hover {
-  background: #00f08e;
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 6px 20px rgba(0, 220, 130, 0.5);
+/* ---------------- SIDE MENU ---------------- */
+.side-menu-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
 }
+.side-menu-overlay.active {
+  opacity: 1; pointer-events: auto;
+}
+
+.side-menu {
+  position: fixed;
+  top: 0; right: -320px;
+  width: 280px; height: 100%;
+  background: rgba(12, 12, 14, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-left: 1px solid var(--border-color);
+  z-index: 2000;
+  transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex; flex-direction: column;
+  box-shadow: -10px 0 40px rgba(0,0,0,0.5);
+}
+.side-menu.open {
+  right: 0;
+}
+
+.menu-header {
+  padding: 24px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--border-color);
+}
+.menu-header h3 { 
+  margin: 0; font-size: 16px; color: var(--text-main); font-weight: 600; 
+}
+.close-menu { 
+  background: none; border: none; color: var(--text-muted); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: color 0.2s, transform 0.2s;
+}
+.close-menu:hover { color: var(--text-main); transform: rotate(90deg); }
+
+.menu-items { padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+.menu-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+.menu-item:hover { 
+  background: rgba(255,255,255,0.05); 
+  color: var(--text-main); 
+}
+.menu-item svg { width: 18px; height: 18px; opacity: 0.9; }
+
+.menu-item.delete:hover { 
+  background: rgba(239, 68, 68, 0.1); 
+  color: var(--accent-rose); 
+}
+.menu-item.delete:hover svg { color: var(--accent-rose); }
 
 /* ---------------- LAYOUT ---------------- */
 .main-container {
@@ -288,226 +319,48 @@ body {
   scroll-behavior: smooth;
 }
 
-/* Message Bubbles */
-.msg {
-  display: flex;
-  width: 100%;
-  align-items: center;
-  animation: messagePop 0.3s var(--transition) forwards;
-}
-
-.msgBox {
-  max-width: 80%;
-  padding: 10px 14px;
-  border-radius: 16px;
-  font-size: 14px;
-  line-height: 1.5;
-  word-break: break-word;
-  position: relative;
-  transition: box-shadow 0.3s ease;
-}
-
-.quote-block {
-  background: rgba(0, 0, 0, 0.25);
-  border-left: 3px solid rgba(255,255,255,0.5);
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 12px;
-  margin-bottom: 8px;
-  cursor: pointer;
-  opacity: 0.85;
-  transition: opacity 0.2s;
-}
+.msg { display: flex; width: 100%; align-items: center; animation: messagePop 0.3s var(--transition) forwards; }
+.msgBox { max-width: 80%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.5; word-break: break-word; position: relative; transition: box-shadow 0.3s ease; }
+.quote-block { background: rgba(0, 0, 0, 0.25); border-left: 3px solid rgba(255,255,255,0.5); padding: 6px 10px; border-radius: 6px; font-size: 12px; margin-bottom: 8px; cursor: pointer; opacity: 0.85; transition: opacity 0.2s; }
 .quote-block:hover { opacity: 1; }
 .quote-name { font-weight: 700; margin-bottom: 2px; }
 
 .left { justify-content: flex-start; }
-.left .msgBox {
-  background: var(--bg-panel-hover);
-  color: var(--text-main);
-  border-bottom-left-radius: 4px;
-  border: 1px solid rgba(255,255,255,0.05);
-}
+.left .msgBox { background: var(--bg-panel-hover); color: var(--text-main); border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
 .left .quote-block { border-left-color: var(--accent-mint); }
-
 .right { justify-content: flex-end; }
-.right .msgBox {
-  background: var(--accent-mint);
-  color: #050505; 
-  border-bottom-right-radius: 4px;
-  box-shadow: 0 4px 15px rgba(0, 220, 130, 0.2);
-  font-weight: 500;
-}
+.right .msgBox { background: var(--accent-mint); color: #050505; border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(0, 220, 130, 0.2); font-weight: 500; }
 .right .quote-block { border-left-color: #050505; background: rgba(0,0,0,0.1); }
 
-.name {
-  font-weight: 700;
-  font-size: 12px;
-  margin-bottom: 4px;
-  opacity: 0.8;
-  letter-spacing: 0.02em;
-}
-
+.name { font-weight: 700; font-size: 12px; margin-bottom: 4px; opacity: 0.8; letter-spacing: 0.02em; }
 .right .name { color: rgba(0,0,0,0.6); }
 
-.reply-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  opacity: 0.5;
-  padding: 8px;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-}
+.reply-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; opacity: 0.5; padding: 8px; transition: all 0.2s; display: flex; align-items: center; }
 .reply-btn:hover { opacity: 1; color: var(--accent-mint); transform: scale(1.1); }
 .left .reply-btn { margin-left: 5px; }
 .right .reply-btn { margin-right: 5px; order: -1; }
 
-.reply-preview {
-  display: none;
-  background: var(--bg-panel-hover);
-  padding: 10px 16px;
-  border-left: 3px solid var(--accent-mint);
-  font-size: 13px;
-  align-items: center;
-  justify-content: space-between;
-  border-top: 1px solid var(--border-color);
-  flex-shrink: 0;
-}
+.reply-preview { display: none; background: var(--bg-panel-hover); padding: 10px 16px; border-left: 3px solid var(--accent-mint); font-size: 13px; align-items: center; justify-content: space-between; border-top: 1px solid var(--border-color); flex-shrink: 0; }
 .reply-preview-text { color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 85%; }
 .reply-preview-text strong { color: var(--text-main); }
-.cancel-reply { 
-  cursor: pointer; 
-  color: var(--accent-rose); 
-  display: flex; 
-  align-items: center; 
-  padding: 4px; 
-}
+.cancel-reply { cursor: pointer; color: var(--accent-rose); display: flex; align-items: center; padding: 4px; }
 
-.chatInput {
-  display: flex;
-  padding: 12px;
-  background: rgba(0, 0, 0, 0.2);
-  border-top: 1px solid var(--border-color);
-  gap: 10px;
-  flex-shrink: 0;
-  align-items: center;
-}
+.chatInput { display: flex; padding: 12px; background: rgba(0, 0, 0, 0.2); border-top: 1px solid var(--border-color); gap: 10px; flex-shrink: 0; align-items: center; }
+.emoji-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 8px; display: flex; align-items: center; justify-content: center; transition: color 0.2s; }
+.emoji-btn:hover { color: var(--text-main); }
+.chatInput input { flex: 1; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: rgba(255,255,255,0.03); color: var(--text-main); font-family: inherit; font-size: 14px; transition: border-color var(--transition); }
+.chatInput input:focus { outline: none; border-color: var(--accent-mint); background: rgba(0, 220, 130, 0.02); }
+.chatInput button.send-btn { background: var(--accent-mint); border: none; color: #050505; width: 44px; height: 44px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s, box-shadow 0.2s; }
+.chatInput button.send-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 220, 130, 0.3); }
 
-.emoji-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.2s;
-}
+.new-msg-dot { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--accent-mint); color: #000; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; display: none; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(0, 220, 130, 0.4); z-index: 10; animation: fadeUp 0.3s forwards; }
 
-.emoji-btn:hover {
-  color: var(--text-main);
-}
+.popup { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: var(--bg-panel); backdrop-filter: blur(20px); border: 1px solid var(--accent-mint); color: var(--accent-mint); padding: 12px 24px; border-radius: 30px; display: none; font-weight: 600; font-size: 13px; box-shadow: 0 10px 30px rgba(0, 220, 130, 0.15); z-index: 1000; animation: slideDown 0.4s var(--transition) forwards; }
 
-.chatInput input {
-  flex: 1;
-  padding: 12px 16px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  background: rgba(255,255,255,0.03);
-  color: var(--text-main);
-  font-family: inherit;
-  font-size: 14px;
-  transition: border-color var(--transition);
-}
-
-.chatInput input:focus {
-  outline: none;
-  border-color: var(--accent-mint);
-  background: rgba(0, 220, 130, 0.02);
-}
-
-.chatInput button.send-btn {
-  background: var(--accent-mint);
-  border: none;
-  color: #050505;
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.chatInput button.send-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 220, 130, 0.3);
-}
-
-.new-msg-dot {
-  position: absolute;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--accent-mint);
-  color: #000;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  display: none;
-  align-items: center;
-  gap: 6px;
-  box-shadow: 0 4px 15px rgba(0, 220, 130, 0.4);
-  z-index: 10;
-  animation: fadeUp 0.3s forwards;
-}
-
-.popup {
-  position: fixed;
-  top: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--bg-panel);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--accent-mint);
-  color: var(--accent-mint);
-  padding: 12px 24px;
-  border-radius: 30px;
-  display: none;
-  font-weight: 600;
-  font-size: 13px;
-  box-shadow: 0 10px 30px rgba(0, 220, 130, 0.15);
-  z-index: 1000;
-  animation: slideDown 0.4s var(--transition) forwards;
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes messagePop {
-  from { opacity: 0; transform: translateY(10px) scale(0.95); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@keyframes slideDown {
-  0% { opacity: 0; transform: translate(-50%, -20px); }
-  100% { opacity: 1; transform: translate(-50%, 0); }
-}
-
-@keyframes pulse {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 220, 130, 0.7); }
-  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 220, 130, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 220, 130, 0); }
-}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes messagePop { from { opacity: 0; transform: translateY(10px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes slideDown { 0% { opacity: 0; transform: translate(-50%, -20px); } 100% { opacity: 1; transform: translate(-50%, 0); } }
+@keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 220, 130, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 220, 130, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 220, 130, 0); } }
 </style>
 </head>
 
@@ -516,14 +369,59 @@ body {
 <div class="ambient-glow-1"></div>
 <div class="ambient-glow-2"></div>
 
+<!-- Topbar -->
 <div class="topbar">
   <div class="logo">ASVM<span>.</span></div>
-  <div class="topbar-actions">
-    <button class="share-btn" onclick="shareRoom()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-      Share
+  <button class="menu-btn" onclick="openMenu()">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="1.5"></circle>
+      <circle cx="12" cy="5" r="1.5"></circle>
+      <circle cx="12" cy="19" r="1.5"></circle>
+    </svg>
+  </button>
+</div>
+
+<!-- Side Menu -->
+<div class="side-menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+<div class="side-menu" id="sideMenu">
+  <div class="menu-header">
+    <h3>Room Options</h3>
+    <button class="close-menu" onclick="closeMenu()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
     </button>
-    <div class="room-badge" id="roomId"></div>
+  </div>
+  <div class="menu-items">
+    <div class="menu-item" onclick="shareRoom(); closeMenu();">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle>
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+      </svg>
+      Share Room
+    </div>
+    <div class="menu-item" onclick="copyRoomLink(); closeMenu();">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+      </svg>
+      Copy Link
+    </div>
+    <div class="menu-item" onclick="changeName(); closeMenu();">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+      Change Name
+    </div>
+    <div class="menu-item delete" onclick="deleteId(); closeMenu();">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="3 6 5 6 21 6"></polyline>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+      </svg>
+      Delete ID
+    </div>
   </div>
 </div>
 
@@ -569,7 +467,6 @@ import {db,ref,onValue,push,onChildAdded} from "./firebase.js"
 
 const params=new URLSearchParams(location.search)
 const room=params.get("room")
-document.getElementById("roomId").innerText="Room: "+room
 
 const video=document.getElementById("player")
 let player=new Plyr(video)
@@ -584,7 +481,7 @@ function askName() {
     let cleanName = name.trim().toLowerCase();
     if (cleanName === "asvm") {
       alert("Sorry, the name 'asvm' is reserved for system. Please choose another name.");
-      return askName(); // Recursive call until a valid name is entered
+      return askName(); 
     }
     localStorage.setItem("asvm_name", name.trim());
     return name.trim();
@@ -661,7 +558,6 @@ let replyingTo = null;
 const msgInput = document.getElementById("msg");
 const msgBoxEl = document.getElementById("messages");
 
-// --- SYSTEM WELCOME MESSAGE (Same style as normal chat) ---
 function addWelcomeMessage() {
   const div = document.createElement("div");
   div.className = "msg left";
@@ -722,10 +618,44 @@ onChildAdded(ref(db,"rooms/"+room+"/chat"),snap=>{
   msgBoxEl.scrollTop = msgBoxEl.scrollHeight;
 })
 
+/* Menu & Action Functions */
+window.openMenu = () => {
+  document.getElementById("sideMenu").classList.add("open");
+  document.getElementById("menuOverlay").classList.add("active");
+}
+window.closeMenu = () => {
+  document.getElementById("sideMenu").classList.remove("open");
+  document.getElementById("menuOverlay").classList.remove("active");
+}
+
 window.shareRoom = () => {
   const url = window.location.href;
   if (navigator.share) navigator.share({ title: 'ASVM', url });
   else { navigator.clipboard.writeText(url); showPopup("Link copied!"); }
+}
+
+window.copyRoomLink = () => {
+  navigator.clipboard.writeText(window.location.href);
+  showPopup("Room link copied!");
+}
+
+window.changeName = () => {
+  let newName = prompt("Enter your new name:");
+  if (newName) {
+    if (newName.trim().toLowerCase() === "asvm") {
+      alert("Name 'asvm' is reserved.");
+    } else {
+      localStorage.setItem("asvm_name", newName.trim());
+      location.reload();
+    }
+  }
+}
+
+window.deleteId = () => {
+  if(confirm("Are you sure you want to delete your ID/Name? You will have to enter a new name to join again.")) {
+    localStorage.removeItem("asvm_name");
+    location.reload();
+  }
 }
 </script>
 </body>
