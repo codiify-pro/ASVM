@@ -8,13 +8,16 @@
 <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css"/>
 
 <style>
-/* Ultra-Modern SaaS Variables (Green/Mint Tone) */
+/* Ultra-Modern SaaS Variables & Chrome Blue Hover Fix */
 * {
   -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
 }
+
 *:focus {
   outline: none;
 }
+
 :root {
   --bg-base: #050505;
   --bg-panel: rgba(24, 24, 27, 0.4);
@@ -173,15 +176,13 @@ body {
 
 .menu-item.highlight-action { color: var(--accent-mint); background: rgba(0,220,130,0.05); border: 1px solid rgba(0,220,130,0.2); }
 .menu-item.highlight-action:hover { background: rgba(0,220,130,0.15); }
-
 .menu-item.delete:hover { background: rgba(239, 68, 68, 0.1); color: var(--accent-rose); }
 .menu-item.delete:hover svg { color: var(--accent-rose); }
 
 /* ---------------- LAYOUT ---------------- */
 .main-container {
   max-width: 1000px; width: 100%; margin: 0 auto; padding: 16px;
-  box-sizing: border-box; display: flex; flex-direction: column;
-  gap: 16px; flex: 1; min-height: 0; 
+  display: flex; flex-direction: column; gap: 16px; flex: 1; min-height: 0; 
 }
 
 /* ---------------- VIDEO PLAYER ---------------- */
@@ -193,10 +194,10 @@ body {
 }
 .plyr { width: 100%; height: 100%; flex: 1; }
 
-/* Authorized Overlay for Viewers */
+/* Viewer Overlay for ComplexP */
 .viewer-overlay {
   position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-  z-index: 50; display: none; /* Hidden by default */
+  z-index: 50; display: none; background: transparent; cursor: not-allowed;
 }
 
 /* ---------------- DRAGGABLE SLIDER (RESIZER) ---------------- */
@@ -364,6 +365,7 @@ body {
   
   <div class="playerWrap" id="playerContainer">
     <video id="player" controls playsinline></video>
+    <!-- OVERLAY TO BLOCK CLICKS IF NOT AUTHORIZED -->
     <div class="viewer-overlay" id="viewerOverlay"></div>
   </div>
 
@@ -424,7 +426,7 @@ const room=params.get("room")
 document.getElementById("roomId").innerText="Room: "+room
 
 const video=document.getElementById("player")
-let player=new Plyr(video)
+let player;
 
 const msgSound = new Audio("https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3");
 
@@ -485,14 +487,26 @@ onValue(ref(db,"rooms/"+room),snap=>{
       if (storedPin === "true") {
           isAuthorized = true;
           document.getElementById("viewerOverlay").style.display = "none";
+          // Remove hidden styles if they exist
+          let authStyle = document.getElementById("auth-style");
+          if(authStyle) authStyle.remove();
       } else {
           isAuthorized = false;
           // Hide plyr controls completely via CSS injection and block clicks
-          const style = document.createElement('style');
-          style.innerHTML = `.plyr__controls { display: none !important; }`;
-          document.head.appendChild(style);
+          let authStyle = document.getElementById("auth-style");
+          if(!authStyle) {
+              const style = document.createElement('style');
+              style.id = "auth-style";
+              style.innerHTML = `.plyr__controls { display: none !important; }`;
+              document.head.appendChild(style);
+          }
           document.getElementById("viewerOverlay").style.display = "block"; // Blocks iframe clicks
       }
+  }
+
+  // Initialize Player
+  if(!player) {
+      player = new Plyr(video);
   }
 
   if(sourceLoaded) return
