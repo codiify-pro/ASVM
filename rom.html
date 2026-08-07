@@ -2,36 +2,34 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>ASVM - Sync Video Meeting Room</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ASVM - Advanced Sync Video Room</title>
 <link rel="icon" type="image/png" href="https://www.asvm.fun/20260310_010041.jpg">
-<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/lucide@latest"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Video.js Player (Replaced Plyr) -->
+<link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
 
 <style>
-/* Ultra-Modern SaaS Variables */
+/* Ultra-Modern Variables */
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
 :root {
   --bg-base: #09090b;
-  --bg-panel: rgba(24, 24, 27, 0.45);
-  --bg-glass: rgba(255, 255, 255, 0.03);
-  --border-color: rgba(255, 255, 255, 0.08);
-  --text-main: #f8fafc;
+  --bg-panel: rgba(24, 24, 27, 0.5);
+  --bg-panel-hover: rgba(39, 39, 42, 0.7);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --text-main: #f4f4f5;
   --text-muted: #a1a1aa;
   
   --accent-mint: #10b981; 
-  --accent-glow: rgba(16, 185, 129, 0.2);
+  --accent-mint-dim: rgba(16, 185, 129, 0.15);
+  --accent-blue: #3b82f6;
   
   --radius-xl: 24px;
   --radius-lg: 16px;
-  --radius-md: 12px;
-  
-  --plyr-color-main: #10b981;
-  --plyr-video-background: #000000;
+  --radius-md: 10px;
+  --transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
 
 body {
   margin: 0;
@@ -44,19 +42,14 @@ body {
   flex-direction: column;
 }
 
-/* Ambient Background Elements */
+/* Ambient Background Glows */
 .ambient-glow {
-  position: fixed; 
-  border-radius: 50%;
-  filter: blur(140px);
-  z-index: -1;
-  opacity: 0.4;
-  pointer-events: none;
+  position: fixed; border-radius: 50%; filter: blur(140px); z-index: -1; opacity: 0.4; pointer-events: none;
 }
-.glow-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--accent-glow); }
-.glow-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: rgba(56, 189, 248, 0.1); }
+.glow-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--accent-mint-dim), transparent 60%); }
+.glow-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59, 130, 246, 0.1), transparent 60%); }
 
-::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
 
@@ -64,361 +57,381 @@ body {
 .topbar {
   background: rgba(9, 9, 11, 0.7);
   backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   padding: 0 4%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--border-color);
+  z-index: 1000;
   height: 70px; 
   flex-shrink: 0; 
-  opacity: 0; /* For Anime.js */
 }
 
-.logo { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+.logo { font-size: 24px; font-weight: 800; letter-spacing: 0.5px; }
 .logo span { color: var(--accent-mint); }
 
-.topbar-actions { display: flex; align-items: center; gap: 12px; }
+.topbar-actions { display: flex; align-items: center; gap: 14px; }
+
+/* Advanced Live Badge */
+.live-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  transition: var(--transition);
+}
+.live-dot {
+  width: 8px; height: 8px;
+  background: #ef4444;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #ef4444;
+  animation: pulseLive 1.5s infinite;
+}
 
 .room-badge {
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--accent-mint);
+  background: var(--bg-panel);
+  color: var(--text-main);
   padding: 6px 14px;
   border-radius: 20px;
   font-size: 13px;
   font-weight: 600;
-  border: 1px solid var(--accent-glow);
+  border: 1px solid var(--border-color);
 }
 
 .share-btn {
-  background: var(--bg-glass);
-  color: var(--text-main);
-  border: 1px solid var(--border-color);
+  background: var(--accent-mint);
+  color: #000;
+  border: none;
   padding: 8px 16px;
   border-radius: 20px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease;
+  gap: 6px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
 }
-.share-btn:hover { background: rgba(255,255,255,0.1); transform: translateY(-1px); }
+.share-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); }
 
-/* ---------------- LAYOUT (BENTO GRID) ---------------- */
+/* ---------------- LAYOUT ---------------- */
 .main-container {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px; 
-  flex: 1; 
-  min-height: 0; 
+  max-width: 1100px; width: 100%; margin: 0 auto; padding: 20px;
+  display: flex; flex-direction: column; gap: 16px; flex: 1; min-height: 0; 
 }
 
-@media (min-width: 992px) {
-  .main-container { flex-direction: row; }
-  .player-section { flex: 2; height: 100%; display: flex; flex-direction: column; }
-  .chatBox { flex: 1; height: 100%; }
-  .resizer { display: none !important; }
-}
-
-/* ---------------- VIDEO PLAYER ---------------- */
-.player-section { width: 100%; display: flex; flex-direction: column; opacity: 0; }
-
+/* ---------------- MODERN VIDEO.JS PLAYER ---------------- */
 .playerWrap {
-  width: 100%;
-  aspect-ratio: 16 / 9; 
-  background: #000;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  width: 100%; aspect-ratio: 16 / 9;
+  background: #000; border-radius: var(--radius-lg); overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.5);
   border: 1px solid var(--border-color);
-  position: relative;
+  flex-shrink: 0; position: relative;
 }
-.plyr { width: 100%; height: 100%; }
 
-.resizer {
-  height: 24px; width: 100%; cursor: ns-resize; display: flex; align-items: center; justify-content: center; opacity: 0.5; margin: 4px 0;
+/* Customizing Video.js to look modern */
+.video-js { width: 100%; height: 100%; font-family: 'Inter', sans-serif; }
+.video-js .vjs-big-play-button {
+  background-color: var(--accent-mint) !important; color: #000 !important;
+  border: none !important; border-radius: 50% !important;
+  width: 70px !important; height: 70px !important; line-height: 70px !important;
+  top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important;
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
 }
-.resizer-line { width: 40px; height: 4px; background: var(--text-muted); border-radius: 10px; }
+.video-js .vjs-control-bar {
+  background: rgba(0, 0, 0, 0.6) !important; backdrop-filter: blur(10px);
+}
+.video-js .vjs-play-progress { background-color: var(--accent-mint) !important; }
+
+/* ---------------- DRAGGABLE RESIZER ---------------- */
+.resizer {
+  height: 20px; width: 100%; cursor: ns-resize; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; opacity: 0.5; transition: opacity 0.2s; border-radius: 10px;
+}
+.resizer:hover, .resizer:active { opacity: 1; background: rgba(255, 255, 255, 0.05); }
+.resizer-line { width: 50px; height: 4px; background: var(--text-muted); border-radius: 10px; }
 
 /* ---------------- CHAT UI ---------------- */
 .chatBox {
   width: 100%; flex: 1; min-height: 0; 
-  background: var(--bg-panel);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  display: flex; flex-direction: column;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-  opacity: 0;
+  background: var(--bg-panel); backdrop-filter: blur(24px);
+  border: 1px solid var(--border-color); border-radius: var(--radius-lg);
+  display: flex; flex-direction: column; overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
 .chatHeader {
-  background: var(--bg-glass);
-  padding: 16px 20px;
-  font-weight: 600;
-  display: flex; align-items: center; gap: 10px;
-  border-bottom: 1px solid var(--border-color);
+  background: rgba(0, 0, 0, 0.2); padding: 14px 20px; font-weight: 600;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--border-color); flex-shrink: 0;
 }
-.live-dot { width: 8px; height: 8px; background: var(--accent-mint); border-radius: 50%; box-shadow: 0 0 10px var(--accent-mint); animation: pulse 2s infinite; }
 
 #messages {
-  flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 18px; scroll-behavior: smooth;
+  flex: 1; overflow-y: auto; padding: 20px;
+  display: flex; flex-direction: column; gap: 16px; scroll-behavior: smooth;
 }
 
-/* Message Bubbles */
-.msg { display: flex; width: 100%; align-items: flex-end; gap: 8px; }
+/* System Message (Join/Leave) */
+.sys-msg {
+  text-align: center; font-size: 12px; color: var(--text-muted);
+  margin: 10px 0; font-weight: 500; letter-spacing: 0.5px;
+}
+
+/* Chat Bubbles */
+.msg { display: flex; width: 100%; flex-direction: column; animation: messagePop 0.3s var(--transition) forwards; }
+.msg-content-wrapper { display: flex; align-items: center; width: 100%; }
 
 .msgBox {
-  max-width: 85%; padding: 12px 16px; border-radius: 18px; font-size: 14px; line-height: 1.5; word-break: break-word;
+  max-width: 75%; padding: 12px 16px; border-radius: 18px; font-size: 14px;
+  line-height: 1.5; word-break: break-word; position: relative;
 }
 
-.quote-block {
-  background: rgba(0, 0, 0, 0.2); border-left: 3px solid rgba(255,255,255,0.3); padding: 8px 12px; border-radius: 6px; font-size: 12px; margin-bottom: 8px;
-}
-.quote-name { font-weight: 700; color: var(--accent-mint); margin-bottom: 4px; }
+.msg-meta { font-size: 11px; margin-top: 4px; opacity: 0.6; display: flex; gap: 8px; align-items: center; }
 
-.left { justify-content: flex-start; }
-.left .msgBox { background: rgba(255,255,255,0.05); border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
+.left .msg-content-wrapper { justify-content: flex-start; }
+.left .msgBox { background: rgba(255, 255, 255, 0.05); border-bottom-left-radius: 4px; border: 1px solid var(--border-color); }
+.left .msg-meta { margin-left: 4px; }
 
-.right { justify-content: flex-end; }
-.right .msgBox { background: var(--accent-mint); color: #000; border-bottom-right-radius: 4px; font-weight: 500; }
-.right .quote-name { color: #000; }
-.right .quote-block { background: rgba(0,0,0,0.1); border-color: rgba(0,0,0,0.3); }
+.right .msg-content-wrapper { justify-content: flex-end; }
+.right .msgBox { background: var(--accent-mint); color: #000; border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(16,185,129,0.2); font-weight: 500;}
+.right .msg-meta { justify-content: flex-end; margin-right: 4px; }
 
-.name { font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; opacity: 0.7; }
+.name { font-weight: 700; font-size: 12px; margin-bottom: 6px; opacity: 0.7; }
+.right .name { display: none; /* Hide own name for cleaner look */ }
 
-.reply-btn {
-  background: transparent; border: none; color: var(--text-muted); cursor: pointer; opacity: 0; transform: translateY(5px); transition: all 0.2s;
-}
-.msg:hover .reply-btn { opacity: 1; transform: translateY(0); }
-.reply-btn:hover { color: var(--accent-mint); }
-
-.reply-preview {
-  display: none; background: rgba(0,0,0,0.2); padding: 12px 20px; border-left: 3px solid var(--accent-mint); font-size: 13px; align-items: center; justify-content: space-between;
-}
-.reply-preview-text { color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 90%; }
-.reply-preview-text strong { color: var(--text-main); }
-.cancel-reply { cursor: pointer; color: #ef4444; }
-
-.chatInput { display: flex; padding: 16px; background: rgba(0, 0, 0, 0.3); gap: 12px; align-items: center; }
-
+.chatInput { display: flex; padding: 14px; background: rgba(0, 0, 0, 0.3); gap: 10px; align-items: center; }
 .chatInput input {
-  flex: 1; padding: 14px 18px; border: 1px solid var(--border-color); border-radius: var(--radius-xl); background: rgba(255,255,255,0.03); color: var(--text-main); font-size: 14px; transition: all 0.3s;
+  flex: 1; padding: 14px 18px; border: 1px solid var(--border-color); border-radius: 30px;
+  background: rgba(255,255,255,0.03); color: var(--text-main); font-size: 14px; transition: var(--transition);
 }
-.chatInput input:focus { border-color: var(--accent-mint); background: rgba(16, 185, 129, 0.05); }
-
-.action-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; transition: color 0.2s; }
-.action-btn:hover { color: var(--text-main); }
+.chatInput input:focus { border-color: var(--accent-mint); background: rgba(16, 185, 129, 0.03); }
 
 .send-btn {
-  background: var(--accent-mint); border: none; color: #000; width: 48px; height: 48px; border-radius: var(--radius-xl); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s;
+  background: var(--accent-mint); border: none; color: #000; width: 48px; height: 48px;
+  border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
-.send-btn:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4); }
+.send-btn:hover { transform: scale(1.05); box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3); }
 
-.popup {
-  position: fixed; top: 90px; left: 50%; transform: translateX(-50%) translateY(-20px); background: var(--bg-panel); backdrop-filter: blur(20px); border: 1px solid var(--accent-mint); color: var(--text-main); padding: 12px 24px; border-radius: 30px; font-weight: 500; font-size: 14px; display: none; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+@keyframes messagePop { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulseLive {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }
-
-@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); } 70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
 </style>
 </head>
 
 <body>
-
 <div class="ambient-glow glow-1"></div>
 <div class="ambient-glow glow-2"></div>
 
 <div class="topbar">
   <div class="logo">ASVM<span>.</span></div>
   <div class="topbar-actions">
-    <button class="share-btn" onclick="shareRoom()">
-      <i data-lucide="share-2" style="width: 16px; height: 16px;"></i> Share
-    </button>
+    <!-- Dynamic Live Users Badge -->
+    <div class="live-badge" id="liveCount" title="Active users on this page">
+      <div class="live-dot"></div> Live (1)
+    </div>
     <div class="room-badge" id="roomId"></div>
+    <button class="share-btn" onclick="shareRoom()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+      Share
+    </button>
   </div>
 </div>
 
 <div class="main-container">
-  <div class="player-section" id="playerContainer">
-    <div class="playerWrap">
-      <video id="player" controls playsinline></video>
-    </div>
-    <div class="resizer" id="resizer"><div class="resizer-line"></div></div>
+  <!-- Video.js Container -->
+  <div class="playerWrap" id="playerContainer">
+    <video id="player" class="video-js vjs-default-skin vjs-big-play-centered" controls playsinline preload="auto"></video>
+  </div>
+
+  <div class="resizer" id="resizer" title="Drag to resize video">
+    <div class="resizer-line"></div>
   </div>
 
   <div class="chatBox" id="chat">
     <div class="chatHeader">
-      <div class="live-dot"></div><span>Live Sync Chat</span>
+      <span>Room Chat</span>
+      <span style="font-size: 12px; color: var(--text-muted);">End-to-End Synced</span>
     </div>
+    
     <div id="messages"></div>
-    <div class="reply-preview" id="replyPreview">
-      <div class="reply-preview-text">Replying to <strong id="replyName"></strong>: <span id="replyText"></span></div>
-      <div class="cancel-reply" onclick="cancelReply()"><i data-lucide="x" style="width: 18px; height: 18px;"></i></div>
-    </div>
+
     <div class="chatInput">
-      <button class="action-btn" id="emojiButton"><i data-lucide="smile" style="width: 22px; height: 22px;"></i></button>
       <input id="msg" placeholder="Type a message..." autocomplete="off" onkeypress="handleKeyPress(event)">
-      <button class="send-btn" onclick="sendMsg()"><i data-lucide="send" style="width: 20px; height: 20px; transform: translateX(-2px) translateY(2px);"></i></button>
+      <button class="send-btn" onclick="sendMsg()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+      </button>
     </div>
   </div>
 </div>
 
-<div class="popup" id="sysPopup"></div>
+<!-- Video.js Core & YouTube Plugin -->
+<script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-youtube/3.0.1/Youtube.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-<script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@3.0.3/dist/index.min.js"></script>
-
+<!-- Note: Make sure your firebase.js exports `set` and `onDisconnect` along with the previous ones -->
 <script type="module">
-import { db, ref, onValue, push, onChildAdded } from "./firebase.js"
-
-// Initialize Lucide Icons
-lucide.createIcons();
-
-// Initial Entry Animations (Anime.js)
-anime({
-  targets: ['.topbar', '.player-section', '.chatBox'],
-  translateY: [30, 0],
-  opacity: [0, 1],
-  delay: anime.stagger(150),
-  easing: 'easeOutExpo',
-  duration: 1200
-});
+import { db, ref, onValue, push, onChildAdded, set, onDisconnect, remove } from "./firebase.js"
 
 const params = new URLSearchParams(location.search);
-const room = params.get("room") || "default";
+const room = params.get("room") || "lobby";
 document.getElementById("roomId").innerText = "Room: " + room;
 
-// Cross-device Modern Player Config
-const video = document.getElementById("player");
-const player = new Plyr(video, {
-  controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
-  settings: ['captions', 'quality', 'speed'],
-  speed: { selected: 1, options: [0.5, 0.75, 1, 1.25, 1.5, 2] }
-});
-
+// Setup Username
 let username = localStorage.getItem("asvm_name");
 function askName() {
-  let name = prompt("Enter your name to join:");
+  let name = prompt("Enter your name to join the room:");
   if (name && name.trim().toLowerCase() !== "asvm") {
-    localStorage.setItem("asvm_name", name.trim()); return name.trim();
+    localStorage.setItem("asvm_name", name.trim());
+    return name.trim();
+  } else {
+    alert("Invalid name. 'asvm' is reserved.");
+    return askName();
   }
-  return askName(); 
 }
 if(!username || username.toLowerCase() === "asvm") username = askName();
 
-// Custom Popup with Anime.js
-function showPopup(text){
-  const p = document.getElementById("sysPopup"); 
-  p.innerText = text; p.style.display = "block";
-  anime({
-    targets: p, translateY: [10, 0], opacity: [0, 1], duration: 400, easing: 'easeOutElastic(1, .8)'
-  });
-  setTimeout(() => {
-    anime({
-      targets: p, translateY: -10, opacity: 0, duration: 300, easing: 'easeInQuad', complete: () => p.style.display = "none"
-    });
-  }, 3000);
-}
+// --- 1. INITIALIZE VIDEO.JS PLAYER ---
+let player = videojs('player', {
+  fluid: false, // Handled by custom flexbox
+  techOrder: ['html5', 'youtube'],
+  youtube: { 
+    // Passes custom vars to YT iframe to ensure HD quality is preferred and UI shows settings
+    customVars: { wmode: 'transparent', vq: 'hd1080', rel: 0, showinfo: 0, modestbranding: 1 }
+  }
+});
 
-// Universal Player Logic (YouTube, Vimeo, HLS, MP4)
 let sourceLoaded = false;
-onValue(ref(db, "rooms/" + room), snap => {
+onValue(ref(db,"rooms/"+room), snap => {
   const data = snap.val(); if(!data) return;
   const url = atob(data.src);
   if(sourceLoaded) return; sourceLoaded = true;
 
-  if (url.includes("youtube.com") || url.includes("youtu.be")) {
-    const ytId = url.match(/((youtu.be\/)|(v=))([^#&?]*)/)?.[4];
-    if(ytId) player.source = { type: 'video', sources: [{ src: ytId, provider: 'youtube' }] };
-  } 
-  else if (url.includes("vimeo.com")) {
-    const vimId = url.match(/(?:www\.|player\.)?vimeo.com\/(?:channels\/(?:\w+\/)?|groups\/(?:[^\/]*)\/videos\/|album\/(?:\d+)\/video\/|video\/|)(\d+)(?:[a-zA-Z0-9_\-]+)?/i)?.[1];
-    if(vimId) player.source = { type: 'video', sources: [{ src: vimId, provider: 'vimeo' }] };
-  }
-  else if (url.includes(".m3u8")) {
-    if(Hls.isSupported()){ const hls = new Hls(); hls.loadSource(url); hls.attachMedia(video); }
-    else if(video.canPlayType('application/vnd.apple.mpegurl')) video.src = url; // iOS fallback
+  if(url.includes("youtube.com") || url.includes("youtu.be")){
+    player.src({ type: 'video/youtube', src: url });
+  } else if(url.includes(".m3u8")){
+    player.src({ type: 'application/x-mpegURL', src: url });
   } else {
-    player.source = { type: "video", sources: [{ src: url, type: "video/mp4" }] };
+    player.src({ type: 'video/mp4', src: url });
   }
 });
 
-/* Mobile Resizer Logic */
-const resizer = document.getElementById("resizer");
-const playerContainer = document.getElementById("playerContainer");
-let isResizing = false;
 
-resizer.addEventListener("touchstart", (e) => { isResizing = true; document.documentElement.addEventListener("touchmove", doDrag); document.documentElement.addEventListener("touchend", stopDrag); });
-function doDrag(e) {
-  if (!isResizing || window.innerWidth >= 992) return;
-  let newHeight = e.touches[0].clientY - playerContainer.getBoundingClientRect().top;
-  if (newHeight >= 150) playerContainer.style.height = newHeight + "px";
-}
-function stopDrag() { isResizing = false; }
+// --- 2. PRESENCE SYSTEM (LIVE USER COUNT) ---
+const presenceRef = ref(db, `rooms/${room}/presence`);
+const myPresenceRef = ref(db, `rooms/${room}/presence/${username}_${Date.now()}`);
+const connectedRef = ref(db, ".info/connected");
 
-/* Chat Core */
-let messagesMap = {}; let replyingTo = null;
+// When user connects, add them to presence node and trigger removal on disconnect
+onValue(connectedRef, (snap) => {
+  if (snap.val() === true) {
+    onDisconnect(myPresenceRef).remove().then(() => {
+      set(myPresenceRef, { name: username, timestamp: Date.now() });
+    });
+  }
+});
+
+// Update the UI Badge based on active connections
+onValue(presenceRef, (snap) => {
+  const data = snap.val() || {};
+  const activeCount = Object.keys(data).length;
+  document.getElementById("liveCount").innerHTML = `<div class="live-dot"></div> Live (${activeCount})`;
+});
+
+
+// --- 3. CHAT SYSTEM WITH TIMESTAMPS ---
 const msgInput = document.getElementById("msg");
 const msgBoxEl = document.getElementById("messages");
 
-// Emojis
-const picker = new EmojiButton({ theme: 'dark' });
-picker.on('emoji', emoji => { msgInput.value += emoji; msgInput.focus(); });
-document.getElementById('emojiButton').addEventListener('click', () => picker.togglePicker(document.getElementById('emojiButton')));
+function formatTime(ms) {
+  return new Date(ms).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+}
+
+function addSystemMessage(text) {
+  const div = document.createElement("div");
+  div.className = "sys-msg";
+  div.innerText = text;
+  msgBoxEl.appendChild(div);
+  msgBoxEl.scrollTop = msgBoxEl.scrollHeight;
+}
+
+addSystemMessage("Welcome to ASVM Secure Sync Room");
 
 window.handleKeyPress = e => { if(e.key === "Enter") sendMsg(); };
-window.initReply = id => {
-  const m = messagesMap[id]; if(!m) return;
-  replyingTo = { id, name: m.name, text: m.text };
-  document.getElementById("replyPreview").style.display = "flex";
-  document.getElementById("replyName").innerText = m.name;
-  document.getElementById("replyText").innerText = m.text;
-  msgInput.focus();
-}
-window.cancelReply = () => { replyingTo = null; document.getElementById("replyPreview").style.display = "none"; }
 
 window.sendMsg = () => {
-  const text = msgInput.value; if(!text.trim()) return;
-  push(ref(db, "rooms/" + room + "/chat"), { name: username, text, time: Date.now(), reply: replyingTo });
-  msgInput.value = ""; cancelReply();
+  const text = msgInput.value.trim(); if(!text) return;
+  push(ref(db,"rooms/"+room+"/chat"), { name: username, text, time: Date.now() });
+  msgInput.value = "";
 }
 
-onChildAdded(ref(db, "rooms/" + room + "/chat"), snap => {
-  const m = snap.val(); messagesMap[snap.key] = m;
+onChildAdded(ref(db,"rooms/"+room+"/chat"), snap => {
+  const m = snap.val();
   const div = document.createElement("div");
   const isMe = m.name === username;
   div.className = "msg " + (isMe ? "right" : "left");
   
-  let quoteHTML = m.reply ? `<div class="quote-block"><div class="quote-name">${m.reply.name}</div><div>${m.reply.text.substring(0,40)}...</div></div>` : "";
+  const timeStr = formatTime(m.time);
 
   div.innerHTML = `
-    ${!isMe ? `<button class="reply-btn" onclick="initReply('${snap.key}')"><i data-lucide="reply" style="width:14px;height:14px;"></i></button>` : ''}
-    <div class="msgBox">
-      ${quoteHTML}
-      <div class="name">${m.name}</div>
-      ${m.text}
+    <div class="msg-content-wrapper">
+      <div class="msgBox">
+        <div class="name">${m.name}</div>
+        ${m.text}
+      </div>
     </div>
-    ${isMe ? `<button class="reply-btn" onclick="initReply('${snap.key}')"><i data-lucide="reply" style="width:14px;height:14px;"></i></button>` : ''}
+    <div class="msg-meta">
+      <span>${timeStr}</span>
+    </div>
   `;
   msgBoxEl.appendChild(div);
-  lucide.createIcons({ root: div });
-  
-  // Animate Message Entry
-  anime({ targets: div, scale: [0.9, 1], opacity: [0, 1], translateY: [15, 0], duration: 400, easing: 'easeOutQuad' });
   msgBoxEl.scrollTop = msgBoxEl.scrollHeight;
 });
 
+
+// --- 4. RESIZER LOGIC ---
+const resizer = document.getElementById("resizer");
+const playerContainer = document.getElementById("playerContainer");
+const mainContainer = document.querySelector(".main-container");
+let isResizing = false;
+
+resizer.addEventListener("mousedown", initDrag);
+resizer.addEventListener("touchstart", initDrag, {passive: true});
+
+function initDrag(e) {
+  isResizing = true;
+  document.documentElement.addEventListener("mousemove", doDrag);
+  document.documentElement.addEventListener("touchmove", doDrag, {passive: false});
+  document.documentElement.addEventListener("mouseup", stopDrag);
+  document.documentElement.addEventListener("touchend", stopDrag);
+}
+
+function doDrag(e) {
+  if (!isResizing) return;
+  let clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+  let newHeight = clientY - playerContainer.getBoundingClientRect().top;
+  if (newHeight >= 150 && newHeight <= mainContainer.clientHeight - 200) {
+    playerContainer.style.height = newHeight + "px";
+  }
+}
+function stopDrag() { isResizing = false; }
+
+
+// --- 5. SHARE ROOM ---
 window.shareRoom = () => {
-  if (navigator.share) navigator.share({ title: 'ASVM', url: window.location.href });
-  else { navigator.clipboard.writeText(window.location.href); showPopup("Link copied!"); }
+  const url = window.location.href;
+  if (navigator.share) navigator.share({ title: 'ASVM Room', url });
+  else { navigator.clipboard.writeText(url); alert("Room Link Copied!"); }
 }
 </script>
 </body>
