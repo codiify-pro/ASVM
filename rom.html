@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>ASVM - Sync Video Meeting Room</title>
@@ -8,10 +8,9 @@
 <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<meta name="description" content="ASVM is a free watch party platform to stream videos together with friends. Create rooms, sync playback, and chat live from any device.">
-<meta name="keywords" content="ASVM, watch videos together, sync video online, watch movies together, online watch party, ASVM">
+<meta name="description" content="ASVM is a free watch party platform to stream videos together with friends.">
+<meta name="keywords" content="ASVM, watch videos together, sync video online, watch movies together">
 <meta name="author" content="ASVM">
-  
 <meta property="og:title" content="ASVM – Watch Videos Together Online">
 <meta property="og:description" content="Create a room and watch videos together with friends using ASVM watch party platform.">
 <meta property="og:type" content="website">
@@ -19,312 +18,403 @@
 <meta property="og:image" content="https://www.asvm.fun/preview.png">
 
 <style>
-/* TUMHARA ORIGINAL CSS */
-* { -webkit-tap-highlight-color: transparent; }
+/* ---------------- CSS VARIABLES & THEMES ---------------- */
+* { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 *:focus { outline: none; }
+
 :root {
+  /* Default Dark Mode */
   --bg-base: #050505;
   --bg-panel: rgba(24, 24, 27, 0.4);
   --bg-panel-hover: rgba(39, 39, 42, 0.6);
   --border-color: rgba(255, 255, 255, 0.08);
   --text-main: #ffffff;
   --text-muted: #a1a1aa;
-  --accent-mint: #00dc82; 
-  --accent-mint-dim: rgba(0, 220, 130, 0.15);
-  --radius-xl: 24px;
-  --radius-lg: 16px;
-  --radius-md: 12px;
+  
+  /* Dynamic Accent Color (Default Mint Green) */
+  --accent-main: #00dc82; 
+  --accent-dim: rgba(0, 220, 130, 0.15);
+  --accent-text: #050505; 
+  
+  --radius-xl: 24px; --radius-lg: 16px; --radius-md: 12px;
   --transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  --plyr-color-main: #00dc82;
+  --plyr-color-main: var(--accent-main);
+  --plyr-video-background: #000000;
+}
+
+[data-theme="light"] {
+  --bg-base: #f3f4f6;
+  --bg-panel: #ffffff;
+  --bg-panel-hover: #f9fafb;
+  --border-color: #e5e7eb;
+  --text-main: #111827;
+  --text-muted: #6b7280;
+  --accent-text: #ffffff;
   --plyr-video-background: #000000;
 }
 
 body {
   margin: 0; background: var(--bg-base); font-family: 'Inter', -apple-system, sans-serif;
-  color: var(--text-main); -webkit-font-smoothing: antialiased; overflow: hidden; height: 100dvh; display: flex; flex-direction: column;
+  color: var(--text-main); -webkit-font-smoothing: antialiased; overflow: hidden; height: 100dvh; display: flex; flex-direction: column; transition: background 0.3s;
 }
 
-.ambient-glow-1, .ambient-glow-2 {
-  position: fixed; border-radius: 50%; filter: blur(120px); z-index: -1; opacity: 0.3; pointer-events: none;
-}
-.ambient-glow-1 {
-  top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--accent-mint-dim), transparent 70%);
-}
-.ambient-glow-2 {
-  bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(14, 165, 233, 0.1), transparent 70%); 
-}
+.ambient-glow-1, .ambient-glow-2 { position: fixed; border-radius: 50%; filter: blur(120px); z-index: -1; opacity: 0.3; pointer-events: none; }
+.ambient-glow-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--accent-dim), transparent 70%); }
+.ambient-glow-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(14, 165, 233, 0.1), transparent 70%); }
 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
 
-/* TOPBAR */
-.topbar {
-  background: rgba(5, 5, 5, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  padding: 0 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); z-index: 1000; height: 64px; flex-shrink: 0; 
-}
-.logo { font-size: 22px; font-weight: 800; letter-spacing: 1px; color: white; }
-.logo span { color: var(--accent-mint); }
-.topbar-actions { display: flex; align-items: center; gap: 12px; }
+/* ---------------- TOPBAR ---------------- */
+.topbar { background: var(--bg-panel); backdrop-filter: blur(20px); padding: 0 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); z-index: 1000; height: 64px; flex-shrink: 0; }
+.logo { font-size: 22px; font-weight: 800; letter-spacing: 1px; color: var(--text-main); }
+.logo span { color: var(--accent-main); transition: color 0.3s; }
+.topbar-actions { display: flex; align-items: center; gap: 15px; }
+.icon-btn { background: transparent; border: none; color: var(--text-main); font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+.icon-btn:hover { color: var(--accent-main); transform: scale(1.1); }
 
-.live-badge {
-  background: rgba(14, 165, 233, 0.1); color: #0ea5e9; padding: 6px 14px; border-radius: 20px;
-  font-size: 13px; font-weight: 600; border: 1px solid rgba(14, 165, 233, 0.2); display: flex; align-items: center; gap: 6px;
-}
-.live-dot-top { width: 8px; height: 8px; background: #0ea5e9; border-radius: 50%; box-shadow: 0 0 10px #0ea5e9; animation: pulseBlue 2s infinite; }
+/* ---------------- SIDEBAR ---------------- */
+.sidebar-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 2000; display: none; opacity: 0; transition: opacity 0.3s; }
+.sidebar { position: fixed; top: 0; right: -300px; width: 280px; height: 100vh; background: var(--bg-panel); backdrop-filter: blur(25px); border-left: 1px solid var(--border-color); z-index: 2001; transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; padding: 20px 0; box-shadow: -5px 0 30px rgba(0,0,0,0.3); }
+.sidebar-header { padding: 0 20px 20px; font-size: 18px; font-weight: 700; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+.sidebar-header button { background: none; border: none; color: var(--text-main); font-size: 24px; cursor: pointer; }
+.sidebar-menu { display: flex; flex-direction: column; padding: 15px 0; }
+.sidebar-menu button { background: transparent; border: none; color: var(--text-main); padding: 15px 20px; text-align: left; font-size: 15px; font-weight: 500; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 12px; }
+.sidebar-menu button:hover { background: var(--accent-dim); color: var(--accent-main); border-left: 4px solid var(--accent-main); padding-left: 16px; }
 
-.room-badge {
-  background: var(--accent-mint-dim); color: var(--accent-mint); padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1px solid rgba(0, 220, 130, 0.2);
-}
-.share-btn {
-  background: transparent; color: var(--text-main); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;
-}
-.share-btn:hover { background: rgba(255,255,255,0.05); }
+/* ---------------- LAYOUT ---------------- */
+.main-container { max-width: 1000px; width: 100%; margin: 0 auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; flex: 1; min-height: 0; }
 
-/* LAYOUT & PLAYER */
-.main-container {
-  max-width: 1000px; width: 100%; margin: 0 auto; padding: 16px; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px; flex: 1; min-height: 0; 
-}
-.playerWrap {
-  width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.4); border: 1px solid var(--border-color); flex-shrink: 0; position: relative; display: flex; flex-direction: column;
-}
-#ytWrapper { width: 100%; height: 100%; }
-#ytPlayerDiv { width: 100%; height: 100%; }
-#plyrWrapper { width: 100%; height: 100%; display: flex; flex-direction: column; }
-.plyr { width: 100%; height: 100%; flex: 1; }
+/* ---------------- VIDEO PLAYER ---------------- */
+.playerWrap { width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.4); border: 1px solid var(--border-color); flex-shrink: 0; position: relative; display: flex; flex-direction: column; }
+#ytWrapper, #plyrWrapper { width: 100%; height: 100%; flex: 1; }
+.plyr { width: 100%; height: 100%; }
+.resizer { height: 24px; width: 100%; cursor: ns-resize; display: flex; align-items: center; justify-content: center; flex-shrink: 0; opacity: 0.6; transition: 0.2s; touch-action: none; }
+.resizer-line { width: 40px; height: 5px; background: var(--text-muted); border-radius: 10px; transition: 0.2s; }
+.resizer:hover .resizer-line { background: var(--accent-main); box-shadow: 0 0 10px var(--accent-main); }
 
-/* RESIZER */
-.resizer { height: 24px; width: 100%; cursor: ns-resize; display: flex; align-items: center; justify-content: center; flex-shrink: 0; opacity: 0.6; transition: opacity 0.2s, background 0.2s; margin: 4px 0; border-radius: 12px; touch-action: none; }
-.resizer:hover, .resizer:active { opacity: 1; background: rgba(255, 255, 255, 0.05); }
-.resizer-line { width: 40px; height: 5px; background: var(--text-muted); border-radius: 10px; transition: background 0.2s; }
-.resizer:hover .resizer-line, .resizer:active .resizer-line { background: var(--accent-mint); box-shadow: 0 0 10px var(--accent-mint); }
+/* ---------------- CHAT UI ---------------- */
+.chatBox { width: 100%; flex: 1; min-height: 0; background: var(--bg-panel); backdrop-filter: blur(24px); border: 1px solid var(--border-color); border-radius: var(--radius-lg); display: flex; flex-direction: column; overflow: hidden; position: relative; }
+.chatHeader { background: rgba(0,0,0,0.05); padding: 14px 20px; font-weight: 600; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
+.live-dot { width: 8px; height: 8px; background: var(--accent-main); border-radius: 50%; box-shadow: 0 0 10px var(--accent-main); animation: pulse 2s infinite; }
+#messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 18px; scroll-behavior: smooth; }
 
-/* CHAT UI */
-.chatBox { width: 100%; flex: 1; min-height: 0; background: var(--bg-panel); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border-color); border-radius: var(--radius-lg); display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; }
-.chatHeader { background: rgba(255, 255, 255, 0.02); padding: 14px 20px; font-weight: 600; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
-.live-dot { width: 8px; height: 8px; background: var(--accent-mint); border-radius: 50%; box-shadow: 0 0 10px var(--accent-mint); animation: pulse 2s infinite; }
-#messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; scroll-behavior: smooth; }
-.msg { display: flex; width: 100%; align-items: center; animation: messagePop 0.3s var(--transition) forwards; }
-.msgBox { max-width: 80%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.5; word-break: break-word; position: relative; transition: box-shadow 0.3s ease; }
-.quote-block { background: rgba(0, 0, 0, 0.25); border-left: 3px solid rgba(255,255,255,0.5); padding: 6px 10px; border-radius: 6px; font-size: 12px; margin-bottom: 8px; cursor: pointer; opacity: 0.85; transition: opacity 0.2s; }
-.quote-block:hover { opacity: 1; }
-.quote-name { font-weight: 700; margin-bottom: 2px; }
-.left { justify-content: flex-start; }
-.left .msgBox { background: var(--bg-panel-hover); color: var(--text-main); border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
-.left .quote-block { border-left-color: var(--accent-mint); }
-.right { justify-content: flex-end; }
-.right .msgBox { background: var(--accent-mint); color: #050505; border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(0, 220, 130, 0.2); font-weight: 500; }
-.right .quote-block { border-left-color: #050505; background: rgba(0,0,0,0.1); }
-.name { font-weight: 700; font-size: 12px; margin-bottom: 4px; opacity: 0.8; letter-spacing: 0.02em; }
+.msg { display: flex; flex-direction: column; width: 100%; animation: messagePop 0.3s forwards; }
+.msg-content-wrapper { display: flex; align-items: center; width: 100%; gap: 5px; }
+.msgBox { max-width: 80%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.5; word-break: break-word; position: relative; }
+.msg-timestamp { font-size: 10px; color: var(--text-muted); margin-top: 4px; font-weight: 500; }
+
+.left .msg-content-wrapper { justify-content: flex-start; }
+.left .msgBox { background: var(--bg-panel-hover); color: var(--text-main); border-bottom-left-radius: 4px; border: 1px solid var(--border-color); }
+.left .msg-timestamp { margin-left: 2px; text-align: left; }
+
+.right .msg-content-wrapper { justify-content: flex-end; }
+.right .msgBox { background: var(--accent-main); color: var(--accent-text); border-bottom-right-radius: 4px; box-shadow: 0 4px 15px var(--accent-dim); font-weight: 500; }
 .right .name { color: rgba(0,0,0,0.6); }
+.right .msg-timestamp { margin-right: 2px; text-align: right; }
 
-.reply-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; opacity: 0.5; padding: 8px; transition: all 0.2s; display: flex; align-items: center; }
-.reply-btn:hover { opacity: 1; color: var(--accent-mint); transform: scale(1.1); }
-.left .reply-btn { margin-left: 5px; } .right .reply-btn { margin-right: 5px; order: -1; }
-.reply-preview { display: none; background: var(--bg-panel-hover); padding: 10px 16px; border-left: 3px solid var(--accent-mint); font-size: 13px; align-items: center; justify-content: space-between; border-top: 1px solid var(--border-color); flex-shrink: 0; }
-.reply-preview-text { color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 85%; }
-.reply-preview-text strong { color: var(--text-main); }
-.cancel-reply { cursor: pointer; color: var(--accent-rose); display: flex; align-items: center; padding: 4px; }
+.quote-block { background: rgba(0, 0, 0, 0.15); border-left: 3px solid rgba(255,255,255,0.5); padding: 6px 10px; border-radius: 6px; font-size: 12px; margin-bottom: 8px; cursor: pointer; }
+.quote-name { font-weight: 700; margin-bottom: 2px; }
+.left .quote-block { border-left-color: var(--accent-main); }
+.right .quote-block { border-left-color: var(--accent-text); }
 
-.chatInput { display: flex; padding: 12px; background: rgba(0, 0, 0, 0.2); border-top: 1px solid var(--border-color); gap: 10px; flex-shrink: 0; align-items: center; }
-.emoji-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 8px; display: flex; align-items: center; justify-content: center; transition: color 0.2s; }
-.emoji-btn:hover { color: var(--text-main); }
-.chatInput input { flex: 1; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: rgba(255,255,255,0.03); color: var(--text-main); font-family: inherit; font-size: 14px; transition: border-color var(--transition); }
-.chatInput input:focus { outline: none; border-color: var(--accent-mint); background: rgba(0, 220, 130, 0.02); }
-.chatInput button.send-btn { background: var(--accent-mint); border: none; color: #050505; width: 44px; height: 44px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s, box-shadow 0.2s; }
-.chatInput button.send-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 220, 130, 0.3); }
-.new-msg-dot { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--accent-mint); color: #000; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; display: none; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(0, 220, 130, 0.4); z-index: 10; animation: fadeUp 0.3s forwards; }
-.popup { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: var(--bg-panel); backdrop-filter: blur(20px); border: 1px solid var(--accent-mint); color: var(--accent-mint); padding: 12px 24px; border-radius: 30px; display: none; font-weight: 600; font-size: 13px; box-shadow: 0 10px 30px rgba(0, 220, 130, 0.15); z-index: 1000; animation: slideDown 0.4s var(--transition) forwards; }
+.name { font-weight: 700; font-size: 12px; margin-bottom: 4px; opacity: 0.8; }
+.reply-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; opacity: 0.5; padding: 6px; transition: 0.2s; }
+.reply-btn:hover { opacity: 1; color: var(--accent-main); }
+.right .reply-btn { order: -1; }
 
-/* ADMIN URL CHANGER & PIN UI (ADDED SMOOTHLY) */
-.admin-panel { display: none; padding: 12px 16px; background: rgba(0,0,0,0.3); border-bottom: 1px solid var(--border-color); gap: 10px; align-items: center; }
-.admin-panel input { flex: 1; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--accent-mint); background: rgba(0, 220, 130, 0.05); color: white; font-size: 13px; outline: none; }
-.admin-panel button { padding: 8px 16px; background: var(--accent-mint); border: none; border-radius: 8px; color: black; font-weight: 600; cursor: pointer; }
-.pin-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); z-index: 99999; display: none; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
-.pin-box { background: var(--bg-panel); border: 1px solid var(--accent-mint); padding: 30px; border-radius: var(--radius-lg); text-align: center; width: 300px; }
-.pin-box h3 { margin-top: 0; color: white; }
-.pin-box input { width: 100%; padding: 10px; margin-bottom: 15px; text-align: center; font-size: 18px; border-radius: 8px; border: 1px solid var(--border-color); background: #000; color: white; outline: none; box-sizing: border-box; }
-.pin-box button { width: 100%; padding: 12px; background: var(--accent-mint); border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
-#pinMsg { color: #ff4444; font-size: 13px; margin-top: 10px; display: block; font-weight: 600; }
+.reply-preview { display: none; background: var(--bg-panel-hover); padding: 10px 16px; border-left: 3px solid var(--accent-main); font-size: 13px; align-items: center; justify-content: space-between; border-top: 1px solid var(--border-color); }
+.cancel-reply { cursor: pointer; color: #ff4444; }
 
-@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.chatInput { display: flex; padding: 12px; background: rgba(0, 0, 0, 0.05); border-top: 1px solid var(--border-color); gap: 10px; align-items: center; flex-shrink: 0; }
+.chatInput input { flex: 1; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: transparent; color: var(--text-main); font-size: 14px; }
+.chatInput input:focus { border-color: var(--accent-main); }
+.send-btn { background: var(--accent-main); color: var(--accent-text); border: none; width: 44px; height: 44px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+/* ---------------- CUSTOM MODALS (For Change ID, Themes, Actions) ---------------- */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 3000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
+.modal-box { background: var(--bg-panel); border: 1px solid var(--border-color); padding: 24px; border-radius: var(--radius-lg); width: 90%; max-width: 400px; box-shadow: 0 15px 40px rgba(0,0,0,0.4); text-align: center; }
+.modal-box h3 { margin: 0 0 15px; color: var(--text-main); }
+.modal-box input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.1); color: var(--text-main); font-size: 15px; }
+.modal-box button { padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; margin: 5px; }
+.btn-primary { background: var(--accent-main); color: var(--accent-text); }
+.btn-cancel { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
+
+/* Theme Color Circles */
+.color-picker { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 20px; }
+.color-circle { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
+.color-circle:hover { transform: scale(1.1); }
+.color-circle.active { border-color: var(--text-main); transform: scale(1.1); box-shadow: 0 0 10px currentColor; }
+
+#recentActionsList { max-height: 250px; overflow-y: auto; text-align: left; font-size: 13px; display: flex; flex-direction: column; gap: 8px; }
+.action-item { padding: 8px; background: rgba(0,0,0,0.1); border-radius: 6px; border-left: 3px solid var(--accent-main); }
+
 @keyframes messagePop { from { opacity: 0; transform: translateY(10px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-@keyframes slideDown { 0% { opacity: 0; transform: translate(-50%, -20px); } 100% { opacity: 1; transform: translate(-50%, 0); } }
-@keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 220, 130, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 220, 130, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 220, 130, 0); } }
-@keyframes pulseBlue { 0% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(14, 165, 233, 0); } 100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); } }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 var(--accent-dim); } 70% { box-shadow: 0 0 0 8px rgba(0,0,0,0); } 100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); } }
 </style>
 </head>
-
 <body>
-
-<!-- PIN OVERLAY (Hidden by default) -->
-<div class="pin-overlay" id="pinOverlay">
-  <div class="pin-box">
-    <h3>🔒 Enter Room PIN</h3>
-    <input type="password" id="roomPin" placeholder="Enter PIN">
-    <button onclick="checkPin()">Unlock Room</button>
-    <span id="pinMsg"></span>
-  </div>
-</div>
 
 <div class="ambient-glow-1"></div>
 <div class="ambient-glow-2"></div>
 
+<!-- Custom Modals -->
+<div class="modal-overlay" id="customModal">
+  <div class="modal-box" id="modalContent"></div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    Menu <button onclick="toggleSidebar()">×</button>
+  </div>
+  <div class="sidebar-menu">
+    <button onclick="shareRoom()">🔗 Share Room</button>
+    <button onclick="openChangeId()">🔄 Change Room ID</button>
+    <button onclick="openDeleteId()">🗑️ Delete Current ID</button>
+    <button onclick="openRecentActions()">🕒 Recent Actions</button>
+    <button onclick="openThemePicker()">🎨 Theme & Colors</button>
+    <button onclick="clearChatUI()">🧹 Clear Chat Screen</button>
+  </div>
+</div>
+
 <div class="topbar">
   <div class="logo">ASVM<span>.</span></div>
   <div class="topbar-actions">
-    <!-- Live User Count -->
-    <div class="live-badge" title="Active Users">
-      <div class="live-dot-top"></div>
-      Live (<span id="liveCount">0</span>)
-    </div>
-    <div class="room-badge" id="roomId"></div>
-    <button class="share-btn" onclick="shareRoom()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-      Share
-    </button>
+    <button class="icon-btn" onclick="toggleDarkMode()" title="Toggle Light/Dark Mode">🌓</button>
+    <button class="icon-btn" onclick="toggleSidebar()" title="Menu">☰</button>
   </div>
 </div>
 
 <div class="main-container">
   <div class="playerWrap" id="playerContainer">
-    <!-- YouTube Native Player Div -->
+    <!-- YT NATIVE PLAYER -->
     <div id="ytWrapper" style="display:none;">
       <div id="ytPlayerDiv"></div>
     </div>
-    <!-- Plyr (Green) Original Div -->
+    <!-- PLYR PLAYER -->
     <div id="plyrWrapper" style="display:none;">
       <video id="player" controls playsinline></video>
     </div>
   </div>
 
-  <div class="resizer" id="resizer" title="Drag to resize">
+  <div class="resizer" id="resizer">
     <div class="resizer-line"></div>
   </div>
 
   <div class="chatBox" id="chat">
     <div class="chatHeader">
-      <div class="live-dot"></div>
-      <span>Room Chat</span>
-    </div>
-    
-    <!-- URL Changer (Visible only in Complexp room after PIN) -->
-    <div class="admin-panel" id="adminPanel">
-      <input type="text" id="adminUrlInput" placeholder="Paste new Video or YouTube URL...">
-      <button onclick="updateRoomUrl()">Update Video</button>
+      <div class="live-dot"></div> <span>Room Chat</span>
     </div>
 
     <div id="messages"></div>
-    <div class="new-msg-dot" id="newMsgDot" onclick="scrollToBottom()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-      New Messages
-    </div>
+    
     <div class="reply-preview" id="replyPreview">
       <div class="reply-preview-text">Replying to <strong id="replyName"></strong>: <span id="replyText"></span></div>
-      <div class="cancel-reply" onclick="cancelReply()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></div>
+      <div class="cancel-reply" onclick="cancelReply()">✕</div>
     </div>
+
     <div class="chatInput">
-      <button class="emoji-btn" id="emojiButton"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg></button>
-      <input id="msg" placeholder="Type a message..." autocomplete="off" onkeypress="handleKeyPress(event)">
-      <button class="send-btn" onclick="sendMsg()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></button>
+      <input id="msg" placeholder="Type a message..." autocomplete="off">
+      <button class="send-btn" onclick="sendMsg()">➤</button>
     </div>
   </div>
 </div>
 
-<div class="popup" id="joinPopup"></div>
-
-<!-- Required Scripts -->
 <script src="https://www.youtube.com/iframe_api"></script>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@3.0.3/dist/index.min.js"></script>
 
 <script type="module">
-import {db, ref, set, push, update, onValue, onChildAdded} from "./firebase.js";
-import { onDisconnect, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import {db, ref, set, push, update, onValue, onChildAdded, remove} from "./firebase.js";
+import { onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const params = new URLSearchParams(location.search);
-const room = params.get("room") || "default";
-document.getElementById("roomId").innerText = "Room: " + room;
+let room = params.get("room") || "default";
 
-const msgSound = new Audio("https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3");
-
-// Name Ask Logic
-let username = localStorage.getItem("asvm_name");
-function askName() {
-  let name = prompt("Enter your name to join the room:");
-  if (name) {
-    let cleanName = name.trim().toLowerCase();
-    if (cleanName === "asvm") { alert("Reserved for system."); return askName(); }
-    localStorage.setItem("asvm_name", name.trim());
-    return name.trim();
-  }
-  return "Anonymous " + Math.floor(Math.random()*1000);
+// ---------------- COMPLEX ROOM BLOCKER ----------------
+function showBlockAlert() {
+  document.body.innerHTML = `
+    <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#050505; color:white; font-family:sans-serif; text-align:center; padding:20px;">
+      <h1 style="color:#ff4444;">⚠️ Access Denied</h1>
+      <p>This room is protected and cannot be accessed directly.</p>
+      <button onclick="window.location.href='?room=default'" style="margin-top:20px; padding:10px 20px; background:#00dc82; color:#000; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Go to Default Room</button>
+    </div>
+  `;
 }
-if(!username || username.toLowerCase() === "asvm") { username = askName(); }
-
-// Complexp Room PIN Logic
-if(room.toLowerCase().includes("complexp")) {
-  document.getElementById("pinOverlay").style.display = "flex";
+if(room.toLowerCase() === "complex" || room.toLowerCase() === "complexp") {
+  showBlockAlert();
+  throw new Error("Blocked Room Access"); // Stops further JS execution
 }
-window.checkPin = () => {
-  const pin = document.getElementById("roomPin").value;
-  if(pin === "1234") { // Ya jo pin tum chaho
-    document.getElementById("pinMsg").style.color = "var(--accent-mint)";
-    document.getElementById("pinMsg").innerText = "Access Granted!";
-    setTimeout(() => {
-      document.getElementById("pinOverlay").style.display = "none";
-      document.getElementById("adminPanel").style.display = "flex";
-    }, 1000);
+
+// ---------------- COOKIES & THEMES LOGIC ----------------
+function setCookie(name, value, days = 365) {
+  const d = new Date(); d.setTime(d.getTime() + (days*24*60*60*1000));
+  document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/`;
+}
+function getCookie(name) {
+  const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+  return v ? v[2] : null;
+}
+
+const colors = [
+  {hex: '#ef4444', text: '#ffffff'}, {hex: '#14b8a6', text: '#ffffff'}, 
+  {hex: '#0ea5e9', text: '#ffffff'}, {hex: '#f59e0b', text: '#000000'}, 
+  {hex: '#ec4899', text: '#ffffff'}, {hex: '#f97316', text: '#ffffff'}, 
+  {hex: '#64748b', text: '#ffffff'}, {hex: '#78350f', text: '#ffffff'}, 
+  {hex: '#8b5cf6', text: '#ffffff'}, {hex: '#3b82f6', text: '#ffffff'},
+  {hex: '#00dc82', text: '#050505'} // Default Green
+];
+
+function applyThemeColor(hex, textColor) {
+  document.documentElement.style.setProperty('--accent-main', hex);
+  document.documentElement.style.setProperty('--accent-text', textColor);
+  document.documentElement.style.setProperty('--accent-dim', hex + '26'); // 15% opacity hex
+  setCookie('asvm_color', hex);
+  setCookie('asvm_color_text', textColor);
+}
+
+window.toggleDarkMode = () => {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  document.documentElement.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  setCookie('asvm_mode', isLight ? 'dark' : 'light');
+}
+
+// Init theme from cookies
+const savedColor = getCookie('asvm_color');
+const savedText = getCookie('asvm_color_text');
+const savedMode = getCookie('asvm_mode');
+if(savedColor && savedText) applyThemeColor(savedColor, savedText);
+if(savedMode) document.documentElement.setAttribute('data-theme', savedMode);
+
+// ---------------- CUSTOM MODALS UI LOGIC ----------------
+const modal = document.getElementById("customModal");
+const modalContent = document.getElementById("modalContent");
+
+function openModal(html) {
+  modalContent.innerHTML = html;
+  modal.style.display = 'flex';
+  setTimeout(() => modal.style.opacity = '1', 10);
+  toggleSidebar(true); // close sidebar if open
+}
+window.closeModal = () => {
+  modal.style.opacity = '0';
+  setTimeout(() => modal.style.display = 'none', 200);
+}
+
+window.toggleSidebar = (forceClose = false) => {
+  const sb = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if(sb.style.right === '0px' || forceClose) {
+    sb.style.right = '-300px'; overlay.style.opacity = '0';
+    setTimeout(() => overlay.style.display = 'none', 300);
   } else {
-    document.getElementById("pinMsg").style.color = "#ff4444";
-    document.getElementById("pinMsg").innerText = "Incorrect PIN!";
+    overlay.style.display = 'block'; setTimeout(() => overlay.style.opacity = '1', 10);
+    sb.style.right = '0px';
   }
 }
 
-// Update Room URL (Complexp Only)
-window.updateRoomUrl = () => {
-  const newUrl = document.getElementById("adminUrlInput").value.trim();
-  if(!newUrl) return;
-  update(ref(db, `rooms/${room}`), { src: btoa(newUrl) });
-  document.getElementById("adminUrlInput").value = "";
-  showPopup("Video URL Updated globally!");
+// SIDEBAR ACTIONS
+window.shareRoom = () => {
+  const url = window.location.href;
+  if(navigator.share) navigator.share({title:'ASVM', url});
+  else { navigator.clipboard.writeText(url); alert("Link Copied!"); }
+  toggleSidebar(true);
+}
+window.openChangeId = () => {
+  openModal(`
+    <h3>Change Room ID</h3>
+    <input type="text" id="newIdInput" placeholder="Enter new Room ID...">
+    <div>
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="changeIdExec()">Join Room</button>
+    </div>
+  `);
+}
+window.changeIdExec = () => {
+  const val = document.getElementById('newIdInput').value.trim();
+  if(val) window.location.href = "?room=" + val;
+}
+window.openDeleteId = () => {
+  openModal(`
+    <h3>Delete Room '${room}'?</h3>
+    <p style="font-size:13px; color:var(--text-muted);">This clears the room database.</p>
+    <div>
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" style="background:#ff4444; color:white;" onclick="deleteIdExec()">Delete & Exit</button>
+    </div>
+  `);
+}
+window.deleteIdExec = () => {
+  remove(ref(db, `rooms/${room}`));
+  window.location.href = "?room=default";
+}
+window.clearChatUI = () => {
+  document.getElementById("messages").innerHTML = "";
+  toggleSidebar(true);
 }
 
-// Live Presence (Active Users)
+// ---------------- RECENT ACTIONS TRACKER ----------------
+let recentEvents = [];
+function formatFullTime(ts) {
+  return new Date(ts).toLocaleTimeString('en-US', {hour: 'numeric', minute:'2-digit', second:'2-digit', hour12:true});
+}
+window.openRecentActions = () => {
+  let listHtml = recentEvents.slice().reverse().map(e => `
+    <div class="action-item">
+      <strong>${e.name}</strong> ${e.action} at ${formatFullTime(e.time)}
+    </div>
+  `).join('');
+  if(recentEvents.length === 0) listHtml = `<p style="color:var(--text-muted);">No recent actions.</p>`;
+  
+  openModal(`
+    <h3>Recent Actions</h3>
+    <div id="recentActionsList">${listHtml}</div>
+    <button class="btn-cancel" style="width:100%; margin-top:15px;" onclick="closeModal()">Close</button>
+  `);
+}
+
+window.openThemePicker = () => {
+  const circles = colors.map(c => `
+    <div class="color-circle" style="background:${c.hex}; color:${c.hex};" 
+         onclick="applyThemeColor('${c.hex}', '${c.text}'); closeModal();"></div>
+  `).join('');
+  
+  openModal(`
+    <h3>Select Theme Color</h3>
+    <div class="color-picker">${circles}</div>
+    <button class="btn-cancel" style="width:100%" onclick="closeModal()">Close</button>
+  `);
+}
+
+
+// ---------------- USERNAME & JOINS ----------------
+let username = localStorage.getItem("asvm_name") || "Anonymous_" + Math.floor(Math.random()*100);
+localStorage.setItem("asvm_name", username);
+
 const sessionId = Math.random().toString(36).substring(2,15);
-const presenceRef = ref(db, `rooms/${room}/presence/${sessionId}`);
-set(presenceRef, true);
-onDisconnect(presenceRef).remove();
-window.addEventListener("beforeunload", () => remove(presenceRef));
-onValue(ref(db, `rooms/${room}/presence`), (snap) => {
+const myJoinRef = ref(db, `rooms/${room}/active/${sessionId}`);
+set(myJoinRef, { name: username, time: Date.now() });
+onDisconnect(myJoinRef).remove(); // Auto trigger leave
+window.addEventListener("beforeunload", () => remove(myJoinRef));
+
+// Listen to joins/leaves for "Recent Actions" array
+onChildAdded(ref(db, `rooms/${room}/active`), snap => {
   const data = snap.val();
-  document.getElementById("liveCount").innerText = data ? Object.keys(data).length : 0;
+  if(Date.now() - data.time < 10000) { // Only log fresh joins
+    recentEvents.push({action: "Joined", name: data.name, time: data.time});
+  }
+});
+// (Firebase doesn't give 'time' on child_removed naturally without cloud functions, so we log current time)
+import { onChildRemoved } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+onChildRemoved(ref(db, `rooms/${room}/active`), snap => {
+  recentEvents.push({action: "Left", name: snap.val().name, time: Date.now()});
 });
 
-// Join Notification
-push(ref(db,"rooms/"+room+"/joins"),{ name:username, time:Date.now() });
-let initJoins = true;
-onChildAdded(ref(db,"rooms/"+room+"/joins"), (snap) => {
-  if(initJoins) return;
-  const j = snap.val(); if(j.name !== username) showPopup(j.name + " joined");
-});
-setTimeout(() => initJoins = false, 2000);
-
-function showPopup(text){
-  const p = document.getElementById("joinPopup"); p.innerText=text; p.style.display="block";
-  setTimeout(()=>{ p.style.display="none" },3000);
-}
-
-// ---------------- VIDEO SYNCING & PLAYERS LOGIC ----------------
-let ignoreSync = false;
-function emitSync(time, state) {
-  if (ignoreSync) return;
-  update(ref(db, `rooms/${room}/sync`), { time, state, by: username, ts: Date.now() });
-}
-
-let ytPlayer = null;
+// ---------------- PLAYER & SYNC LOGIC ----------------
 let plyrInstance = null;
+let ytPlayer = null;
 const plyrVideo = document.getElementById("player");
 const ytWrap = document.getElementById("ytWrapper");
 const plyrWrap = document.getElementById("plyrWrapper");
@@ -332,17 +422,25 @@ const plyrWrap = document.getElementById("plyrWrapper");
 let isYtPlaying = false;
 let ytApiReady = false;
 let pendingYtId = null;
+let currentSrc = "";
+let isCurrentYt = false;
+let ignoreSync = false;
 
 window.onYouTubeIframeAPIReady = () => { ytApiReady = true; loadYtIfReady(); };
 
+function emitSync(time, state) {
+  if (ignoreSync) return;
+  update(ref(db, `rooms/${room}/sync`), { time, state, by: username, ts: Date.now() });
+}
+
 function loadYtIfReady() {
   if(!ytApiReady || !pendingYtId) return;
-  if(ytPlayer) {
+  if(ytPlayer && ytPlayer.loadVideoById) {
     ytPlayer.loadVideoById(pendingYtId);
   } else {
     ytPlayer = new YT.Player('ytPlayerDiv', {
       videoId: pendingYtId,
-      playerVars: { rel: 0, enablejsapi: 1, autoplay: 1 },
+      playerVars: { rel: 0, enablejsapi: 1, autoplay: 1, modestbranding: 1 },
       events: {
         'onStateChange': (e) => {
           if(ignoreSync) return;
@@ -353,9 +451,6 @@ function loadYtIfReady() {
     });
   }
 }
-
-let currentSrc = "";
-let isCurrentYt = false;
 
 onValue(ref(db, "rooms/"+room), snap => {
   const data = snap.val(); if(!data || !data.src) return;
@@ -375,7 +470,7 @@ onValue(ref(db, "rooms/"+room), snap => {
     if(ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo();
     
     if(!plyrInstance) {
-      plyrInstance = new Plyr(plyrVideo);
+      plyrInstance = new Plyr(plyrVideo, { controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'] });
       plyrVideo.addEventListener('play', () => emitSync(plyrVideo.currentTime, 'play'));
       plyrVideo.addEventListener('pause', () => emitSync(plyrVideo.currentTime, 'pause'));
       plyrVideo.addEventListener('seeked', () => emitSync(plyrVideo.currentTime, plyrVideo.paused ? 'pause' : 'play'));
@@ -389,59 +484,29 @@ onValue(ref(db, "rooms/"+room), snap => {
   }
 });
 
-// Receive Sync Signal
 onValue(ref(db, `rooms/${room}/sync`), snap => {
   const data = snap.val();
   if(!data || data.by === username || Date.now() - data.ts > 3000) return;
-
   ignoreSync = true;
   const t = data.time;
 
   if(isCurrentYt && ytPlayer && ytPlayer.seekTo) {
     if(Math.abs(ytPlayer.getCurrentTime() - t) > 1.5) ytPlayer.seekTo(t, true);
-    if(data.state === 'play') ytPlayer.playVideo();
-    else if (data.state === 'pause') ytPlayer.pauseVideo();
+    if(data.state === 'play') ytPlayer.playVideo(); else ytPlayer.pauseVideo();
   } else if (!isCurrentYt && plyrVideo) {
     if(Math.abs(plyrVideo.currentTime - t) > 1.5) plyrVideo.currentTime = t;
-    if(data.state === 'play') plyrVideo.play().catch(()=>{});
-    else if (data.state === 'pause') plyrVideo.pause();
+    if(data.state === 'play') plyrVideo.play().catch(()=>{}); else plyrVideo.pause();
   }
-  
   setTimeout(() => { ignoreSync = false; }, 1500);
 });
 
-// ---------------- RESIZER LOGIC ----------------
-const resizer = document.getElementById("resizer");
-const playerContainer = document.getElementById("playerContainer");
-const mainContainer = document.querySelector(".main-container");
-let isResizing = false;
-resizer.addEventListener("mousedown", initDrag);
-resizer.addEventListener("touchstart", initDrag, {passive: false});
-function initDrag(e) { isResizing = true; document.documentElement.addEventListener("mousemove", doDrag); document.documentElement.addEventListener("touchmove", doDrag, {passive: false}); document.documentElement.addEventListener("mouseup", stopDrag); document.documentElement.addEventListener("touchend", stopDrag); }
-function doDrag(e) {
-  if (!isResizing) return;
-  let clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-  let newHeight = clientY - playerContainer.getBoundingClientRect().top;
-  if (newHeight >= 100 && newHeight <= mainContainer.clientHeight - 200) { playerContainer.style.height = newHeight + "px"; }
-}
-function stopDrag() { isResizing = false; }
-
-// ---------------- CHAT LOGIC ----------------
+// ---------------- CHAT & TIMESTAMPS ----------------
 let messagesMap = {}; let replyingTo = null;
-const msgInput = document.getElementById("msg"); const msgBoxEl = document.getElementById("messages");
+const msgInput = document.getElementById("msg"); 
+const msgBoxEl = document.getElementById("messages");
 
-function addWelcomeMessage() {
-  const div = document.createElement("div"); div.className = "msg left";
-  div.innerHTML = `<div class="msgBox"><div class="name">asvm</div>Welcome to ASVM Sync Room!</div>`;
-  msgBoxEl.appendChild(div);
-}
-addWelcomeMessage();
+msgInput.addEventListener('keypress', e => { if(e.key==="Enter") window.sendMsg(); });
 
-const picker = new EmojiButton({ theme: 'dark', position: 'top-start' });
-picker.on('emoji', emoji => { msgInput.value += emoji; msgInput.focus(); });
-document.getElementById('emojiButton').addEventListener('click', () => picker.togglePicker(document.getElementById('emojiButton')));
-
-window.handleKeyPress = e => { if(e.key==="Enter") sendMsg() };
 window.initReply = id => {
   const m = messagesMap[id]; if(!m) return; replyingTo = { id, name: m.name, text: m.text };
   document.getElementById("replyPreview").style.display = "flex";
@@ -455,28 +520,48 @@ window.sendMsg = () => {
   push(ref(db,"rooms/"+room+"/chat"),{ name:username, text, time:Date.now(), reply: replyingTo });
   msgInput.value=""; cancelReply();
 }
-window.scrollToBottom = () => { msgBoxEl.scrollTop = msgBoxEl.scrollHeight; document.getElementById("newMsgDot").style.display = "none"; }
 
-onChildAdded(ref(db,"rooms/"+room+"/chat"),snap=>{
-  const m=snap.val(); messagesMap[snap.key] = m;
-  const div=document.createElement("div"); const isMe = m.name===username;
-  div.className="msg "+(isMe?"right":"left");
-  if(!isMe) msgSound.play().catch(e => {});
+onChildAdded(ref(db,"rooms/"+room+"/chat"), snap => {
+  const m = snap.val(); messagesMap[snap.key] = m;
+  const div = document.createElement("div"); 
+  const isMe = m.name === username;
+  div.className = "msg " + (isMe ? "right" : "left");
+  
+  // Format Time (HH:MM:SS AM/PM)
+  const timeStr = formatFullTime(m.time);
 
   let quoteHTML = m.reply ? `<div class="quote-block"><div class="quote-name">${m.reply.name}</div><div>${m.reply.text}</div></div>` : "";
-  div.innerHTML=`<div class="msgBox">${quoteHTML}<div class="name">${m.name}</div>${m.text}</div><button class="reply-btn" onclick="initReply('${snap.key}')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path></svg></button>`;
-  msgBoxEl.appendChild(div);
   
-  if(msgBoxEl.scrollHeight - msgBoxEl.scrollTop - msgBoxEl.clientHeight > 100 && !isMe) {
-    document.getElementById("newMsgDot").style.display = "flex";
-  } else { msgBoxEl.scrollTop = msgBoxEl.scrollHeight; }
+  div.innerHTML = `
+    <div class="msg-content-wrapper">
+      <div class="msgBox">
+        ${quoteHTML}
+        <div class="name">${m.name}</div>
+        ${m.text}
+        <div class="msg-timestamp">${timeStr}</div>
+      </div>
+      <button class="reply-btn" onclick="initReply('${snap.key}')">↩</button>
+    </div>
+  `;
+  msgBoxEl.appendChild(div);
+  msgBoxEl.scrollTop = msgBoxEl.scrollHeight;
 });
 
-window.shareRoom = () => {
-  const url = window.location.href;
-  if (navigator.share) navigator.share({ title: 'ASVM', url });
-  else { navigator.clipboard.writeText(url); showPopup("Link copied!"); }
+// Resizer logic
+const resizer = document.getElementById("resizer");
+const playerContainer = document.getElementById("playerContainer");
+const mainContainer = document.querySelector(".main-container");
+let isResizing = false;
+resizer.addEventListener("mousedown", initDrag);
+resizer.addEventListener("touchstart", initDrag, {passive: false});
+function initDrag() { isResizing = true; document.documentElement.addEventListener("mousemove", doDrag); document.documentElement.addEventListener("touchmove", doDrag, {passive: false}); document.documentElement.addEventListener("mouseup", stopDrag); document.documentElement.addEventListener("touchend", stopDrag); }
+function doDrag(e) {
+  if (!isResizing) return;
+  let clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+  let newHeight = clientY - playerContainer.getBoundingClientRect().top;
+  if (newHeight >= 100 && newHeight <= mainContainer.clientHeight - 150) playerContainer.style.height = newHeight + "px";
 }
+function stopDrag() { isResizing = false; }
 </script>
 </body>
 </html>
