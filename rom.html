@@ -7,7 +7,7 @@
 <link rel="icon" type="image/png" href="https://www.asvm.fun/20260310_010041.jpg">
 <link rel="shortcut icon" href="https://www.asvm.fun/20260310_010041.jpg" type="image/png">
 <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <meta name="description" content="ASVM is a free watch party platform to stream videos together with friends.">
 <meta name="keywords" content="ASVM, watch videos together, sync video online, watch movies together">
@@ -32,10 +32,11 @@
   --text-main: #ffffff;
   --text-muted: #a1a1aa;
   
-  /* Dynamic Accent Color (Default Mint Green) */
-  --accent-main: #00dc82; 
-  --accent-dim: rgba(0, 220, 130, 0.15);
-  --accent-text: #050505; 
+  /* Dynamic Accent Color (Default AS Cinemaa Red) */
+  --accent-main: #e50914; 
+  --accent-dim: rgba(229, 9, 20, 0.15);
+  --accent-text: #ffffff; 
+  --gold: #d4af37;
   
   --radius-xl: 24px; --radius-lg: 16px; --radius-md: 12px;
   --transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -55,13 +56,13 @@
 }
 
 body {
-  margin: 0; background: var(--bg-base); font-family: 'Inter', -apple-system, sans-serif;
+  margin: 0; background: var(--bg-base); font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
   color: var(--text-main); -webkit-font-smoothing: antialiased; overflow: hidden; height: 100dvh; display: flex; flex-direction: column; transition: background 0.3s;
 }
 
 .ambient-glow-1, .ambient-glow-2 { position: fixed; border-radius: 50%; filter: blur(120px); z-index: -1; opacity: 0.3; pointer-events: none; }
 .ambient-glow-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--accent-dim), transparent 70%); }
-.ambient-glow-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(14, 165, 233, 0.1), transparent 70%); }
+.ambient-glow-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(212, 175, 55, 0.1), transparent 70%); }
 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -274,10 +275,9 @@ body {
 <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@3.0.3/dist/index.min.js"></script>
 
-<!-- 🔥 FIREBASE MODULE WITH ALL IMPORTS FIXED AT THE TOP 🔥 -->
 <script type="module">
-import {db, ref, set, push, update, onValue, onChildAdded} from "./firebase.js";
-import { onDisconnect, remove, onChildRemoved } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import {db, ref, set, push, update, onValue, onChildAdded, remove} from "./firebase.js";
+import { onDisconnect } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const params = new URLSearchParams(location.search);
 let room = params.get("room") || "default";
@@ -295,7 +295,7 @@ function showBlockAlert() {
 }
 if(room.toLowerCase() === "complex" || room.toLowerCase() === "complexp") {
   showBlockAlert();
-  throw new Error("Blocked Room Access"); // Stops further JS execution
+  throw new Error("Blocked Room Access"); // Stops further JS execution & Firebase Fetch
 }
 
 // ---------------- COOKIES & THEMES LOGIC ----------------
@@ -309,21 +309,23 @@ function getCookie(name) {
 }
 
 const colors = [
-  {hex: '#ef4444', text: '#ffffff'}, {hex: '#14b8a6', text: '#ffffff'}, 
-  {hex: '#0ea5e9', text: '#ffffff'}, {hex: '#f59e0b', text: '#000000'}, 
-  {hex: '#ec4899', text: '#ffffff'}, {hex: '#f97316', text: '#ffffff'}, 
-  {hex: '#64748b', text: '#ffffff'}, {hex: '#78350f', text: '#ffffff'}, 
+  {hex: '#e50914', text: '#ffffff'}, // Default AS Cinemaa Red
+  {hex: '#d4af37', text: '#050505'}, // Luxury Gold
+  {hex: '#14b8a6', text: '#ffffff'}, {hex: '#0ea5e9', text: '#ffffff'}, 
+  {hex: '#f59e0b', text: '#000000'}, {hex: '#ec4899', text: '#ffffff'}, 
+  {hex: '#f97316', text: '#ffffff'}, {hex: '#64748b', text: '#ffffff'}, 
   {hex: '#8b5cf6', text: '#ffffff'}, {hex: '#3b82f6', text: '#ffffff'},
-  {hex: '#00dc82', text: '#050505'} // Default Green
+  {hex: '#00dc82', text: '#050505'}
 ];
 
 function applyThemeColor(hex, textColor) {
   document.documentElement.style.setProperty('--accent-main', hex);
   document.documentElement.style.setProperty('--accent-text', textColor);
-  document.documentElement.style.setProperty('--accent-dim', hex + '26'); 
+  document.documentElement.style.setProperty('--accent-dim', hex + '26'); // 15% opacity hex
   setCookie('asvm_color', hex);
   setCookie('asvm_color_text', textColor);
 }
+window.applyThemeColor = applyThemeColor;
 
 window.toggleDarkMode = () => {
   const isLight = document.documentElement.getAttribute('data-theme') === 'light';
@@ -342,11 +344,11 @@ if(savedMode) document.documentElement.setAttribute('data-theme', savedMode);
 const modal = document.getElementById("customModal");
 const modalContent = document.getElementById("modalContent");
 
-window.openModal = function(html) {
+function openModal(html) {
   modalContent.innerHTML = html;
   modal.style.display = 'flex';
   setTimeout(() => modal.style.opacity = '1', 10);
-  window.toggleSidebar(true);
+  toggleSidebar(true);
 }
 window.closeModal = () => {
   modal.style.opacity = '0';
@@ -356,7 +358,7 @@ window.closeModal = () => {
 window.toggleSidebar = (forceClose = false) => {
   const sb = document.getElementById('sidebar');
   const overlay = document.getElementById('sidebarOverlay');
-  if(sb.style.right === '0px' || forceClose === true) {
+  if(sb.style.right === '0px' || forceClose) {
     sb.style.right = '-300px'; overlay.style.opacity = '0';
     setTimeout(() => overlay.style.display = 'none', 300);
   } else {
@@ -370,10 +372,10 @@ window.shareRoom = () => {
   const url = window.location.href;
   if(navigator.share) navigator.share({title:'ASVM', url});
   else { navigator.clipboard.writeText(url); alert("Link Copied!"); }
-  window.toggleSidebar(true);
+  toggleSidebar(true);
 }
 window.openChangeId = () => {
-  window.openModal(`
+  openModal(`
     <h3>Change Room ID</h3>
     <input type="text" id="newIdInput" placeholder="Enter new Room ID...">
     <div>
@@ -384,11 +386,11 @@ window.openChangeId = () => {
 }
 window.changeIdExec = () => {
   const val = document.getElementById('newIdInput').value.trim();
-  if(val) window.location.href = "?room=" + val;
+  if(val) window.location.href = "?room=" + encodeURIComponent(val);
 }
 window.openDeleteId = () => {
-  window.openModal(`
-    <h3>Delete Room '${room}'?</h3>
+  openModal(`
+    <h3>Delete Room '${escapeHTML(room)}'?</h3>
     <p style="font-size:13px; color:var(--text-muted);">This clears the room database.</p>
     <div>
       <button class="btn-cancel" onclick="closeModal()">Cancel</button>
@@ -402,7 +404,14 @@ window.deleteIdExec = () => {
 }
 window.clearChatUI = () => {
   document.getElementById("messages").innerHTML = "";
-  window.toggleSidebar(true);
+  toggleSidebar(true);
+}
+
+// ---------------- SAFE HTML ESCAPING (prevents chat XSS) ----------------
+function escapeHTML(str) {
+  return String(str ?? "").replace(/[&<>"']/g, ch => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[ch]));
 }
 
 // ---------------- RECENT ACTIONS TRACKER ----------------
@@ -413,12 +422,12 @@ function formatFullTime(ts) {
 window.openRecentActions = () => {
   let listHtml = recentEvents.slice().reverse().map(e => `
     <div class="action-item">
-      <strong>${e.name}</strong> ${e.action} at ${formatFullTime(e.time)}
+      <strong>${escapeHTML(e.name)}</strong> ${escapeHTML(e.action)} at ${formatFullTime(e.time)}
     </div>
   `).join('');
   if(recentEvents.length === 0) listHtml = `<p style="color:var(--text-muted);">No recent actions.</p>`;
   
-  window.openModal(`
+  openModal(`
     <h3>Recent Actions</h3>
     <div id="recentActionsList">${listHtml}</div>
     <button class="btn-cancel" style="width:100%; margin-top:15px;" onclick="closeModal()">Close</button>
@@ -426,12 +435,13 @@ window.openRecentActions = () => {
 }
 
 window.openThemePicker = () => {
+  const currentAccent = getComputedStyle(document.documentElement).getPropertyValue('--accent-main').trim();
   const circles = colors.map(c => `
-    <div class="color-circle" style="background:${c.hex}; color:${c.hex};" 
+    <div class="color-circle ${c.hex.toLowerCase() === currentAccent.toLowerCase() ? 'active' : ''}" style="background:${c.hex}; color:${c.hex};" 
          onclick="applyThemeColor('${c.hex}', '${c.text}'); closeModal();"></div>
   `).join('');
   
-  window.openModal(`
+  openModal(`
     <h3>Select Theme Color</h3>
     <div class="color-picker">${circles}</div>
     <button class="btn-cancel" style="width:100%" onclick="closeModal()">Close</button>
@@ -456,6 +466,7 @@ onChildAdded(ref(db, `rooms/${room}/active`), snap => {
   }
 });
 
+import { onChildRemoved } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 onChildRemoved(ref(db, `rooms/${room}/active`), snap => {
   recentEvents.push({action: "Left", name: snap.val().name, time: Date.now()});
 });
@@ -501,7 +512,8 @@ function loadYtIfReady() {
 
 onValue(ref(db, "rooms/"+room), snap => {
   const data = snap.val(); if(!data || !data.src) return;
-  const url = atob(data.src);
+  let url;
+  try { url = atob(data.src); } catch(err) { console.error("Bad src encoding", err); return; }
   if(currentSrc === url) return;
   currentSrc = url;
 
@@ -509,7 +521,9 @@ onValue(ref(db, "rooms/"+room), snap => {
     isCurrentYt = true;
     plyrWrap.style.display = "none"; ytWrap.style.display = "block";
     if(plyrInstance) plyrInstance.pause();
-    pendingYtId = url.match(/((youtu.be\/)|(v=))([^#&?]*)/)[4];
+    const ytMatch = url.match(/((youtu.be\/)|(v=))([^#&?]*)/);
+    if(!ytMatch) { console.error("Could not parse YouTube ID from URL:", url); return; }
+    pendingYtId = ytMatch[4];
     loadYtIfReady();
   } else {
     isCurrentYt = false;
@@ -582,14 +596,14 @@ onChildAdded(ref(db,"rooms/"+room+"/chat"), snap => {
   // Format Time (HH:MM:SS AM/PM)
   const timeStr = formatFullTime(m.time);
 
-  let quoteHTML = m.reply ? `<div class="quote-block"><div class="quote-name">${m.reply.name}</div><div>${m.reply.text}</div></div>` : "";
+  let quoteHTML = m.reply ? `<div class="quote-block"><div class="quote-name">${escapeHTML(m.reply.name)}</div><div>${escapeHTML(m.reply.text)}</div></div>` : "";
   
   div.innerHTML = `
     <div class="msg-content-wrapper">
       <div class="msgBox">
         ${quoteHTML}
-        <div class="name">${m.name}</div>
-        ${m.text}
+        <div class="name">${escapeHTML(m.name)}</div>
+        ${escapeHTML(m.text)}
         <div class="msg-timestamp">${timeStr}</div>
       </div>
       <button class="reply-btn" onclick="initReply('${snap.key}')">
