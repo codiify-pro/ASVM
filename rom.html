@@ -1,23 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>ASVM Watch Room</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ASVM - Sync Video Meeting Room</title>
+<link rel="icon" type="image/png" href="https://www.asvm.fun/20260310_010041.jpg">
+<link rel="shortcut icon" href="https://www.asvm.fun/20260310_010041.jpg" type="image/png">
 <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+<meta name="description" content="ASVM is a free watch party platform to stream videos together with friends. Create rooms, sync playback, and chat live from any device.">
 <style>
-/* Ultra-Modern SaaS Variables & Chrome Blue Hover Fix */
-* {
-  -webkit-tap-highlight-color: transparent;
-  box-sizing: border-box;
-}
-
-*:focus {
-  outline: none;
-}
-
+/* Ultra-Modern SaaS Variables (Green/Mint Tone) */
+* { -webkit-tap-highlight-color: transparent; }
+*:focus { outline: none; }
 :root {
   --bg-base: #050505;
   --bg-panel: rgba(24, 24, 27, 0.4);
@@ -28,20 +23,15 @@
   
   --accent-mint: #00dc82; 
   --accent-mint-dim: rgba(0, 220, 130, 0.15);
-  --accent-rose: #ef4444;
   
   --radius-xl: 24px;
   --radius-lg: 16px;
   --radius-md: 12px;
   
-  --transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  
-  /* Plyr Theme Override to match ASVM Mint */
   --plyr-color-main: #00dc82;
   --plyr-video-background: #000000;
 }
 
-/* App-like fixed layout */
 body {
   margin: 0;
   background: var(--bg-base);
@@ -54,699 +44,391 @@ body {
   flex-direction: column;
 }
 
-/* Ambient Background Glows */
 .ambient-glow-1, .ambient-glow-2 {
-  position: fixed; 
-  border-radius: 50%;
-  filter: blur(120px);
-  z-index: -1;
-  opacity: 0.3;
-  pointer-events: none;
+  position: fixed; border-radius: 50%; filter: blur(120px); z-index: -1; opacity: 0.3; pointer-events: none;
 }
-.ambient-glow-1 {
-  top: -10%; left: -10%;
-  width: 50vw; height: 50vw;
-  background: radial-gradient(circle, var(--accent-mint-dim), transparent 70%);
-}
-.ambient-glow-2 {
-  bottom: -10%; right: -10%;
-  width: 40vw; height: 40vw;
-  background: radial-gradient(circle, rgba(14, 165, 233, 0.1), transparent 70%); 
-}
+.ambient-glow-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: radial-gradient(circle, var(--accent-mint-dim), transparent 70%); }
+.ambient-glow-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(14, 165, 233, 0.1), transparent 70%); }
 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
 
-/* ---------------- TOPBAR ---------------- */
+/* TOPBAR */
 .topbar {
-  background: rgba(15, 15, 18, 0.6);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  padding: 0 5%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--border-color);
-  z-index: 1000;
-  height: 64px; 
-  flex-shrink: 0; 
+  background: rgba(5, 5, 5, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  padding: 0 5%; display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--border-color); z-index: 1000; height: 64px; flex-shrink: 0; 
 }
-
-.logo {
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  color: white;
-  display: flex;
-  align-items: center;
-}
+.logo { font-size: 22px; font-weight: 800; letter-spacing: 1px; color: white; }
 .logo span { color: var(--accent-mint); }
+.topbar-actions { display: flex; align-items: center; gap: 12px; }
 
-.topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.live-badge {
+  background: rgba(255, 68, 68, 0.1); color: #ff4444; padding: 6px 14px; border-radius: 20px;
+  font-size: 13px; font-weight: 700; border: 1px solid rgba(255, 68, 68, 0.2); display: flex; align-items: center; gap: 6px;
 }
+.live-badge .pulse-dot { width: 8px; height: 8px; background: #ff4444; border-radius: 50%; box-shadow: 0 0 10px #ff4444; animation: pulseRed 2s infinite; }
+.room-badge { background: var(--accent-mint-dim); color: var(--accent-mint); padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1px solid rgba(0, 220, 130, 0.2); }
 
-.room-badge {
-  background: var(--accent-mint-dim);
-  color: var(--accent-mint);
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  border: 1px solid rgba(0, 220, 130, 0.2);
-}
-
-.menu-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-main);
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-.menu-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--accent-mint);
-}
-
-/* ---------------- SIDE MENU ---------------- */
-.side-menu-overlay {
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px);
-  z-index: 1999; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-}
-.side-menu-overlay.active { opacity: 1; pointer-events: auto; }
-
-.side-menu {
-  position: fixed; top: 0; right: -320px; width: 280px; height: 100%;
-  background: rgba(12, 12, 14, 0.95); backdrop-filter: blur(20px);
-  border-left: 1px solid var(--border-color); z-index: 2000;
-  transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  display: flex; flex-direction: column; box-shadow: -10px 0 40px rgba(0,0,0,0.5);
-}
-.side-menu.open { right: 0; }
-
-.menu-header {
-  padding: 24px; display: flex; justify-content: space-between; align-items: center;
-  border-bottom: 1px solid var(--border-color);
-}
-.menu-header h3 { margin: 0; font-size: 16px; color: var(--text-main); font-weight: 600; }
-.close-menu { 
-  background: none; border: none; color: var(--text-muted); cursor: pointer;
-  display: flex; align-items: center; justify-content: center; transition: color 0.2s, transform 0.2s;
-}
-.close-menu:hover { color: var(--text-main); transform: rotate(90deg); }
-
-.menu-items { padding: 16px; display: flex; flex-direction: column; gap: 8px; }
-.menu-item {
-  display: flex; align-items: center; gap: 14px; padding: 14px 16px;
-  border-radius: 12px; cursor: pointer; color: var(--text-muted);
-  font-size: 14px; font-weight: 500; transition: all 0.2s;
-}
-.menu-item:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
-.menu-item svg { width: 18px; height: 18px; opacity: 0.9; }
-
-.menu-item.highlight-action { color: var(--accent-mint); background: rgba(0,220,130,0.05); border: 1px solid rgba(0,220,130,0.2); }
-.menu-item.highlight-action:hover { background: rgba(0,220,130,0.15); }
-.menu-item.delete:hover { background: rgba(239, 68, 68, 0.1); color: var(--accent-rose); }
-.menu-item.delete:hover svg { color: var(--accent-rose); }
-
-/* ---------------- LAYOUT ---------------- */
+/* MAIN LAYOUT */
 .main-container {
-  max-width: 1000px; width: 100%; margin: 0 auto; padding: 16px;
-  display: flex; flex-direction: column; gap: 16px; flex: 1; min-height: 0; 
+  max-width: 1000px; width: 100%; margin: 0 auto; padding: 16px; box-sizing: border-box;
+  display: flex; flex-direction: column; gap: 12px; flex: 1; min-height: 0; 
 }
 
-/* ---------------- VIDEO PLAYER ---------------- */
+/* ADMIN PANEL (URL Changer) */
+.admin-panel {
+  background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: var(--radius-md);
+  padding: 12px 16px; display: flex; flex-direction: column; gap: 10px;
+}
+.admin-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.admin-panel input {
+  padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-color);
+  background: rgba(255,255,255,0.05); color: white; flex: 1; min-width: 150px;
+}
+.admin-panel input:focus { border-color: var(--accent-mint); }
+.admin-panel button {
+  background: var(--accent-mint); color: #000; border: none; padding: 8px 16px;
+  border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s;
+}
+.admin-panel button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,220,130,0.3); }
+#pinMsg { font-size: 13px; font-weight: 600; margin-left: 10px; }
+
+/* VIDEO PLAYER */
 .playerWrap {
-  width: 100%; aspect-ratio: 16 / 9; background: #000;
-  border-radius: var(--radius-lg); overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4); border: 1px solid var(--border-color);
+  width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: var(--radius-lg);
+  overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.4); border: 1px solid var(--border-color);
   flex-shrink: 0; position: relative; display: flex; flex-direction: column;
 }
 .plyr { width: 100%; height: 100%; flex: 1; }
+#ytContainer { width: 100%; height: 100%; display: none; }
+#ytContainer iframe { width: 100%; height: 100%; border: none; }
 
-/* Viewer Overlay for ComplexP */
-.viewer-overlay {
-  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-  z-index: 50; display: none; background: transparent; cursor: not-allowed;
-}
-
-/* ---------------- DRAGGABLE SLIDER (RESIZER) ---------------- */
-.resizer {
-  height: 24px; width: 100%; cursor: ns-resize; display: flex; align-items: center;
-  justify-content: center; flex-shrink: 0; opacity: 0.6; transition: opacity 0.2s, background 0.2s;
-  margin: 4px 0; border-radius: 12px; touch-action: none; 
-}
+/* RESIZER */
+.resizer { height: 24px; width: 100%; cursor: ns-resize; display: flex; align-items: center; justify-content: center; flex-shrink: 0; opacity: 0.6; transition: 0.2s; border-radius: 12px; touch-action: none; }
 .resizer:hover, .resizer:active { opacity: 1; background: rgba(255, 255, 255, 0.05); }
 .resizer-line { width: 40px; height: 5px; background: var(--text-muted); border-radius: 10px; transition: background 0.2s; }
 .resizer:hover .resizer-line, .resizer:active .resizer-line { background: var(--accent-mint); box-shadow: 0 0 10px var(--accent-mint); }
 
-/* ---------------- CHAT UI ---------------- */
+/* CHAT UI */
 .chatBox {
-  width: 100%; flex: 1; min-height: 0; background: var(--bg-panel);
-  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--border-color); border-radius: var(--radius-lg);
-  display: flex; flex-direction: column; overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative;
+  width: 100%; flex: 1; min-height: 0; background: var(--bg-panel); backdrop-filter: blur(24px);
+  border: 1px solid var(--border-color); border-radius: var(--radius-lg); display: flex; flex-direction: column; overflow: hidden; position: relative;
 }
+.chatHeader { background: rgba(255, 255, 255, 0.02); padding: 14px 20px; font-weight: 600; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
+.typing-indicator { margin-left: auto; font-size: 12px; color: var(--accent-mint); font-style: italic; display: none; }
 
-.chatHeader {
-  background: rgba(255, 255, 255, 0.02); padding: 14px 20px; font-weight: 600;
-  display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-color); flex-shrink: 0;
-}
-.live-dot { width: 8px; height: 8px; background: var(--accent-mint); border-radius: 50%; box-shadow: 0 0 10px var(--accent-mint); animation: pulse 2s infinite; }
-
-#messages {
-  flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; scroll-behavior: smooth;
-}
-
-/* Message Bubbles */
-.msg { display: flex; width: 100%; align-items: center; animation: messagePop 0.3s var(--transition) forwards; }
-.msgBox { max-width: 80%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.5; word-break: break-word; position: relative; transition: box-shadow 0.3s ease; }
-
-.quote-block { background: rgba(0, 0, 0, 0.25); border-left: 3px solid rgba(255,255,255,0.5); padding: 6px 10px; border-radius: 6px; font-size: 12px; margin-bottom: 8px; cursor: pointer; opacity: 0.85; transition: opacity 0.2s; }
-.quote-block:hover { opacity: 1; }
-.quote-name { font-weight: 700; margin-bottom: 2px; }
-
+#messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; scroll-behavior: smooth; }
+.msg { display: flex; width: 100%; align-items: center; }
+.msgBox { max-width: 80%; padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.5; word-break: break-word; }
 .left { justify-content: flex-start; }
 .left .msgBox { background: var(--bg-panel-hover); color: var(--text-main); border-bottom-left-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
-.left .quote-block { border-left-color: var(--accent-mint); }
-
 .right { justify-content: flex-end; }
-.right .msgBox { background: var(--accent-mint); color: #050505; border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(0, 220, 130, 0.2); font-weight: 500; }
-.right .quote-block { border-left-color: #050505; background: rgba(0,0,0,0.1); }
-
-.name { font-weight: 700; font-size: 12px; margin-bottom: 4px; opacity: 0.8; letter-spacing: 0.02em; }
+.right .msgBox { background: var(--accent-mint); color: #050505; border-bottom-right-radius: 4px; font-weight: 500; }
+.name { font-weight: 700; font-size: 12px; margin-bottom: 4px; opacity: 0.8; }
 .right .name { color: rgba(0,0,0,0.6); }
 
-/* Reply Button */
-.reply-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; opacity: 0.5; padding: 8px; transition: all 0.2s; display: flex; align-items: center; }
-.reply-btn:hover { opacity: 1; color: var(--accent-mint); transform: scale(1.1); }
-.left .reply-btn { margin-left: 5px; }
-.right .reply-btn { margin-right: 5px; order: -1; }
-
-/* Reply Preview */
-.reply-preview { display: none; background: var(--bg-panel-hover); padding: 10px 16px; border-left: 3px solid var(--accent-mint); font-size: 13px; align-items: center; justify-content: space-between; border-top: 1px solid var(--border-color); flex-shrink: 0; }
-.reply-preview-text { color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 85%; }
-.reply-preview-text strong { color: var(--text-main); }
-.cancel-reply { cursor: pointer; color: var(--accent-rose); display: flex; align-items: center; padding: 4px; }
-
-/* Chat Input */
 .chatInput { display: flex; padding: 12px; background: rgba(0, 0, 0, 0.2); border-top: 1px solid var(--border-color); gap: 10px; flex-shrink: 0; align-items: center; }
-.emoji-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 8px; display: flex; align-items: center; justify-content: center; transition: color 0.2s; }
-.emoji-btn:hover { color: var(--text-main); }
-.chatInput input { flex: 1; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: rgba(255,255,255,0.03); color: var(--text-main); font-family: inherit; font-size: 14px; transition: border-color var(--transition); }
-.chatInput input:focus { outline: none; border-color: var(--accent-mint); background: rgba(0, 220, 130, 0.02); }
-.chatInput button.send-btn { background: var(--accent-mint); border: none; color: #050505; width: 44px; height: 44px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s, box-shadow 0.2s; }
-.chatInput button.send-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 220, 130, 0.3); }
+.chatInput input { flex: 1; padding: 12px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: rgba(255,255,255,0.03); color: var(--text-main); font-size: 14px; }
+.chatInput input:focus { border-color: var(--accent-mint); }
+.send-btn { background: var(--accent-mint); border: none; color: #050505; width: 44px; height: 44px; border-radius: var(--radius-md); cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-/* Smart Scroll Dot */
-.new-msg-dot { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--accent-mint); color: #000; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; display: none; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(0, 220, 130, 0.4); z-index: 10; animation: fadeUp 0.3s forwards; }
-
-/* Popups & Animations */
-.popup { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: var(--bg-panel); backdrop-filter: blur(20px); border: 1px solid var(--accent-mint); color: var(--accent-mint); padding: 12px 24px; border-radius: 30px; display: none; font-weight: 600; font-size: 13px; box-shadow: 0 10px 30px rgba(0, 220, 130, 0.15); z-index: 1000; animation: slideDown 0.4s var(--transition) forwards; }
-
-@keyframes flashHighlight { 0% { box-shadow: 0 0 0 0 transparent; transform: scale(1); } 20% { box-shadow: 0 0 20px 5px var(--accent-mint); transform: scale(1.02); } 100% { box-shadow: 0 0 0 0 transparent; transform: scale(1); } }
-.highlight-anim { animation: flashHighlight 1.5s ease; }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes messagePop { from { opacity: 0; transform: translateY(10px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-@keyframes slideDown { 0% { opacity: 0; transform: translate(-50%, -20px); } 100% { opacity: 1; transform: translate(-50%, 0); } }
-@keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 220, 130, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 220, 130, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 220, 130, 0); } }
-
-@media(max-width: 768px) {
-  .main-container { padding: 16px; height: auto; min-height: calc(100vh - 64px); }
-  .chatBox { min-height: 450px; }
-}
+@keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(255, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 68, 68, 0); } }
 </style>
 </head>
 
 <body>
-
 <div class="ambient-glow-1"></div>
 <div class="ambient-glow-2"></div>
 
 <div class="topbar">
   <div class="logo">ASVM<span>.</span></div>
   <div class="topbar-actions">
+    <div class="live-badge"><div class="pulse-dot"></div>Live: <span id="liveCount">1</span></div>
     <div class="room-badge" id="roomId"></div>
-    <button class="menu-btn" onclick="openMenu()">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="1.5"></circle>
-        <circle cx="12" cy="5" r="1.5"></circle>
-        <circle cx="12" cy="19" r="1.5"></circle>
-      </svg>
-    </button>
-  </div>
-</div>
-
-<!-- Side Menu -->
-<div class="side-menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
-<div class="side-menu" id="sideMenu">
-  <div class="menu-header">
-    <h3>Room Options</h3>
-    <button class="close-menu" onclick="closeMenu()">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
-    </button>
-  </div>
-  <div class="menu-items">
-    
-    <!-- PIN ACTION (Only shows if complexp) -->
-    <div class="menu-item highlight-action" id="pinMenuBtn" style="display: none;" onclick="promptPin(); closeMenu();">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-      </svg>
-      Enter Room PIN
-    </div>
-
-    <div class="menu-item" onclick="shareRoom(); closeMenu();">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle>
-        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-      </svg>
-      Share Room
-    </div>
-    <div class="menu-item" onclick="copyRoomLink(); closeMenu();">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-      </svg>
-      Copy Link
-    </div>
-    <div class="menu-item" onclick="changeName(); closeMenu();">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-        <circle cx="12" cy="7" r="4"></circle>
-      </svg>
-      Change Name
-    </div>
-    <div class="menu-item delete" onclick="deleteId(); closeMenu();">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="3 6 5 6 21 6"></polyline>
-        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-      </svg>
-      Delete Name/ID
-    </div>
   </div>
 </div>
 
 <div class="main-container">
-  
+
+  <!-- ADMIN PANEL (URL CHANGER) -->
+  <div class="admin-panel" id="adminBox">
+    <div class="admin-row" id="pinSection">
+      <input type="password" id="pinInput" placeholder="Enter PIN for Room Access">
+      <button onclick="verifyPin()">Unlock</button>
+      <span id="pinMsg"></span>
+    </div>
+    <div class="admin-row" id="urlControls" style="display:none;">
+      <input type="text" id="newUrlInput" placeholder="Paste New YouTube or MP4/M3U8 URL here">
+      <button onclick="changeVideoUrl()">Update Room Video</button>
+    </div>
+  </div>
+
+  <!-- VIDEO PLAYER AREA -->
   <div class="playerWrap" id="playerContainer">
+    <!-- Plyr Player (Green theme) -->
     <video id="player" controls playsinline></video>
-    <!-- OVERLAY TO BLOCK CLICKS IF NOT AUTHORIZED -->
-    <div class="viewer-overlay" id="viewerOverlay"></div>
+    
+    <!-- YouTube Native Embed (Quality Selector & Rel=0) -->
+    <div id="ytContainer">
+      <div id="ytPlayer"></div>
+    </div>
   </div>
 
-  <div class="resizer" id="resizer" title="Drag to resize video and chat">
-    <div class="resizer-line"></div>
-  </div>
+  <div class="resizer" id="resizer"><div class="resizer-line"></div></div>
 
+  <!-- CHAT AREA -->
   <div class="chatBox" id="chat">
     <div class="chatHeader">
-      <div class="live-dot"></div>
       <span>Room Chat</span>
+      <span class="typing-indicator" id="typingDisplay">Someone is typing...</span>
     </div>
-
     <div id="messages"></div>
-    
-    <div class="new-msg-dot" id="newMsgDot" onclick="scrollToBottom()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-      New Messages
-    </div>
-
-    <div class="reply-preview" id="replyPreview">
-      <div class="reply-preview-text">
-        Replying to <strong id="replyName"></strong>: <span id="replyText"></span>
-      </div>
-      <div class="cancel-reply" onclick="cancelReply()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-      </div>
-    </div>
-
     <div class="chatInput">
-      <button class="emoji-btn" id="emojiButton">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
-      </button>
-      <input id="msg" placeholder="Type a message..." autocomplete="off" onkeypress="handleKeyPress(event)">
-      <button class="send-btn" onclick="sendMsg()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="22" y1="2" x2="11" y2="13"></line>
-          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-        </svg>
-      </button>
+      <input id="msg" placeholder="Type a message..." autocomplete="off">
+      <button class="send-btn" onclick="sendMsg()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></button>
     </div>
   </div>
-
 </div>
 
-<div class="popup" id="joinPopup"></div>
-
+<!-- Load APIs -->
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@3.0.3/dist/index.min.js"></script>
+<script src="https://www.youtube.com/iframe_api"></script>
 
 <script type="module">
-import {db,ref,onValue,push,onChildAdded} from "./firebase.js"
+import {db, ref, set, push, update, onValue, onChildAdded} from "./firebase.js";
+import { onDisconnect, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-const params=new URLSearchParams(location.search)
-const room=params.get("room")
+const params = new URLSearchParams(location.search);
+const room = params.get("room") || "default";
+document.getElementById("roomId").innerText = "Room: " + room;
 
-document.getElementById("roomId").innerText="Room: "+room
+let username = localStorage.getItem("asvm_name") || "User" + Math.floor(Math.random()*1000);
+const sessionId = Math.random().toString(36).substring(2, 15);
 
-const video=document.getElementById("player")
-let player;
+// ---------------- PRESENCE ----------------
+const myPresenceRef = ref(db, `rooms/${room}/presence/${sessionId}`);
+set(myPresenceRef, { name: username, active: true });
+onDisconnect(myPresenceRef).remove();
+window.addEventListener("beforeunload", () => remove(myPresenceRef));
 
-const msgSound = new Audio("https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3");
+onValue(ref(db, `rooms/${room}/presence`), snap => {
+  document.getElementById("liveCount").innerText = snap.val() ? Object.keys(snap.val()).length : 0;
+});
 
-// Name Restriction Logic
-let username=localStorage.getItem("asvm_name")
-
-function askName() {
-  let name = prompt("Enter your name to join the room:");
-  if (name) {
-    let cleanName = name.trim().toLowerCase();
-    if (cleanName === "asvm") {
-      alert("Sorry, the name 'asvm' is reserved. Please choose another name.");
-      return askName(); 
-    }
-    localStorage.setItem("asvm_name", name.trim());
-    return name.trim();
+// ---------------- ADMIN / PIN LOGIC ----------------
+window.verifyPin = () => {
+  const pin = document.getElementById("pinInput").value;
+  if(pin === "1234") { // <-- CHANGE PIN HERE IF YOU WANT
+    document.getElementById("pinMsg").innerText = "Access Granted!";
+    document.getElementById("pinMsg").style.color = "var(--accent-mint)";
+    document.getElementById("pinSection").style.display = "none";
+    document.getElementById("urlControls").style.display = "flex";
+  } else {
+    document.getElementById("pinMsg").innerText = "Incorrect PIN";
+    document.getElementById("pinMsg").style.color = "#ff4444";
   }
-  return "Anonymous";
 }
 
-if(!username || username.toLowerCase() === "asvm"){
-  username = askName();
+window.changeVideoUrl = () => {
+  const newUrl = document.getElementById("newUrlInput").value.trim();
+  if(!newUrl) return;
+  // Update Room URL in Firebase
+  update(ref(db, "rooms/" + room), { src: btoa(newUrl) });
+  document.getElementById("newUrlInput").value = "";
+  // Broadcast reset sync
+  set(ref(db, `rooms/${room}/sync`), { time: 0, playing: true, by: sessionId, ts: Date.now() });
 }
 
-/* User Join Notification */
-push(ref(db,"rooms/"+room+"/joins"),{ name:username, time:Date.now() })
+// ---------------- PLAYER SETUP (YT Native vs Plyr) ----------------
+const videoEl = document.getElementById("player");
+const ytContainer = document.getElementById("ytContainer");
+let plyrInstance = null;
+let ytInstance = null;
+let activePlayer = null; // 'youtube' or 'plyr'
 
-onChildAdded(ref(db,"rooms/"+room+"/joins"),(snap)=>{
-  const j=snap.val()
-  if(j.name!==username){ showPopup(j.name+" joined the room") }
-})
+let isRemoteSyncing = false; // Flag to prevent infinite loop
 
-function showPopup(text){
-  const p=document.getElementById("joinPopup"); p.innerText=text; p.style.display="block";
-  setTimeout(()=>{ p.style.display="none" },3000)
+function getYoutubeID(url){ 
+  let reg = /((youtu.be\/)|(v=)|(\/v\/)|(\/embed\/))([^#&?]*)/; 
+  let match = url.match(reg); 
+  return (match && match[6].length === 11) ? match[6] : null; 
 }
 
-/* ComplexP Logic & Video Loading */
-let sourceLoaded=false
-let roomPin = "";
-let roomType = "";
-let isAuthorized = true;
+window.onYouTubeIframeAPIReady = function() {
+  console.log("YouTube API Ready");
+}
 
-onValue(ref(db,"rooms/"+room),snap=>{
-  const data=snap.val()
-  if(!data) return
-
-  const url=atob(data.src)
-  
-  // Security checks
-  roomPin = data.pin;
-  roomType = data.type;
-  
-  if (roomType === "complexp") {
-      document.getElementById("pinMenuBtn").style.display = "flex"; // Show pin button in menu
-      const storedPin = sessionStorage.getItem("pin_verified_" + room);
-      
-      if (storedPin === "true") {
-          isAuthorized = true;
-          document.getElementById("viewerOverlay").style.display = "none";
-          // Remove hidden styles if they exist
-          let authStyle = document.getElementById("auth-style");
-          if(authStyle) authStyle.remove();
-      } else {
-          isAuthorized = false;
-          // Hide plyr controls completely via CSS injection and block clicks
-          let authStyle = document.getElementById("auth-style");
-          if(!authStyle) {
-              const style = document.createElement('style');
-              style.id = "auth-style";
-              style.innerHTML = `.plyr__controls { display: none !important; }`;
-              document.head.appendChild(style);
-          }
-          document.getElementById("viewerOverlay").style.display = "block"; // Blocks iframe clicks
+function initYoutubePlayer(videoId) {
+  if (ytInstance) {
+    ytInstance.loadVideoById(videoId);
+  } else {
+    ytInstance = new YT.Player('ytPlayer', {
+      videoId: videoId,
+      playerVars: { 'rel': 0, 'autoplay': 1, 'modestbranding': 1 },
+      events: {
+        'onStateChange': onYtStateChange
       }
+    });
   }
+}
 
-  // Initialize Player
-  if(!player) {
-      player = new Plyr(video);
+// Plyr Setup
+plyrInstance = new Plyr(videoEl, { controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'] });
+
+plyrInstance.on('play', () => broadcastSync(plyrInstance.currentTime, true));
+plyrInstance.on('pause', () => broadcastSync(plyrInstance.currentTime, false));
+plyrInstance.on('seeked', () => broadcastSync(plyrInstance.currentTime, plyrInstance.playing));
+
+function onYtStateChange(event) {
+  if(isRemoteSyncing) return; // ignore if it was triggered by another user
+  
+  const time = ytInstance.getCurrentTime();
+  if (event.data === YT.PlayerState.PLAYING) {
+    broadcastSync(time, true);
+  } else if (event.data === YT.PlayerState.PAUSED) {
+    broadcastSync(time, false);
+  } else if (event.data === YT.PlayerState.BUFFERING) {
+    // Usually happens on seek
+    broadcastSync(time, true);
   }
+}
 
-  if(sourceLoaded) return
-  sourceLoaded=true
+// Watch for URL Changes
+onValue(ref(db, "rooms/" + room), snap => {
+  const data = snap.val(); if(!data || !data.src) return;
+  const url = atob(data.src);
 
-  // NATIVE PLYR YOUTUBE INTEGRATION
-  if(url.includes("youtube.com") || url.includes("youtu.be")){
-    const ytId = getYoutubeID(url);
-    if(ytId) {
-      player.source = {
-        type: 'video',
-        sources: [ { src: ytId, provider: 'youtube' } ]
-      };
+  const ytId = getYoutubeID(url);
+  if (ytId) {
+    // Switch to YT Player
+    activePlayer = 'youtube';
+    document.querySelector(".plyr").style.display = "none";
+    ytContainer.style.display = "block";
+    if (window.YT && window.YT.Player) {
+      initYoutubePlayer(ytId);
+    } else {
+      setTimeout(() => initYoutubePlayer(ytId), 1000); // wait if api loading
+    }
+  } else {
+    // Switch to Plyr
+    activePlayer = 'plyr';
+    ytContainer.style.display = "none";
+    document.querySelector(".plyr").style.display = "block";
+    
+    if(url.includes(".m3u8") && Hls.isSupported()){
+      const hls = new Hls(); hls.loadSource(url); hls.attachMedia(videoEl);
+    } else {
+      plyrInstance.source = { type: "video", sources: [{ src: url, type: "video/mp4" }] };
     }
   }
-  else if(url.includes(".m3u8")){
-    if(Hls.isSupported()){
-      const hls=new Hls(); hls.loadSource(url); hls.attachMedia(video);
-    }
+});
+
+// ---------------- SYNC LOGIC (SEEK, PLAY, PAUSE) ----------------
+function broadcastSync(time, isPlaying) {
+  if(isRemoteSyncing) return;
+  set(ref(db, `rooms/${room}/sync`), {
+    time: time,
+    playing: isPlaying,
+    by: sessionId,
+    ts: Date.now()
+  });
+}
+
+onValue(ref(db, `rooms/${room}/sync`), snap => {
+  const data = snap.val();
+  if(!data || data.by === sessionId) return; // Don't sync with yourself
+
+  isRemoteSyncing = true;
+  
+  if (activePlayer === 'youtube' && ytInstance && typeof ytInstance.seekTo === 'function') {
+    const diff = Math.abs(ytInstance.getCurrentTime() - data.time);
+    if(diff > 2) ytInstance.seekTo(data.time, true);
+    
+    if (data.playing) ytInstance.playVideo();
+    else ytInstance.pauseVideo();
+    
+  } else if (activePlayer === 'plyr') {
+    const diff = Math.abs(plyrInstance.currentTime - data.time);
+    if(diff > 2) plyrInstance.currentTime = data.time;
+    
+    if (data.playing) plyrInstance.play();
+    else plyrInstance.pause();
   }
-  else{
-    player.source={ type:"video", sources:[ { src:url, type:"video/mp4" } ] }
-  }
-})
 
-function getYoutubeID(url){
-  let reg=/((youtu.be\/)|(v=))([^#&?]*)/
-  let match=url.match(reg)
-  return(match&&match[4])?match[4]:null
-}
+  // Release remote lock after a short delay
+  setTimeout(() => { isRemoteSyncing = false; }, 500);
+});
 
-/* --- Menu Functions --- */
-window.openMenu = () => {
-  document.getElementById("sideMenu").classList.add("open");
-  document.getElementById("menuOverlay").classList.add("active");
-}
-window.closeMenu = () => {
-  document.getElementById("sideMenu").classList.remove("open");
-  document.getElementById("menuOverlay").classList.remove("active");
-}
 
-window.shareRoom = () => {
-  const url = window.location.href;
-  if (navigator.share) { navigator.share({ title: 'ASVM Watch Room', url: url }); } 
-  else { navigator.clipboard.writeText(url); showPopup("Link copied!"); }
-}
-
-window.copyRoomLink = () => {
-  navigator.clipboard.writeText(window.location.href);
-  showPopup("Room link copied!");
-}
-
-window.changeName = () => {
-  let newName = prompt("Enter your new name:");
-  if (newName) {
-    if (newName.trim().toLowerCase() === "asvm") { alert("Name 'asvm' is reserved."); } 
-    else { localStorage.setItem("asvm_name", newName.trim()); location.reload(); }
-  }
-}
-
-window.deleteId = () => {
-  if(confirm("Delete your ID? You will have to enter a new name to join again.")) {
-    localStorage.removeItem("asvm_name"); location.reload();
-  }
-}
-
-window.promptPin = function() {
-    const inputPin = prompt("Enter 4-digit Room PIN to unlock Host Controls:");
-    if (inputPin === roomPin) {
-        sessionStorage.setItem("pin_verified_" + room, "true");
-        alert("Access Granted! You are now the Host.");
-        location.reload();
-    } else if (inputPin) {
-        alert("Invalid PIN. You are in Viewer Mode.");
-    }
-}
-
-/* ---------------- SLIDER (RESIZER) LOGIC ---------------- */
+// ---------------- RESIZER & CHAT ----------------
 const resizer = document.getElementById("resizer");
 const playerContainer = document.getElementById("playerContainer");
-const mainContainer = document.querySelector(".main-container");
-
 let isResizing = false;
-let startY = 0;
-let startHeight = 0;
-
-resizer.addEventListener("mousedown", initDrag, false);
+resizer.addEventListener("mousedown", initDrag);
 resizer.addEventListener("touchstart", initDrag, {passive: false});
 
-function initDrag(e) {
+function initDrag() {
   isResizing = true;
-  startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
-  startHeight = playerContainer.getBoundingClientRect().height;
-  playerContainer.style.transition = 'none';
-  
-  document.documentElement.addEventListener("mousemove", doDrag, false);
+  document.documentElement.addEventListener("mousemove", doDrag);
   document.documentElement.addEventListener("touchmove", doDrag, {passive: false});
-  document.documentElement.addEventListener("mouseup", stopDrag, false);
-  document.documentElement.addEventListener("touchend", stopDrag, false);
+  document.documentElement.addEventListener("mouseup", stopDrag);
+  document.documentElement.addEventListener("touchend", stopDrag);
 }
-
 function doDrag(e) {
   if (!isResizing) return;
-  if(e.cancelable) e.preventDefault(); 
-  
   let clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-  let newHeight = startHeight + (clientY - startY);
-  
-  let minHeight = 100; 
-  let maxHeight = mainContainer.clientHeight - 250; 
-  
-  if (newHeight >= minHeight && newHeight <= maxHeight) {
-    playerContainer.style.aspectRatio = 'auto'; 
+  let newHeight = clientY - playerContainer.getBoundingClientRect().top;
+  if (newHeight >= 100 && newHeight <= document.querySelector('.main-container').clientHeight - 150) {
     playerContainer.style.height = newHeight + "px";
   }
 }
+function stopDrag() { isResizing = false; }
 
-function stopDrag(e) {
-  isResizing = false;
-  document.documentElement.removeEventListener("mousemove", doDrag, false);
-  document.documentElement.removeEventListener("touchmove", doDrag, false);
-  document.documentElement.removeEventListener("mouseup", stopDrag, false);
-  document.documentElement.removeEventListener("touchend", stopDrag, false);
-}
 
-/* ---------------- CHAT, REPLY & EMOJI LOGIC ---------------- */
-let messagesMap = {}; 
-let replyingTo = null;
 const msgInput = document.getElementById("msg");
-
-function addWelcomeMessage() {
-  const msgBoxEl = document.getElementById("messages");
-  const div = document.createElement("div");
-  div.className = "msg left";
-  div.innerHTML = `
-    <div class="msgBox" style="border: 1px solid var(--accent-mint);">
-      <div class="name" style="color: var(--accent-mint);">ASVM System</div>
-      Welcome to ASVM Player!
-    </div>
-  `;
-  msgBoxEl.appendChild(div);
-}
-addWelcomeMessage();
-
-const picker = new EmojiButton({ theme: 'dark', position: 'top-start' });
-const emojiBtn = document.getElementById('emojiButton');
-
-picker.on('emoji', emoji => { msgInput.value += emoji; msgInput.focus(); });
-emojiBtn.addEventListener('click', () => { picker.togglePicker(emojiBtn); });
-
-window.handleKeyPress=function(e){ if(e.key==="Enter"){ sendMsg() } }
-
-window.initReply = function(msgId) {
-  const m = messagesMap[msgId];
-  if(!m) return;
-  replyingTo = { id: msgId, name: m.name, text: m.text };
-  document.getElementById("replyPreview").style.display = "flex";
-  document.getElementById("replyName").innerText = m.name;
-  let snippet = m.text.length > 30 ? m.text.substring(0, 30) + "..." : m.text;
-  document.getElementById("replyText").innerText = snippet;
-  msgInput.focus();
-}
-
-window.cancelReply = function() {
-  replyingTo = null;
-  document.getElementById("replyPreview").style.display = "none";
-}
-
-window.sendMsg=function(){
-  const text=msgInput.value
-  if(!text) return
-  push(ref(db,"rooms/"+room+"/chat"),{ name:username, text:text, time:Date.now(), reply: replyingTo })
-  msgInput.value=""
-  cancelReply(); 
-}
-
-window.scrollToMsg = function(id) {
-  const el = document.getElementById("msg-" + id);
-  if(el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    el.querySelector('.msgBox').classList.remove("highlight-anim");
-    void el.offsetWidth;
-    el.querySelector('.msgBox').classList.add("highlight-anim");
-  }
-}
-
 const msgBoxEl = document.getElementById("messages");
-const newMsgDot = document.getElementById("newMsgDot");
 
-msgBoxEl.addEventListener("scroll", () => {
-  if(msgBoxEl.scrollHeight - msgBoxEl.scrollTop - msgBoxEl.clientHeight < 50) { newMsgDot.style.display = "none"; }
+// Typing Indicator
+const typingRef = ref(db, `rooms/${room}/typing/${sessionId}`);
+let typingTimeout;
+msgInput.addEventListener('input', () => {
+  set(typingRef, username);
+  clearTimeout(typingTimeout);
+  typingTimeout = setTimeout(() => remove(typingRef), 1000);
 });
 
-window.scrollToBottom = function() {
-  msgBoxEl.scrollTop = msgBoxEl.scrollHeight;
-  newMsgDot.style.display = "none";
+onValue(ref(db, `rooms/${room}/typing`), (snap) => {
+  const typingDisplay = document.getElementById("typingDisplay");
+  if (!snap.val()) { typingDisplay.style.display = 'none'; return; }
+  const typists = Object.values(snap.val()).filter(n => n !== username);
+  if (typists.length > 0) {
+    typingDisplay.innerText = typists[0] + " is typing...";
+    typingDisplay.style.display = 'block';
+  } else {
+    typingDisplay.style.display = 'none';
+  }
+});
+
+msgInput.addEventListener('keypress', e => { if(e.key === "Enter") window.sendMsg(); });
+
+window.sendMsg = () => {
+  const text = msgInput.value.trim(); if(!text) return;
+  push(ref(db,"rooms/"+room+"/chat"),{ name:username, text, time:Date.now() });
+  msgInput.value=""; remove(typingRef);
 }
 
-onChildAdded(ref(db,"rooms/"+room+"/chat"),snap=>{
-  const m=snap.val()
-  const msgId = snap.key;
-  messagesMap[msgId] = m; 
-
-  const div=document.createElement("div")
-  div.id = "msg-" + msgId;
-  const isMe = m.name===username;
-  div.className="msg "+(isMe?"right":"left")
-
-  const isScrolledUp = msgBoxEl.scrollHeight - msgBoxEl.scrollTop - msgBoxEl.clientHeight > 50;
-
-  if(!isMe){ msgSound.play().catch(e => console.log("Sound blocked")); }
-
-  let quoteHTML = "";
-  if(m.reply) {
-    let snippet = m.reply.text.length > 50 ? m.reply.text.substring(0,50) + "..." : m.reply.text;
-    quoteHTML = `
-      <div class="quote-block" onclick="scrollToMsg('${m.reply.id}')">
-        <div class="quote-name">${m.reply.name}</div>
-        <div>${snippet}</div>
-      </div>
-    `;
-  }
-
-  div.innerHTML=`
-    <div class="msgBox">
-      ${quoteHTML}
-      <div class="name">${m.name}</div>
-      ${m.text}
-    </div>
-    <button class="reply-btn" onclick="initReply('${msgId}')" title="Reply">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path></svg>
-    </button>
-  `
-
-  msgBoxEl.appendChild(div)
-
-  if(!isScrolledUp) { msgBoxEl.scrollTop = msgBoxEl.scrollHeight; } 
-  else { newMsgDot.style.display = "flex"; }
-})
+onChildAdded(ref(db,"rooms/"+room+"/chat"), snap => {
+  const m = snap.val(); 
+  const div = document.createElement("div");
+  const isMe = m.name === username;
+  div.className = "msg " + (isMe ? "right" : "left");
+  div.innerHTML = `<div class="msgBox"><div class="name">${m.name}</div>${m.text}</div>`;
+  msgBoxEl.appendChild(div);
+  msgBoxEl.scrollTop = msgBoxEl.scrollHeight;
+});
 </script>
-
 </body>
 </html>
