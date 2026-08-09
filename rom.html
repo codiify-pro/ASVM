@@ -50,17 +50,15 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
 
-/* ---------------- REFINED HEADER ---------------- */
+/* ---------------- REFINED HEADER (Curved / Floating) ---------------- */
+.topbar-wrapper { padding: 14px 16px 0; flex-shrink: 0; }
 .topbar {
-  background: linear-gradient(180deg, rgba(28,28,32,0.85), rgba(12,12,14,0.65));
+  background: linear-gradient(180deg, rgba(30,30,34,0.9), rgba(14,14,16,0.72));
   backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
-  padding: 0 4%; display: flex; justify-content: space-between; align-items: center;
-  border-bottom: 1px solid var(--border-color); position: relative; z-index: 1000; height: 72px; flex-shrink: 0;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.35);
-}
-.topbar::after {
-  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--accent-main), transparent); opacity: 0.45;
+  padding: 0 22px; display: flex; justify-content: space-between; align-items: center;
+  border: 1px solid var(--border-color); border-radius: 999px; position: relative; z-index: 1000; height: 66px;
+  max-width: 1000px; margin: 0 auto; width: 100%;
+  box-shadow: 0 10px 34px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
 }
 .logo { font-size: 23px; font-weight: 800; letter-spacing: 0.5px; color: var(--text-main); display: flex; align-items: center; gap: 6px; }
 .logo span { color: var(--accent-main); text-shadow: 0 0 18px var(--accent-dim); }
@@ -85,7 +83,7 @@ body {
 .lang-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--accent-main); }
 .lang-btn:hover svg { color: var(--accent-main); }
 .lang-menu {
-  position: absolute; right: 0; top: 120%; background: #18181b; border: 1px solid var(--border-color);
+  position: absolute; right: 0; top: 130%; background: #18181b; border: 1px solid var(--border-color);
   border-radius: var(--radius-md); box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; flex-direction: column; width: 140px; z-index: 2500; overflow: hidden;
 }
 .lang-menu button {
@@ -124,8 +122,6 @@ body {
 /* ---------------- LAYOUT & VIDEO PLAYER ---------------- */
 .main-container { max-width: 1000px; width: 100%; margin: 0 auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; flex: 1; min-height: 0; }
 .playerWrap { width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.4); border: 1px solid var(--border-color); flex-shrink: 0; position: relative; }
-#ytWrapper, #plyrWrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-#ytPlayerDiv, #ytWrapper iframe { width: 100% !important; height: 100% !important; position: absolute; top: 0; left: 0; border: 0; }
 .plyr { width: 100%; height: 100%; }
 
 /* Resizer */
@@ -154,10 +150,17 @@ body {
 .right .msg-timestamp { margin-right: 2px; text-align: right; }
 
 .quote-block { background: rgba(0, 0, 0, 0.25); border-left: 3px solid rgba(255,255,255,0.5); padding: 6px 10px; border-radius: 6px; font-size: 12px; margin-bottom: 8px; cursor: pointer; opacity: 0.85; transition: 0.2s; }
-.quote-block:hover { opacity: 1; }
+.quote-block:hover { opacity: 1; background: rgba(0,0,0,0.35); }
 .quote-name { font-weight: 700; margin-bottom: 2px; }
 .left .quote-block { border-left-color: var(--accent-main); }
 .right .quote-block { border-left-color: var(--accent-text); }
+
+.msgBox.highlighted { animation: highlightPulse 1.6s ease; }
+@keyframes highlightPulse {
+  0% { box-shadow: 0 0 0 0 var(--accent-main); background-color: var(--accent-dim); }
+  60% { box-shadow: 0 0 0 10px rgba(0,220,130,0); }
+  100% { box-shadow: 0 0 0 0 rgba(0,220,130,0); }
+}
 
 .name { font-weight: 700; font-size: 12px; margin-bottom: 4px; opacity: 0.8; letter-spacing: 0.02em; }
 .reply-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; opacity: 0.5; padding: 6px; transition: 0.2s; display: flex; align-items: center; }
@@ -180,17 +183,29 @@ body {
 .emoji-btn:hover { color: var(--text-main); }
 
 /* ---------------- CUSTOM MODALS ---------------- */
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 3000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
-.modal-box { background: var(--bg-panel); border: 1px solid var(--border-color); padding: 24px; border-radius: var(--radius-lg); width: 90%; max-width: 400px; box-shadow: 0 15px 40px rgba(0,0,0,0.5); text-align: center; }
-.modal-box h3 { margin: 0 0 15px; color: var(--text-main); }
-.modal-box input { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.2); color: var(--text-main); font-size: 14px; outline: none; }
-.modal-box input:focus { border-color: var(--accent-main); }
-.modal-box button { padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; margin: 5px; }
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); z-index: 3000; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.25s ease; }
+.modal-box { background: var(--bg-panel); border: 1px solid var(--border-color); padding: 26px; border-radius: var(--radius-xl); width: 90%; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); text-align: center; backdrop-filter: blur(20px); }
+.modal-box h3 { margin: 0 0 15px; color: var(--text-main); font-size: 19px; }
+.modal-box input { width: 100%; padding: 13px 16px; margin-bottom: 15px; border-radius: 14px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.25); color: var(--text-main); font-size: 14px; outline: none; transition: 0.2s; }
+.modal-box input:focus { border-color: var(--accent-main); box-shadow: 0 0 0 3px var(--accent-dim); }
+.modal-box button { padding: 11px 22px; border-radius: 999px; font-weight: 600; cursor: pointer; border: none; margin: 5px; transition: 0.2s; }
 .btn-primary { background: var(--accent-main); color: var(--accent-text); }
-.btn-cancel { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px var(--accent-dim); }
+.btn-cancel { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); }
+.btn-cancel:hover { background: rgba(255,255,255,0.1); }
 
 #recentActionsList { max-height: 280px; overflow-y: auto; text-align: left; font-size: 13px; display: flex; flex-direction: column; gap: 8px; }
-.action-item { padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px; border-left: 3px solid var(--accent-main); }
+.action-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: rgba(255,255,255,0.05); border-radius: 12px; border: 1px solid var(--border-color); transition: 0.2s; }
+.action-item:hover { background: rgba(255,255,255,0.08); border-color: var(--accent-main); }
+.action-avatar { width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color: #050505; }
+.action-body { flex: 1; min-width: 0; }
+.action-line { color: var(--text-main); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.action-label { color: var(--text-muted); font-weight: 500; }
+.action-time { color: var(--text-muted); font-size: 11px; margin-top: 2px; }
+.action-type-icon { flex-shrink: 0; display: flex; }
+.action-type-icon svg { width: 16px; height: 16px; }
+
+.live-summary { display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(0,220,130,0.08); border: 1px solid rgba(0,220,130,0.2); border-radius: 999px; padding: 8px 16px; margin-bottom: 16px; font-size: 13px; color: var(--text-main); }
 
 /* Hide default Google Translate element completely to prevent watermark/banner */
 #google_translate_element, .goog-te-banner-frame, .goog-te-gadget, .skiptranslate { display: none !important; }
@@ -255,6 +270,7 @@ body { top: 0px !important; }
     </div>
   </div>
 
+  <div class="topbar-wrapper">
   <div class="topbar" translate="no">
     <div class="logo">ASVM<span>.</span></div>
     <div class="topbar-right">
@@ -289,17 +305,11 @@ body { top: 0px !important; }
       </button>
     </div>
   </div>
+  </div>
 
   <div class="main-container">
     <div class="playerWrap" id="playerContainer" translate="no">
-      <!-- YT NATIVE PLAYER (Fixed Positioning) -->
-      <div id="ytWrapper" style="display:none;">
-        <div id="ytPlayerDiv"></div>
-      </div>
-      <!-- PLYR PLAYER -->
-      <div id="plyrWrapper" style="display:none;">
-        <video id="player" controls playsinline></video>
-      </div>
+      <video id="player" controls playsinline></video>
     </div>
 
     <div class="resizer" id="resizer">
@@ -333,7 +343,6 @@ body { top: 0px !important; }
   </div>
 </div>
 
-<script src="https://www.youtube.com/iframe_api"></script>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@3.0.3/dist/index.min.js"></script>
@@ -464,16 +473,48 @@ function initRoomLogic() {
   function formatFullTime(ts) {
     return new Date(ts).toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit', second:'2-digit', hour12:true});
   }
+
+  const avatarPalette = ['#00dc82', '#0ea5e9', '#f59e0b', '#ec4899', '#8b5cf6', '#ef4444', '#14b8a6', '#f97316'];
+  function avatarColor(name) {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    return avatarPalette[Math.abs(hash) % avatarPalette.length];
+  }
+
+  const icons = {
+    joined: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>',
+    left: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>',
+    messaged: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>'
+  };
+  function actionMeta(action) {
+    if (action.includes('joined')) return { icon: icons.joined, color: '#00dc82', label: 'joined' };
+    if (action.includes('left')) return { icon: icons.left, color: '#ef4444', label: 'left' };
+    return { icon: icons.messaged, color: '#0ea5e9', label: 'sent a message' };
+  }
+
   window.openRecentActions = () => {
-    let listHtml = recentEvents.map(e => `
+    let listHtml = recentEvents.map(e => {
+      const meta = actionMeta(e.action);
+      const initial = (e.name || '?').trim().charAt(0).toUpperCase();
+      return `
       <div class="action-item">
-        <strong style="color:var(--text-main);">${e.name}</strong> ${e.action} <span style="color:var(--text-muted)">${formatFullTime(e.time)}</span>
+        <div class="action-avatar" style="background:${avatarColor(e.name)}">${initial}</div>
+        <div class="action-body">
+          <div class="action-line"><strong>${e.name}</strong> <span class="action-label">${meta.label}</span></div>
+          <div class="action-time">${formatFullTime(e.time)}</div>
+        </div>
+        <div class="action-type-icon" style="color:${meta.color}">${meta.icon}</div>
       </div>
-    `).join('');
-    if(recentEvents.length === 0) listHtml = `<p style="color:var(--text-muted);">No recent actions.</p>`;
+    `;
+    }).join('');
+    if(recentEvents.length === 0) listHtml = `<p style="color:var(--text-muted); text-align:center; padding:10px 0;">No recent actions.</p>`;
     
     window.openModal(`
       <h3>Recent Actions</h3>
+      <div class="live-summary">
+        <div class="live-dot-header"></div>
+        <span><strong>${liveCount}</strong> live right now</span>
+      </div>
       <div id="recentActionsList">${listHtml}</div>
       <button class="btn-cancel" style="width:100%; margin-top:15px;" onclick="closeModal()">Close</button>
     `);
@@ -495,10 +536,11 @@ function initRoomLogic() {
   window.addEventListener("beforeunload", () => remove(myJoinRef));
 
   // Update Header Live Count
+  let liveCount = 0;
   onValue(ref(db, `rooms/${room}/active`), snap => {
     const data = snap.val();
-    const count = data ? Object.keys(data).length : 0;
-    document.getElementById("headerLiveCount").innerText = count;
+    liveCount = data ? Object.keys(data).length : 0;
+    document.getElementById("headerLiveCount").innerText = liveCount;
   });
 
   onChildAdded(ref(db, `rooms/${room}/active`), snap => {
@@ -513,49 +555,28 @@ function initRoomLogic() {
     if(data) addEventToTracker(data.name, "left the room at", Date.now());
   });
 
-  // ---------------- PLAYER & SYNC LOGIC ----------------
+  // ---------------- PLAYER & SYNC LOGIC (Plyr only, incl. YouTube) ----------------
   let plyrInstance = null;
-  let ytPlayer = null;
   const plyrVideo = document.getElementById("player");
-  const ytWrap = document.getElementById("ytWrapper");
-  const plyrWrap = document.getElementById("plyrWrapper");
-
-  let ytApiReady = false;
-  let pendingYtId = null;
   let currentSrc = "";
-  let isCurrentYt = false;
   let ignoreSync = false;
-
-  window.onYouTubeIframeAPIReady = () => { ytApiReady = true; loadYtIfReady(); };
 
   function emitSync(time, state) {
     if (ignoreSync) return;
     update(ref(db, `rooms/${room}/sync`), { time, state, by: username, ts: Date.now() });
   }
 
-  function loadYtIfReady() {
-    if(!ytApiReady || !pendingYtId) return;
-    if(ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
-      ytPlayer.loadVideoById(pendingYtId);
-    } else {
-      // Fix for YouTube Embedded Black Screen issue - force full width/height
-      ytPlayer = new YT.Player('ytPlayerDiv', {
-        videoId: pendingYtId,
-        width: '100%',
-        height: '100%',
-        playerVars: { 
-          rel: 0, enablejsapi: 1, autoplay: 1, modestbranding: 1, playsinline: 1, origin: window.location.origin 
-        },
-        events: {
-          'onReady': (e) => { e.target.playVideo(); },
-          'onStateChange': (e) => {
-            if(ignoreSync) return;
-            if(e.data === YT.PlayerState.PLAYING) emitSync(ytPlayer.getCurrentTime(), 'play');
-            if(e.data === YT.PlayerState.PAUSED) emitSync(ytPlayer.getCurrentTime(), 'pause');
-          }
-        }
-      });
-    }
+  function ensurePlyr() {
+    if (plyrInstance) return plyrInstance;
+    plyrInstance = new Plyr(plyrVideo, {
+      controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
+      settings: ['quality', 'speed'],
+      youtube: { noCookie: false, rel: 0, showinfo: 0, iv_load_policy: 3, modestbranding: 1 }
+    });
+    plyrInstance.on('play', () => emitSync(plyrInstance.currentTime, 'play'));
+    plyrInstance.on('pause', () => emitSync(plyrInstance.currentTime, 'pause'));
+    plyrInstance.on('seeked', () => emitSync(plyrInstance.currentTime, plyrInstance.paused ? 'pause' : 'play'));
+    return plyrInstance;
   }
 
   onValue(ref(db, "rooms/"+room), snap => {
@@ -564,45 +585,36 @@ function initRoomLogic() {
     if(currentSrc === url) return;
     currentSrc = url;
 
-    if (url.includes("youtube.com") || url.includes("youtu.be")) {
-      isCurrentYt = true;
-      plyrWrap.style.display = "none"; ytWrap.style.display = "block";
-      if(plyrInstance) plyrInstance.pause();
-      pendingYtId = url.match(/((youtu.be\/)|(v=))([^#&?]*)/)[4];
-      loadYtIfReady();
-    } else {
-      isCurrentYt = false;
-      ytWrap.style.display = "none"; plyrWrap.style.display = "block";
-      if(ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo();
-      
-      if(!plyrInstance) {
-        plyrInstance = new Plyr(plyrVideo, { controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'] });
-        plyrVideo.addEventListener('play', () => emitSync(plyrVideo.currentTime, 'play'));
-        plyrVideo.addEventListener('pause', () => emitSync(plyrVideo.currentTime, 'pause'));
-        plyrVideo.addEventListener('seeked', () => emitSync(plyrVideo.currentTime, plyrVideo.paused ? 'pause' : 'play'));
-      }
+    const p = ensurePlyr();
 
-      if(url.includes(".m3u8")) {
-        if(Hls.isSupported()){ const hls=new Hls(); hls.loadSource(url); hls.attachMedia(plyrVideo); }
-      } else {
-        plyrInstance.source = { type:"video", sources:[{ src:url, type:"video/mp4" }] };
-      }
+    if (url.includes("youtube.com") || url.includes("youtu.be")) {
+      const ytId = url.match(/((youtu.be\/)|(v=))([^#&?]*)/)[4];
+      p.source = { type: 'video', sources: [{ src: ytId, provider: 'youtube' }] };
+    } else if (url.includes(".m3u8")) {
+      // Force a native <video> element back before attaching hls.js
+      p.source = { type: 'video', sources: [{ src: '', type: 'video/mp4' }] };
+      setTimeout(() => {
+        const mediaEl = p.media;
+        if (Hls.isSupported()) {
+          const hls = new Hls();
+          hls.loadSource(url);
+          hls.attachMedia(mediaEl);
+        } else if (mediaEl.canPlayType('application/vnd.apple.mpegurl')) {
+          mediaEl.src = url;
+        }
+      }, 60);
+    } else {
+      p.source = { type: 'video', sources: [{ src: url, type: 'video/mp4' }] };
     }
   });
 
   onValue(ref(db, `rooms/${room}/sync`), snap => {
     const data = snap.val();
-    if(!data || data.by === username || Date.now() - data.ts > 3000) return;
+    if(!data || !plyrInstance || data.by === username || Date.now() - data.ts > 3000) return;
     ignoreSync = true;
     const t = data.time;
-
-    if(isCurrentYt && ytPlayer && ytPlayer.seekTo) {
-      if(Math.abs(ytPlayer.getCurrentTime() - t) > 1.5) ytPlayer.seekTo(t, true);
-      if(data.state === 'play') ytPlayer.playVideo(); else ytPlayer.pauseVideo();
-    } else if (!isCurrentYt && plyrVideo) {
-      if(Math.abs(plyrVideo.currentTime - t) > 1.5) plyrVideo.currentTime = t;
-      if(data.state === 'play') plyrVideo.play().catch(()=>{}); else plyrVideo.pause();
-    }
+    if(Math.abs(plyrInstance.currentTime - t) > 1.5) plyrInstance.currentTime = t;
+    if(data.state === 'play') plyrInstance.play().catch(()=>{}); else plyrInstance.pause();
     setTimeout(() => { ignoreSync = false; }, 1500);
   });
 
@@ -627,6 +639,16 @@ function initRoomLogic() {
   }
   window.cancelReply = () => { replyingTo = null; document.getElementById("replyPreview").style.display = "none"; }
 
+  window.scrollToMessage = (id) => {
+    const el = document.getElementById('msg-' + id);
+    if(!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.remove('highlighted');
+    void el.offsetWidth; // restart animation if clicked again quickly
+    el.classList.add('highlighted');
+    setTimeout(() => el.classList.remove('highlighted'), 1600);
+  }
+
   window.sendMsg = () => {
     const text=msgInput.value.trim(); if(!text) return;
     push(ref(db,"rooms/"+room+"/chat"),{ name:username, text, time:Date.now(), reply: replyingTo });
@@ -646,11 +668,11 @@ function initRoomLogic() {
     div.className = "msg " + (isMe ? "right" : "left");
     
     const timeStr = formatFullTime(m.time);
-    let quoteHTML = m.reply ? `<div class="quote-block"><div class="quote-name">${m.reply.name}</div><div>${m.reply.text}</div></div>` : "";
+    let quoteHTML = m.reply ? `<div class="quote-block" onclick="scrollToMessage('${m.reply.id}')"><div class="quote-name">${m.reply.name}</div><div>${m.reply.text}</div></div>` : "";
     
     div.innerHTML = `
       <div class="msg-content-wrapper">
-        <div class="msgBox">
+        <div class="msgBox" id="msg-${snap.key}">
           ${quoteHTML}
           <div class="name">${m.name}</div>
           ${m.text}
