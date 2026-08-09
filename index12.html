@@ -10,21 +10,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
-/* Modern SaaS Dark Mode Variables */
+/* ---------------- MODERN SAAS DARK VARIABLES ---------------- */
 * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 *:focus { outline: none; }
+html { scroll-behavior: smooth; }
 
 :root {
-  --bg-base: #050505;
+  --bg-base: #030303;
   --bg-panel: rgba(24, 24, 27, 0.65);
   --border-color: rgba(255, 255, 255, 0.08);
   --text-main: #f4f4f5;
   --text-muted: #a1a1aa;
   --accent-mint: #00dc82; 
   --accent-mint-hover: #00b368;
-  --radius-xl: 24px;
-  --radius-lg: 16px;
-  --radius-md: 12px;
+  --radius-xl: 24px; --radius-lg: 16px; --radius-md: 12px;
   --transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -38,19 +37,23 @@ body {
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
 
 /* Background Glows */
-.ambient-glow { position: absolute; border-radius: 50%; filter: blur(120px); z-index: -1; opacity: 0.2; pointer-events: none; }
+.ambient-glow { position: absolute; border-radius: 50%; filter: blur(120px); z-index: -1; opacity: 0.15; pointer-events: none; }
 .glow-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--accent-mint); }
-.glow-2 { bottom: 20%; right: -10%; width: 40vw; height: 40vw; background: #3b82f6; }
+.glow-2 { bottom: 10%; right: -10%; width: 40vw; height: 40vw; background: #3b82f6; }
+.glow-3 { top: 40%; left: 30%; width: 30vw; height: 30vw; background: #ec4899; opacity: 0.08; }
 
 /* ---------------- HEADER ---------------- */
 .navbar {
-  position: fixed; top: 0; width: 100%; background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(20px);
+  position: fixed; top: 0; width: 100%; background: rgba(3, 3, 3, 0.85); backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-color); z-index: 1000; padding: 16px 5%; display: flex; justify-content: space-between; align-items: center;
 }
-.logo { font-size: 24px; font-weight: 800; letter-spacing: 1px; }
+.logo { font-size: 24px; font-weight: 800; letter-spacing: 1px; text-decoration: none; color: white; }
 .logo span { color: var(--accent-mint); }
 
-.nav-links { display: flex; gap: 20px; align-items: center; }
+.nav-right { display: flex; align-items: center; gap: 30px; }
+.nav-links { display: flex; gap: 24px; }
+.nav-links a { color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 14px; transition: var(--transition); }
+.nav-links a:hover { color: var(--text-main); }
 
 /* Translator Dropdown */
 .lang-dropdown-wrapper { position: relative; display: inline-block; }
@@ -61,89 +64,145 @@ body {
 .lang-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--accent-mint); }
 .lang-menu {
   position: absolute; right: 0; top: 110%; background: #18181b; border: 1px solid var(--border-color);
-  border-radius: var(--radius-md); box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; flex-direction: column; width: 150px; z-index: 2500; overflow: hidden;
+  border-radius: var(--radius-md); box-shadow: 0 10px 40px rgba(0,0,0,0.6); display: none; flex-direction: column; width: 150px; z-index: 2500; overflow: hidden;
 }
-.lang-menu button {
-  background: transparent; border: none; color: var(--text-main); padding: 12px 16px; text-align: left; font-size: 13px; cursor: pointer; transition: 0.2s; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.02);
-}
-.lang-menu button:hover { background: rgba(0, 220, 130, 0.1); color: var(--accent-mint); }
+.lang-menu button { background: transparent; border: none; color: var(--text-main); padding: 12px 16px; text-align: left; font-size: 13px; cursor: pointer; transition: 0.2s; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.02); }
+.lang-menu button:hover { background: rgba(0, 220, 130, 0.1); color: var(--accent-mint); padding-left: 20px; }
 
 /* Hide Google Translate Elements */
 #google_translate_element, .goog-te-banner-frame, .goog-te-gadget, .skiptranslate { display: none !important; }
 body { top: 0px !important; }
 
 /* ---------------- HERO SECTION ---------------- */
-.hero { padding: 140px 5% 80px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: 60px; align-items: center; min-height: 80vh; }
+.hero { padding: 140px 5% 60px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.1fr 1fr; gap: 60px; align-items: center; min-height: 85vh; }
 .hero-text h1 { font-size: 56px; font-weight: 800; line-height: 1.1; margin: 0 0 20px 0; letter-spacing: -0.03em; }
-.hero-text p { font-size: 18px; color: var(--text-muted); line-height: 1.6; margin: 0 0 30px 0; }
+.hero-text p { font-size: 18px; color: var(--text-muted); line-height: 1.6; margin: 0 0 30px 0; max-width: 90%; }
 
 .badges { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 40px; }
-.badge { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 30px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; color: var(--text-main); transition: 0.2s; }
+.badge { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 30px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; color: var(--text-main); transition: 0.2s; }
 .badge:hover { transform: translateY(-2px); border-color: var(--accent-mint); background: rgba(0, 220, 130, 0.05); }
 .badge.yt svg { color: #ff0000; fill: #ff0000; }
 .badge.mp4 svg { color: #3b82f6; }
 .badge.live svg { color: var(--accent-mint); }
 
 /* Create Card */
-.create-card { background: var(--bg-panel); backdrop-filter: blur(24px); border: 1px solid var(--border-color); padding: 35px; border-radius: var(--radius-xl); box-shadow: 0 24px 50px rgba(0,0,0,0.5); position: relative; }
+.create-card { background: var(--bg-panel); backdrop-filter: blur(30px); border: 1px solid var(--border-color); padding: 35px; border-radius: var(--radius-xl); box-shadow: 0 24px 50px rgba(0,0,0,0.5); position: relative; }
 .create-card h2 { margin: 0 0 24px 0; font-size: 24px; text-align: center; }
 .input-wrapper { margin-bottom: 20px; }
-.input-wrapper label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
-
+.input-wrapper label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
 .create-card input { width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: white; border-radius: var(--radius-lg); font-size: 15px; font-family: inherit; transition: 0.3s; }
 .create-card input:focus { border-color: var(--accent-mint); background: rgba(0, 220, 130, 0.03); box-shadow: 0 0 0 4px rgba(0, 220, 130, 0.1); }
 
 .type-selector { display: flex; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); padding: 4px; gap: 4px; }
 .type-btn { flex: 1; padding: 10px; text-align: center; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: 0.3s; }
 .type-btn.active { background: var(--accent-mint); color: #000; box-shadow: 0 4px 10px rgba(0, 220, 130, 0.3); }
-.type-desc { font-size: 12px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; min-height: 36px; text-align: center; }
+.type-desc { font-size: 12px; color: var(--text-muted); margin-top: 10px; line-height: 1.5; min-height: 36px; text-align: center; }
 
-.create-card button.main-btn { margin-top: 10px; width: 100%; padding: 16px; background: var(--accent-mint); border: none; color: #000; font-weight: 700; font-size: 16px; border-radius: var(--radius-lg); cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.3s; }
-.create-card button.main-btn:hover { background: var(--accent-mint-hover); transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0, 220, 130, 0.3); }
+.main-btn { margin-top: 10px; width: 100%; padding: 16px; background: var(--accent-mint); border: none; color: #000; font-weight: 700; font-size: 15px; border-radius: var(--radius-lg); cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.3s; }
+.main-btn:hover { background: var(--accent-mint-hover); transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0, 220, 130, 0.3); }
 
 /* History Section */
 .history-section { margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px; display: none; }
-.history-section h3 { font-size: 14px; margin: 0 0 15px 0; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+.history-section h3 { font-size: 13px; margin: 0 0 15px 0; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 .history-list { display: flex; flex-direction: column; gap: 10px; }
-.history-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 12px 16px; border-radius: var(--radius-md); transition: 0.2s; }
-.history-item:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); }
-.history-info { display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
+.history-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 12px 16px; border-radius: var(--radius-md); transition: 0.2s; }
+.history-item:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+.history-info { display: flex; flex-direction: column; gap: 4px; }
 .history-info strong { font-size: 14px; color: var(--text-main); }
-.history-info span { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+.history-info span { font-size: 11px; color: var(--text-muted); font-weight: 600;}
 .history-actions { display: flex; gap: 8px; align-items: center; }
-.history-actions a { background: rgba(0, 220, 130, 0.1); color: var(--accent-mint); padding: 6px 12px; border-radius: 8px; text-decoration: none; font-size: 12px; font-weight: 600; border: 1px solid rgba(0, 220, 130, 0.2); transition: 0.2s; }
+.history-actions a { background: rgba(0, 220, 130, 0.1); color: var(--accent-mint); padding: 6px 14px; border-radius: 8px; text-decoration: none; font-size: 12px; font-weight: 600; border: 1px solid rgba(0, 220, 130, 0.2); transition: 0.2s; }
 .history-actions a:hover { background: var(--accent-mint); color: #000; }
-.delete-btn { background: transparent; border: none; color: #ff4444; cursor: pointer; padding: 6px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: 0.2s; opacity: 0.7; }
+.delete-btn { background: transparent; border: none; color: #ff4444; cursor: pointer; padding: 6px; border-radius: 8px; transition: 0.2s; opacity: 0.7; }
 .delete-btn:hover { background: rgba(255, 68, 68, 0.1); opacity: 1; transform: scale(1.1); }
 
-/* Misc */
 .result-box { margin-top: 20px; background: rgba(0, 220, 130, 0.1); border: 1px dashed rgba(0, 220, 130, 0.4); padding: 16px; border-radius: var(--radius-md); animation: fadeUp 0.4s ease forwards; text-align: center; }
 .result-box span { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-.result-box a { color: var(--accent-mint); font-weight: 600; word-break: break-all; text-decoration: none; }
-.result-box a:hover { text-decoration: underline; }
+.result-box a { color: var(--accent-mint); font-weight: 600; word-break: break-all; text-decoration: none; font-size: 14px; }
+
+/* ---------------- SECTIONS ---------------- */
+.section { padding: 100px 5%; max-width: 1200px; margin: 0 auto; }
+.section-title { text-align: center; font-size: 36px; font-weight: 800; margin-bottom: 16px; }
+.section-subtitle { text-align: center; color: var(--text-muted); font-size: 16px; margin-bottom: 60px; max-width: 600px; margin-left: auto; margin-right: auto;}
+
+/* How it works */
+.steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; position: relative; }
+.step-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); padding: 40px 30px; border-radius: var(--radius-xl); text-align: center; transition: 0.3s; }
+.step-card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); }
+.step-icon { width: 64px; height: 64px; background: rgba(0, 220, 130, 0.1); color: var(--accent-mint); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 24px; font-weight: 800; }
+.step-card h3 { font-size: 20px; margin: 0 0 10px 0; }
+.step-card p { color: var(--text-muted); font-size: 14px; line-height: 1.6; margin: 0; }
+
+/* Features Grid */
+.features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+.feature { background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); padding: 40px 30px; border-radius: var(--radius-xl); transition: 0.3s; }
+.feature:hover { transform: translateY(-5px); border-color: var(--accent-mint); }
+.feature-icon { width: 50px; height: 50px; background: rgba(255,255,255,0.05); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--text-main); margin-bottom: 24px; }
+.feature h3 { font-size: 20px; margin: 0 0 12px 0; }
+.feature p { color: var(--text-muted); line-height: 1.6; margin: 0; font-size: 14px; }
+
+/* Use Cases */
+.use-cases { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.use-case { border-radius: var(--radius-lg); overflow: hidden; position: relative; aspect-ratio: 16/9; background: #111; display: flex; align-items: flex-end; padding: 30px; border: 1px solid var(--border-color); }
+.use-case::before { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.1)); z-index: 1; }
+.use-case-content { position: relative; z-index: 2; }
+.use-case h3 { color: #fff; margin: 0 0 8px 0; font-size: 22px; }
+.use-case p { color: rgba(255,255,255,0.7); margin: 0; font-size: 14px; }
+
+/* FAQ Accordion */
+.faq-container { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+details { background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; cursor: pointer; transition: 0.3s; }
+details:hover { background: rgba(255,255,255,0.04); }
+summary { font-size: 16px; font-weight: 600; outline: none; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: '+'; color: var(--accent-mint); font-size: 20px; font-weight: 400; }
+details[open] summary::after { content: '−'; }
+details p { margin: 16px 0 0 0; color: var(--text-muted); font-size: 14px; line-height: 1.6; padding-top: 16px; border-top: 1px solid var(--border-color); }
+
+/* ---------------- FOOTER ---------------- */
+.footer { background: #000; border-top: 1px solid var(--border-color); padding: 60px 5% 40px; }
+.footer-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 30px; }
+.footer-logo { font-size: 24px; font-weight: 800; color: white; text-decoration: none;}
+.footer-logo span { color: var(--accent-mint); }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a { color: var(--text-muted); text-decoration: none; font-size: 14px; transition: 0.2s; }
+.footer-links a:hover { color: white; }
+.footer-bottom { text-align: center; color: var(--text-muted); font-size: 13px; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
 
 @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 @media(max-width: 900px) {
   .hero { grid-template-columns: 1fr; padding-top: 120px; gap: 40px; text-align: center; }
+  .hero-text h1 { font-size: 42px; }
   .hero-text p { margin: 0 auto 30px auto; }
   .badges { justify-content: center; }
   .create-card { padding: 24px; }
+  .nav-links { display: none; }
+  .steps-grid { grid-template-columns: 1fr; }
+  .use-cases { grid-template-columns: 1fr; }
+  .footer-content { flex-direction: column; text-align: center; }
 }
 </style>
 </head>
 
-<body>
+<body translate="no">
 
 <div class="ambient-glow glow-1"></div>
 <div class="ambient-glow glow-2"></div>
+<div class="ambient-glow glow-3"></div>
 
 <!-- Hidden Google Translate Element -->
 <div id="google_translate_element"></div>
 
-<header class="navbar" translate="no">
-  <div class="logo">ASVM<span>.</span></div>
-  <div class="nav-links">
+<header class="navbar">
+  <a href="#" class="logo">ASVM<span>.</span></a>
+  <div class="nav-right">
+    <div class="nav-links">
+      <a href="#how-it-works">How it Works</a>
+      <a href="#features">Features</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    
     <!-- Google Translator -->
     <div class="lang-dropdown-wrapper">
       <button class="lang-btn" onclick="toggleLangMenu()">
@@ -159,34 +218,34 @@ body { top: 0px !important; }
         <button onclick="changeLanguage('ja', 'Japanese')">Japanese</button>
         <button onclick="changeLanguage('ar', 'Arabic')">Arabic</button>
         <button onclick="changeLanguage('ru', 'Russian')">Russian</button>
-        <button onclick="changeLanguage('pt', 'Portuguese')">Portuguese</button>
+        <button onclick="changeLanguage('sa', 'Sanskrit')">Sanskrit</button> <!-- SANSKRIT ADDED -->
       </div>
     </div>
   </div>
 </header>
 
 <section class="hero">
-  <div class="hero-text" translate="no">
+  <div class="hero-text">
     <h1>Host the Ultimate Watch Party.</h1>
     <p>Grab a link, invite your friends, and start watching together. Experience high-quality synchronized streaming with a built-in real-time chat room.</p>
     
     <div class="badges">
       <div class="badge yt">
-        <svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="#000"></polygon></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="#000"></polygon></svg>
         YouTube
       </div>
       <div class="badge mp4">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
-        Direct Media (MP4)
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
+        Direct MP4
       </div>
       <div class="badge live">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 3"></path></svg>
-        Live Streams (M3U8)
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 3"></path></svg>
+        M3U8 Live
       </div>
     </div>
   </div>
 
-  <div class="create-card" translate="no">
+  <div class="create-card">
     <h2>Create Room</h2>
     
     <div class="input-wrapper">
@@ -212,7 +271,7 @@ body { top: 0px !important; }
     </div>
 
     <button class="main-btn" onclick="createRoom()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
       Generate Private Room
     </button>
     
@@ -226,7 +285,120 @@ body { top: 0px !important; }
   </div>
 </section>
 
-<!-- Google Translate Initialization Script -->
+<section id="how-it-works" class="section">
+  <h2 class="section-title">How It Works</h2>
+  <p class="section-subtitle">Get your watch party started in under 30 seconds. No sign-ups required.</p>
+  
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-icon">1</div>
+      <h3>Create a Room</h3>
+      <p>Paste any supported media link, choose your preferred room mode (Simple or Sync), and hit generate.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-icon">2</div>
+      <h3>Invite Friends</h3>
+      <p>Copy the unique room URL and share it via WhatsApp, Telegram, or Discord. They can join instantly.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-icon">3</div>
+      <h3>Watch & Chat</h3>
+      <p>Enjoy the video together in real-time. Use the built-in ephemeral chat to share your reactions.</p>
+    </div>
+  </div>
+</section>
+
+<section id="features" class="section" style="background: rgba(255,255,255,0.01);">
+  <h2 class="section-title">Everything You Need</h2>
+  <p class="section-subtitle">A platform built for seamless media streaming and flawless communication.</p>
+  
+  <div class="features-grid">
+    <div class="feature">
+      <div class="feature-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+      </div>
+      <h3>Zero-Latency Chat</h3>
+      <p>Lightning fast chat powered by Firebase. Includes reply threading, emojis, and unread message indicators.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+      </div>
+      <h3>PIN Protected</h3>
+      <p>Create 'ComplexP' rooms to lock video controls behind a 4-digit PIN. Perfect for hosting large groups.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+      </div>
+      <h3>Live Translator</h3>
+      <p>Chat with global friends. Our built-in translator supports 10 languages including Hindi, English, and Sanskrit.</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+      </div>
+      <h3>Multiple Formats</h3>
+      <p>We use a custom-built dual engine that seamlessly switches between YouTube API and HTML5 Plyr.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title">Built for Every Occasion</h2>
+  <div class="use-cases">
+    <div class="use-case" style="background: url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&q=80&w=800') center/cover;">
+      <div class="use-case-content">
+        <h3>Movie Nights</h3>
+        <p>Sync up full-length MP4 movies and watch together without buffering issues.</p>
+      </div>
+    </div>
+    <div class="use-case" style="background: url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800') center/cover;">
+      <div class="use-case-content">
+        <h3>Study Groups</h3>
+        <p>Load educational YouTube videos and discuss concepts live in the chat.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq" class="section">
+  <h2 class="section-title">Frequently Asked Questions</h2>
+  <div class="faq-container">
+    <details>
+      <summary>Is ASVM completely free to use?</summary>
+      <p>Yes! ASVM is a 100% free platform. We don't require any sign-ups, subscriptions, or hidden fees. Just create a room and start watching.</p>
+    </details>
+    <details>
+      <summary>What is the difference between Simple and Complex rooms?</summary>
+      <p>In a <strong>Simple</strong> room, every user controls their own video player independently. In a <strong>Complex</strong> room, the player is synchronized; if the host pauses the video, it pauses for everyone.</p>
+    </details>
+    <details>
+      <summary>Can I delete a room after I'm done?</summary>
+      <p>Absolutely. You can delete any room directly from your "Recent Rooms" dashboard on the homepage, or from the sidebar menu inside the room itself.</p>
+    </details>
+    <details>
+      <summary>Does the chat data save forever?</summary>
+      <p>No. ASVM is designed for privacy. Once a room is deleted or becomes inactive, all chat logs and video data are permanently erased from our databases.</p>
+    </details>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-content">
+    <a href="#" class="footer-logo">ASVM<span>.</span></a>
+    <div class="footer-links">
+      <a href="#how-it-works">How it Works</a>
+      <a href="#features">Features</a>
+      <a href="#faq">FAQ</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    &copy; 2026 ASVM Watch Party Platform. Designed for seamless streaming.
+  </div>
+</footer>
+
+<!-- Google Translate Script Setup -->
 <script type="text/javascript">
 function googleTranslateElementInit() {
   new google.translate.TranslateElement({pageLanguage: 'en', autoDisplay: false}, 'google_translate_element');
@@ -234,18 +406,21 @@ function googleTranslateElementInit() {
 </script>
 <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
+<!-- Firebase Module -->
 <script type="module">
 import { db, ref, set } from "./firebase.js";
 import { remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-// ---------------- GOOGLE TRANSLATOR LOGIC ----------------
+// ---------------- TRANSLATOR LOGIC ----------------
 window.toggleLangMenu = () => {
   const menu = document.getElementById("langMenu");
   menu.style.display = menu.style.display === "flex" ? "none" : "flex";
 }
+
 window.changeLanguage = (langCode, langName) => {
   document.getElementById("currentLangLabel").innerText = langName;
   document.getElementById("langMenu").style.display = "none";
+  
   const triggerTranslation = () => {
     let selectField = document.querySelector(".goog-te-combo");
     if(selectField) {
@@ -254,8 +429,9 @@ window.changeLanguage = (langCode, langName) => {
     }
   };
   triggerTranslation();
-  setTimeout(triggerTranslation, 1000); 
+  setTimeout(triggerTranslation, 1000); // Retry fallback
 }
+
 window.addEventListener('click', (e) => {
   if(!e.target.closest('.lang-dropdown-wrapper')) {
     const menu = document.getElementById("langMenu");
@@ -263,7 +439,7 @@ window.addEventListener('click', (e) => {
   }
 });
 
-// ---------------- HISTORY LOGIC (Local Storage) ----------------
+// ---------------- HISTORY LOGIC ----------------
 function getHistory() {
   let hist = localStorage.getItem('asvm_history');
   return hist ? JSON.parse(hist) : [];
@@ -271,6 +447,7 @@ function getHistory() {
 function saveHistory(history) {
   localStorage.setItem('asvm_history', JSON.stringify(history));
 }
+
 function renderHistory() {
   const history = getHistory();
   const section = document.getElementById("historySection");
@@ -300,16 +477,12 @@ function renderHistory() {
 
 document.addEventListener("DOMContentLoaded", renderHistory);
 
-// Delete Room entirely from Firebase & UI
 window.deleteRoomFromDB = function(roomId) {
   if(confirm(`Are you sure you want to permanently delete Room #${roomId}?`)) {
-    // 1. Delete from Firebase
     remove(ref(db, "rooms/" + roomId)).then(() => {
-      // 2. Remove from Local History array
       let history = getHistory();
       history = history.filter(r => r.id !== roomId);
       saveHistory(history);
-      // 3. Update UI
       renderHistory();
     }).catch((error) => {
       alert("Error deleting room: " + error.message);
@@ -360,14 +533,14 @@ window.createRoom = function() {
   const room = Math.random().toString(36).substring(2,7);
   const encoded = btoa(video);
 
-  // Dynamic Routing Logic
+  // Dynamic Routing
   let pageName = "room.html";
   if (window.currentRoomType === "complex") pageName = "complex.html";
   if (window.currentRoomType === "complexp") pageName = "complexP.html";
   
   const link = location.origin + "/" + pageName + "?room=" + room;
 
-  // Save to Firebase
+  // Save to Firebase Database
   set(ref(db, "rooms/" + room), {
     src: encoded,
     type: window.currentRoomType,
@@ -376,14 +549,14 @@ window.createRoom = function() {
     state: { playing:false, time:0 }
   });
 
-  // Save to History (Max 5)
+  // Save to Local History
   let history = getHistory();
-  history = history.filter(r => r.id !== room); // Remove duplicates if any
-  history.unshift({ id: room, type: window.currentRoomType, link: link }); // Add to front
-  if (history.length > 5) history.pop(); // Keep only last 5
+  history = history.filter(r => r.id !== room); 
+  history.unshift({ id: room, type: window.currentRoomType, link: link });
+  if (history.length > 5) history.pop(); 
   saveHistory(history);
 
-  // Render Result & Update List
+  // Show Result
   document.getElementById("result").innerHTML = `
     <div class="result-box">
       <span>Room Successfully Created</span>
