@@ -12,11 +12,6 @@
 <meta name="description" content="ASVM is a free watch party platform to stream videos together with friends.">
 <meta name="keywords" content="ASVM, watch videos together, sync video online, watch movies together">
 <meta name="author" content="ASVM">
-<meta property="og:title" content="ASVM – Watch Videos Together Online">
-<meta property="og:description" content="Create a room and watch videos together with friends using ASVM watch party platform.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://www.asvm.fun">
-<meta property="og:image" content="https://www.asvm.fun/preview.png">
 
 <style>
 /* ---------------- PREMIUM DARK CSS VARIABLES ---------------- */
@@ -55,13 +50,38 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
 
-/* ---------------- TOPBAR ---------------- */
-.topbar { background: var(--bg-panel); backdrop-filter: blur(20px); padding: 0 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); z-index: 1000; height: 64px; flex-shrink: 0; }
-.logo { font-size: 22px; font-weight: 800; letter-spacing: 1px; color: var(--text-main); }
+/* ---------------- REFINED HEADER ---------------- */
+.topbar { background: var(--bg-panel); backdrop-filter: blur(20px); padding: 0 4%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); z-index: 1000; height: 68px; flex-shrink: 0; }
+.logo { font-size: 22px; font-weight: 800; letter-spacing: 1px; color: var(--text-main); display: flex; align-items: center; gap: 6px; }
 .logo span { color: var(--accent-main); }
-.topbar-actions { display: flex; align-items: center; gap: 15px; }
+
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+
+/* Live Badge in Header */
+.live-badge {
+  background: rgba(0, 220, 130, 0.1); color: var(--accent-main); padding: 6px 12px; border-radius: 20px;
+  font-size: 13px; font-weight: 700; border: 1px solid rgba(0, 220, 130, 0.2); display: flex; align-items: center; gap: 6px;
+}
+.live-dot-header { width: 8px; height: 8px; background: var(--accent-main); border-radius: 50%; box-shadow: 0 0 10px var(--accent-main); animation: pulse 2s infinite; }
+
+/* Custom Language Selector Dropdown */
+.lang-dropdown-wrapper { position: relative; display: inline-block; }
+.lang-btn {
+  background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main);
+  padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s;
+}
+.lang-btn:hover { background: rgba(255, 255, 255, 0.1); }
+.lang-menu {
+  position: absolute; right: 0; top: 110%; background: #18181b; border: 1px solid var(--border-color);
+  border-radius: var(--radius-md); box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; flex-direction: column; width: 140px; z-index: 2500; overflow: hidden;
+}
+.lang-menu button {
+  background: transparent; border: none; color: var(--text-main); padding: 12px 14px; text-align: left; font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.02);
+}
+.lang-menu button:hover { background: var(--accent-dim); color: var(--accent-main); }
+
 .icon-btn { background: transparent; border: none; color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; padding: 5px; }
-.icon-btn svg { width: 26px; height: 26px; }
+.icon-btn svg { width: 24px; height: 24px; }
 .icon-btn:hover { color: var(--accent-main); transform: scale(1.1); }
 
 /* ---------------- SIDEBAR ---------------- */
@@ -77,6 +97,14 @@ body {
 .sidebar-menu button:hover { background: var(--accent-dim); color: var(--accent-main); border-left: 4px solid var(--accent-main); padding-left: 16px; }
 .sidebar-menu button:hover svg { opacity: 1; stroke: var(--accent-main); }
 
+/* ---------------- MISSING ROOM ID SCREEN ---------------- */
+.missing-room-container {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; gap: 16px; height: 100%;
+}
+.missing-room-container svg { width: 72px; height: 72px; color: #ff4444; filter: drop-shadow(0 0 16px rgba(255, 68, 68, 0.3)); }
+.missing-room-container h2 { font-size: 26px; font-weight: 700; margin: 0; color: var(--text-main); }
+.missing-room-container p { color: var(--text-muted); font-size: 15px; margin: 0; max-width: 400px; line-height: 1.5; }
+
 /* ---------------- LAYOUT & VIDEO PLAYER ---------------- */
 .main-container { max-width: 1000px; width: 100%; margin: 0 auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; flex: 1; min-height: 0; }
 .playerWrap { width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.4); border: 1px solid var(--border-color); flex-shrink: 0; position: relative; }
@@ -88,10 +116,10 @@ body {
 .resizer-line { width: 40px; height: 5px; background: var(--text-muted); border-radius: 10px; transition: 0.2s; }
 .resizer:hover .resizer-line { background: var(--accent-main); box-shadow: 0 0 10px var(--accent-main); }
 
-/* ---------------- CHAT UI (SMOOTH OLD STYLE) ---------------- */
+/* ---------------- CHAT UI ---------------- */
 .chatBox { width: 100%; flex: 1; min-height: 0; background: var(--bg-panel); backdrop-filter: blur(24px); border: 1px solid var(--border-color); border-radius: var(--radius-lg); display: flex; flex-direction: column; overflow: hidden; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
 .chatHeader { background: rgba(0,0,0,0.2); padding: 14px 20px; font-weight: 600; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
-.live-dot { width: 8px; height: 8px; background: var(--accent-main); border-radius: 50%; box-shadow: 0 0 10px var(--accent-main); animation: pulse 2s infinite; }
+.chat-live-dot { width: 8px; height: 8px; background: var(--accent-main); border-radius: 50%; box-shadow: 0 0 10px var(--accent-main); animation: pulse 2s infinite; }
 #messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; scroll-behavior: smooth; }
 
 .msg { display: flex; flex-direction: column; width: 100%; animation: messagePop 0.3s forwards; }
@@ -147,6 +175,10 @@ body {
 #recentActionsList { max-height: 280px; overflow-y: auto; text-align: left; font-size: 13px; display: flex; flex-direction: column; gap: 8px; }
 .action-item { padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px; border-left: 3px solid var(--accent-main); }
 
+/* Hide default Google Translate element completely to prevent watermark/banner */
+#google_translate_element, .goog-te-banner-frame, .goog-te-gadget, .skiptranslate { display: none !important; }
+body { top: 0px !important; }
+
 @keyframes messagePop { from { opacity: 0; transform: translateY(10px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 var(--accent-dim); } 70% { box-shadow: 0 0 0 8px rgba(0,0,0,0); } 100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); } }
 </style>
@@ -156,92 +188,129 @@ body {
 <div class="ambient-glow-1"></div>
 <div class="ambient-glow-2"></div>
 
-<!-- Custom Modals -->
-<div class="modal-overlay" id="customModal">
-  <div class="modal-box" id="modalContent"></div>
+<!-- Hidden Google Translate Element -->
+<div id="google_translate_element"></div>
+
+<!-- Missing Room Display (Hidden by default) -->
+<div id="missingRoom" class="missing-room-container" style="display: none;">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"></circle>
+    <line x1="12" y1="8" x2="12" y2="12"></line>
+    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+  </svg>
+  <h2>Room ID is Missing</h2>
+  <p>Please enter a valid room ID or create a new one to join the watch party.</p>
 </div>
 
-<!-- Sidebar Menu -->
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-<div class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    Menu 
-    <button onclick="toggleSidebar()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-    </button>
+<!-- Main App (Hidden if room is invalid) -->
+<div id="mainApp" style="display: none; flex-direction: column; flex: 1; height: 100%;">
+  <!-- Custom Modals -->
+  <div class="modal-overlay" id="customModal">
+    <div class="modal-box" id="modalContent"></div>
   </div>
-  <div class="sidebar-menu">
-    <button onclick="shareRoom()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-      Share Room
-    </button>
-    <button onclick="openChangeId()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-      Change Room ID
-    </button>
-    <button onclick="openDeleteId()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-      Delete Current ID
-    </button>
-    <button onclick="openRecentActions()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-      Recent Actions
-    </button>
-    <button onclick="clearChatUI()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="9" x2="15" y2="15"></line><line x1="15" y1="9" x2="9" y2="15"></line></svg>
-      Clear Chat Screen
-    </button>
-  </div>
-</div>
 
-<div class="topbar">
-  <div class="logo">ASVM<span>.</span></div>
-  <div class="topbar-actions">
-    <button class="icon-btn" onclick="toggleSidebar()" title="Menu">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-    </button>
-  </div>
-</div>
-
-<div class="main-container">
-  <div class="playerWrap" id="playerContainer">
-    <!-- YT NATIVE PLAYER (Fixed Positioning) -->
-    <div id="ytWrapper" style="display:none;">
-      <div id="ytPlayerDiv" style="width:100%; height:100%;"></div>
+  <!-- Sidebar Menu -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+  <div class="sidebar" id="sidebar" translate="no">
+    <div class="sidebar-header">
+      Menu 
+      <button onclick="toggleSidebar()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
     </div>
-    <!-- PLYR PLAYER -->
-    <div id="plyrWrapper" style="display:none;">
-      <video id="player" controls playsinline></video>
+    <div class="sidebar-menu">
+      <button onclick="shareRoom()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+        Share Room
+      </button>
+      <button onclick="openChangeId()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+        Change Room ID
+      </button>
+      <button onclick="openRecentActions()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        Recent Actions
+      </button>
+      <button onclick="clearChatUI()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="9" x2="15" y2="15"></line><line x1="15" y1="9" x2="9" y2="15"></line></svg>
+        Clear Chat Screen
+      </button>
     </div>
   </div>
 
-  <div class="resizer" id="resizer">
-    <div class="resizer-line"></div>
+  <div class="topbar" translate="no">
+    <div class="logo">ASVM<span>.</span></div>
+    <div class="topbar-right">
+      <!-- Live Users Badge in Header -->
+      <div class="live-badge" title="Active users in room">
+        <div class="live-dot-header"></div>
+        Live: <span id="headerLiveCount">0</span>
+      </div>
+
+      <!-- Google Translator 10 Languages Dropdown -->
+      <div class="lang-dropdown-wrapper">
+        <button class="lang-btn" onclick="toggleLangMenu()">
+          🌐 <span id="currentLangLabel">Language</span>
+        </button>
+        <div class="lang-menu" id="langMenu">
+          <button onclick="changeLanguage('en', 'English')">English</button>
+          <button onclick="changeLanguage('hi', 'Hindi')">Hindi</button>
+          <button onclick="changeLanguage('es', 'Spanish')">Spanish</button>
+          <button onclick="changeLanguage('fr', 'French')">French</button>
+          <button onclick="changeLanguage('de', 'German')">German</button>
+          <button onclick="changeLanguage('zh-CN', 'Chinese')">Chinese</button>
+          <button onclick="changeLanguage('ja', 'Japanese')">Japanese</button>
+          <button onclick="changeLanguage('ar', 'Arabic')">Arabic</button>
+          <button onclick="changeLanguage('ru', 'Russian')">Russian</button>
+          <button onclick="changeLanguage('pt', 'Portuguese')">Portuguese</button>
+        </div>
+      </div>
+
+      <button class="icon-btn" onclick="toggleSidebar()" title="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+    </div>
   </div>
 
-  <div class="chatBox" id="chat">
-    <div class="chatHeader">
-      <div class="live-dot"></div> <span>Room Chat</span>
-    </div>
-
-    <div id="messages"></div>
-    
-    <div class="reply-preview" id="replyPreview">
-      <div class="reply-preview-text">Replying to <strong id="replyName"></strong>: <span id="replyText"></span></div>
-      <div class="cancel-reply" onclick="cancelReply()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+  <div class="main-container">
+    <div class="playerWrap" id="playerContainer" translate="no">
+      <!-- YT NATIVE PLAYER (Fixed Positioning) -->
+      <div id="ytWrapper" style="display:none;">
+        <div id="ytPlayerDiv"></div>
+      </div>
+      <!-- PLYR PLAYER -->
+      <div id="plyrWrapper" style="display:none;">
+        <video id="player" controls playsinline></video>
       </div>
     </div>
 
-    <div class="chatInput">
-      <!-- Emoji Button -->
-      <button class="emoji-btn" id="emojiButton">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
-      </button>
-      <input id="msg" placeholder="Type a message..." autocomplete="off">
-      <button class="send-btn" onclick="sendMsg()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-      </button>
+    <div class="resizer" id="resizer">
+      <div class="resizer-line"></div>
+    </div>
+
+    <div class="chatBox" id="chat">
+      <div class="chatHeader" translate="no">
+        <div class="chat-live-dot"></div> <span>Room Chat</span>
+      </div>
+
+      <div id="messages"></div>
+      
+      <div class="reply-preview" id="replyPreview" translate="no">
+        <div class="reply-preview-text">Replying to <strong id="replyName"></strong>: <span id="replyText"></span></div>
+        <div class="cancel-reply" onclick="cancelReply()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </div>
+      </div>
+
+      <div class="chatInput" translate="no">
+        <button class="emoji-btn" id="emojiButton">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+        </button>
+        <input id="msg" placeholder="Type a message..." autocomplete="off">
+        <button class="send-btn" onclick="sendMsg()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -251,306 +320,332 @@ body {
 <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@3.0.3/dist/index.min.js"></script>
 
+<!-- Google Translate Initialization Script -->
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en', autoDisplay: false}, 'google_translate_element');
+}
+</script>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 <script type="module">
 import {db, ref, set, push, update, onValue, onChildAdded} from "./firebase.js";
 import { onDisconnect, remove, onChildRemoved } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 const params = new URLSearchParams(location.search);
-let room = params.get("room") || "default";
+let room = params.get("room");
 
-// ---------------- COMPLEX ROOM BLOCKER ----------------
-function showBlockAlert() {
-  document.body.innerHTML = `
-    <div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#050505; color:white; font-family:sans-serif; text-align:center; padding:20px;">
-      <svg style="color:#ff4444; width:50px; height:50px; margin-bottom:15px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-      <h1 style="color:#ff4444; margin:0 0 10px 0;">Access Denied</h1>
-      <p style="color:#a1a1aa;">This room is protected and cannot be accessed directly.</p>
-      <button onclick="window.location.href='?room=default'" style="margin-top:20px; padding:12px 24px; background:#00dc82; color:#000; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Go to Default Room</button>
-    </div>
-  `;
-}
-if(room.toLowerCase() === "complex" || room.toLowerCase() === "complexp") {
-  showBlockAlert();
-  throw new Error("Blocked Room Access"); 
+// ---------------- CHECK ROOM ID LOGIC ----------------
+if(!room || room.trim() === "" || room.toLowerCase() === "default") {
+  document.getElementById("missingRoom").style.display = "flex";
+} else {
+  // If Room ID is valid, show app and run logic
+  document.getElementById("mainApp").style.display = "flex";
+  initRoomLogic();
 }
 
-// ---------------- CUSTOM MODALS UI LOGIC ----------------
-const modal = document.getElementById("customModal");
-const modalContent = document.getElementById("modalContent");
-
-window.openModal = function(html) {
-  modalContent.innerHTML = html;
-  modal.style.display = 'flex';
-  setTimeout(() => modal.style.opacity = '1', 10);
-  window.toggleSidebar(true);
-}
-window.closeModal = () => {
-  modal.style.opacity = '0';
-  setTimeout(() => modal.style.display = 'none', 200);
+// ---------------- GOOGLE TRANSLATOR LOGIC ----------------
+window.toggleLangMenu = () => {
+  const menu = document.getElementById("langMenu");
+  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
 }
 
-window.toggleSidebar = (forceClose = false) => {
-  const sb = document.getElementById('sidebar');
-  const overlay = document.getElementById('sidebarOverlay');
-  if(sb.style.right === '0px' || forceClose === true) {
-    sb.style.right = '-300px'; overlay.style.opacity = '0';
-    setTimeout(() => overlay.style.display = 'none', 300);
-  } else {
-    overlay.style.display = 'block'; setTimeout(() => overlay.style.opacity = '1', 10);
-    sb.style.right = '0px';
-  }
-}
-
-// SIDEBAR ACTIONS
-window.shareRoom = () => {
-  const url = window.location.href;
-  if(navigator.share) navigator.share({title:'ASVM', url});
-  else { navigator.clipboard.writeText(url); alert("Link Copied!"); }
-  window.toggleSidebar(true);
-}
-window.openChangeId = () => {
-  window.openModal(`
-    <h3>Change Room ID</h3>
-    <input type="text" id="newIdInput" placeholder="Enter new Room ID...">
-    <div>
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-primary" onclick="changeIdExec()">Join Room</button>
-    </div>
-  `);
-}
-window.changeIdExec = () => {
-  const val = document.getElementById('newIdInput').value.trim();
-  if(val) window.location.href = "?room=" + val;
-}
-window.openDeleteId = () => {
-  window.openModal(`
-    <h3>Delete Room '${room}'?</h3>
-    <p style="font-size:13px; color:var(--text-muted); margin-bottom: 20px;">This clears the room database.</p>
-    <div>
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-primary" style="background:#ff4444; color:white;" onclick="deleteIdExec()">Delete & Exit</button>
-    </div>
-  `);
-}
-window.deleteIdExec = () => {
-  remove(ref(db, `rooms/${room}`));
-  window.location.href = "?room=default";
-}
-window.clearChatUI = () => {
-  document.getElementById("messages").innerHTML = "";
-  window.toggleSidebar(true);
-}
-
-// ---------------- RECENT ACTIONS TRACKER ----------------
-let recentEvents = [];
-function formatFullTime(ts) {
-  return new Date(ts).toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit', second:'2-digit', hour12:true});
-}
-window.openRecentActions = () => {
-  let listHtml = recentEvents.map(e => `
-    <div class="action-item">
-      <strong>${e.name}</strong> ${e.action} <span style="color:var(--text-muted)">${formatFullTime(e.time)}</span>
-    </div>
-  `).join('');
-  if(recentEvents.length === 0) listHtml = `<p style="color:var(--text-muted);">No recent actions.</p>`;
+window.changeLanguage = (langCode, langName) => {
+  document.getElementById("currentLangLabel").innerText = langName;
+  document.getElementById("langMenu").style.display = "none";
   
-  window.openModal(`
-    <h3>Recent Actions</h3>
-    <div id="recentActionsList">${listHtml}</div>
-    <button class="btn-cancel" style="width:100%; margin-top:15px;" onclick="closeModal()">Close</button>
-  `);
-}
-
-function addEventToTracker(name, action, time) {
-  recentEvents.unshift({name, action, time}); // Add to start
-  if(recentEvents.length > 50) recentEvents.pop(); // Keep array small
-}
-
-// ---------------- USERNAME & JOINS ----------------
-let username = localStorage.getItem("asvm_name") || "Anonymous_" + Math.floor(Math.random()*100);
-localStorage.setItem("asvm_name", username);
-
-const sessionId = Math.random().toString(36).substring(2,15);
-const myJoinRef = ref(db, `rooms/${room}/active/${sessionId}`);
-set(myJoinRef, { name: username, time: Date.now() });
-onDisconnect(myJoinRef).remove(); // Auto trigger leave on tab close
-window.addEventListener("beforeunload", () => remove(myJoinRef));
-
-onChildAdded(ref(db, `rooms/${room}/active`), snap => {
-  const data = snap.val();
-  if(Date.now() - data.time < 15000) { 
-    addEventToTracker(data.name, "joined the room at", data.time);
-  }
-});
-
-onChildRemoved(ref(db, `rooms/${room}/active`), snap => {
-  const data = snap.val();
-  if(data) addEventToTracker(data.name, "left the room at", Date.now());
-});
-
-// ---------------- PLAYER & SYNC LOGIC ----------------
-let plyrInstance = null;
-let ytPlayer = null;
-const plyrVideo = document.getElementById("player");
-const ytWrap = document.getElementById("ytWrapper");
-const plyrWrap = document.getElementById("plyrWrapper");
-
-let ytApiReady = false;
-let pendingYtId = null;
-let currentSrc = "";
-let isCurrentYt = false;
-let ignoreSync = false;
-
-window.onYouTubeIframeAPIReady = () => { ytApiReady = true; loadYtIfReady(); };
-
-function emitSync(time, state) {
-  if (ignoreSync) return;
-  update(ref(db, `rooms/${room}/sync`), { time, state, by: username, ts: Date.now() });
-}
-
-function loadYtIfReady() {
-  if(!ytApiReady || !pendingYtId) return;
-  if(ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
-    ytPlayer.loadVideoById(pendingYtId);
-  } else {
-    ytPlayer = new YT.Player('ytPlayerDiv', {
-      videoId: pendingYtId,
-      playerVars: { rel: 0, enablejsapi: 1, autoplay: 1, modestbranding: 1, playsinline: 1 },
-      events: {
-        'onStateChange': (e) => {
-          if(ignoreSync) return;
-          if(e.data === YT.PlayerState.PLAYING) emitSync(ytPlayer.getCurrentTime(), 'play');
-          if(e.data === YT.PlayerState.PAUSED) emitSync(ytPlayer.getCurrentTime(), 'pause');
-        }
-      }
-    });
-  }
-}
-
-onValue(ref(db, "rooms/"+room), snap => {
-  const data = snap.val(); if(!data || !data.src) return;
-  const url = atob(data.src);
-  if(currentSrc === url) return;
-  currentSrc = url;
-
-  if (url.includes("youtube.com") || url.includes("youtu.be")) {
-    isCurrentYt = true;
-    plyrWrap.style.display = "none"; ytWrap.style.display = "block"; // Show first!
-    if(plyrInstance) plyrInstance.pause();
-    pendingYtId = url.match(/((youtu.be\/)|(v=))([^#&?]*)/)[4];
-    loadYtIfReady();
-  } else {
-    isCurrentYt = false;
-    ytWrap.style.display = "none"; plyrWrap.style.display = "block";
-    if(ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo();
-    
-    if(!plyrInstance) {
-      plyrInstance = new Plyr(plyrVideo, { controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'] });
-      plyrVideo.addEventListener('play', () => emitSync(plyrVideo.currentTime, 'play'));
-      plyrVideo.addEventListener('pause', () => emitSync(plyrVideo.currentTime, 'pause'));
-      plyrVideo.addEventListener('seeked', () => emitSync(plyrVideo.currentTime, plyrVideo.paused ? 'pause' : 'play'));
+  const triggerTranslation = () => {
+    let selectField = document.querySelector(".goog-te-combo");
+    if(selectField) {
+      selectField.value = langCode;
+      selectField.dispatchEvent(new Event('change'));
     }
+  };
+  
+  triggerTranslation();
+  setTimeout(triggerTranslation, 1000); // Retry fallback
+}
 
-    if(url.includes(".m3u8")) {
-      if(Hls.isSupported()){ const hls=new Hls(); hls.loadSource(url); hls.attachMedia(plyrVideo); }
+window.addEventListener('click', (e) => {
+  if(!e.target.closest('.lang-dropdown-wrapper')) {
+    const menu = document.getElementById("langMenu");
+    if(menu) menu.style.display = 'none';
+  }
+});
+
+function initRoomLogic() {
+  // ---------------- CUSTOM MODALS UI LOGIC ----------------
+  const modal = document.getElementById("customModal");
+  const modalContent = document.getElementById("modalContent");
+
+  window.openModal = function(html) {
+    modalContent.innerHTML = html;
+    modal.style.display = 'flex';
+    setTimeout(() => modal.style.opacity = '1', 10);
+    window.toggleSidebar(true);
+  }
+  window.closeModal = () => {
+    modal.style.opacity = '0';
+    setTimeout(() => modal.style.display = 'none', 200);
+  }
+
+  window.toggleSidebar = (forceClose = false) => {
+    const sb = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    if(sb.style.right === '0px' || forceClose === true) {
+      sb.style.right = '-300px'; overlay.style.opacity = '0';
+      setTimeout(() => overlay.style.display = 'none', 300);
     } else {
-      plyrInstance.source = { type:"video", sources:[{ src:url, type:"video/mp4" }] };
+      overlay.style.display = 'block'; setTimeout(() => overlay.style.opacity = '1', 10);
+      sb.style.right = '0px';
     }
   }
-});
 
-onValue(ref(db, `rooms/${room}/sync`), snap => {
-  const data = snap.val();
-  if(!data || data.by === username || Date.now() - data.ts > 3000) return;
-  ignoreSync = true;
-  const t = data.time;
-
-  if(isCurrentYt && ytPlayer && ytPlayer.seekTo) {
-    if(Math.abs(ytPlayer.getCurrentTime() - t) > 1.5) ytPlayer.seekTo(t, true);
-    if(data.state === 'play') ytPlayer.playVideo(); else ytPlayer.pauseVideo();
-  } else if (!isCurrentYt && plyrVideo) {
-    if(Math.abs(plyrVideo.currentTime - t) > 1.5) plyrVideo.currentTime = t;
-    if(data.state === 'play') plyrVideo.play().catch(()=>{}); else plyrVideo.pause();
+  // SIDEBAR ACTIONS
+  window.shareRoom = () => {
+    const url = window.location.href;
+    if(navigator.share) navigator.share({title:'ASVM', url});
+    else { navigator.clipboard.writeText(url); alert("Link Copied!"); }
+    window.toggleSidebar(true);
   }
-  setTimeout(() => { ignoreSync = false; }, 1500);
-});
-
-// ---------------- CHAT, EMOJIS & TIMESTAMPS ----------------
-let messagesMap = {}; let replyingTo = null;
-const msgInput = document.getElementById("msg"); 
-const msgBoxEl = document.getElementById("messages");
-
-// EMOJI PICKER (FIXED)
-const picker = new EmojiButton({ theme: 'dark', position: 'top-start' });
-const emojiBtn = document.getElementById('emojiButton');
-picker.on('emoji', emoji => { msgInput.value += emoji; msgInput.focus(); });
-emojiBtn.addEventListener('click', () => picker.togglePicker(emojiBtn));
-
-msgInput.addEventListener('keypress', e => { if(e.key==="Enter") window.sendMsg(); });
-
-window.initReply = id => {
-  const m = messagesMap[id]; if(!m) return; replyingTo = { id, name: m.name, text: m.text };
-  document.getElementById("replyPreview").style.display = "flex";
-  document.getElementById("replyName").innerText = m.name;
-  document.getElementById("replyText").innerText = m.text.substring(0, 30); msgInput.focus();
-}
-window.cancelReply = () => { replyingTo = null; document.getElementById("replyPreview").style.display = "none"; }
-
-window.sendMsg = () => {
-  const text=msgInput.value.trim(); if(!text) return;
-  push(ref(db,"rooms/"+room+"/chat"),{ name:username, text, time:Date.now(), reply: replyingTo });
-  msgInput.value=""; cancelReply();
-}
-
-onChildAdded(ref(db,"rooms/"+room+"/chat"), snap => {
-  const m = snap.val(); messagesMap[snap.key] = m;
-  
-  // Track message in recent actions
-  if(Date.now() - m.time < 15000) {
-    addEventToTracker(m.name, "messaged at", m.time);
-  }
-
-  const div = document.createElement("div"); 
-  const isMe = m.name === username;
-  div.className = "msg " + (isMe ? "right" : "left");
-  
-  // Format Time (HH:MM:SS AM/PM)
-  const timeStr = formatFullTime(m.time);
-
-  let quoteHTML = m.reply ? `<div class="quote-block"><div class="quote-name">${m.reply.name}</div><div>${m.reply.text}</div></div>` : "";
-  
-  div.innerHTML = `
-    <div class="msg-content-wrapper">
-      <div class="msgBox">
-        ${quoteHTML}
-        <div class="name">${m.name}</div>
-        ${m.text}
-        <div class="msg-timestamp">${timeStr}</div>
+  window.openChangeId = () => {
+    window.openModal(`
+      <h3>Change Room ID</h3>
+      <input type="text" id="newIdInput" placeholder="Enter new Room ID...">
+      <div>
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" onclick="changeIdExec()">Join Room</button>
       </div>
-      <button class="reply-btn" onclick="initReply('${snap.key}')" title="Reply">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path></svg>
-      </button>
-    </div>
-  `;
-  msgBoxEl.appendChild(div);
-  msgBoxEl.scrollTop = msgBoxEl.scrollHeight;
-});
+    `);
+  }
+  window.changeIdExec = () => {
+    const val = document.getElementById('newIdInput').value.trim();
+    if(val) window.location.href = "?room=" + val;
+  }
+  window.clearChatUI = () => {
+    document.getElementById("messages").innerHTML = "";
+    window.toggleSidebar(true);
+  }
 
-// ---------------- RESIZER LOGIC ----------------
-const resizer = document.getElementById("resizer");
-const playerContainer = document.getElementById("playerContainer");
-const mainContainer = document.querySelector(".main-container");
-let isResizing = false;
-resizer.addEventListener("mousedown", initDrag);
-resizer.addEventListener("touchstart", initDrag, {passive: false});
-function initDrag() { isResizing = true; document.documentElement.addEventListener("mousemove", doDrag); document.documentElement.addEventListener("touchmove", doDrag, {passive: false}); document.documentElement.addEventListener("mouseup", stopDrag); document.documentElement.addEventListener("touchend", stopDrag); }
-function doDrag(e) {
-  if (!isResizing) return;
-  let clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-  let newHeight = clientY - playerContainer.getBoundingClientRect().top;
-  if (newHeight >= 100 && newHeight <= mainContainer.clientHeight - 150) playerContainer.style.height = newHeight + "px";
+  // ---------------- RECENT ACTIONS TRACKER ----------------
+  let recentEvents = [];
+  function formatFullTime(ts) {
+    return new Date(ts).toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit', second:'2-digit', hour12:true});
+  }
+  window.openRecentActions = () => {
+    let listHtml = recentEvents.map(e => `
+      <div class="action-item">
+        <strong style="color:var(--text-main);">${e.name}</strong> ${e.action} <span style="color:var(--text-muted)">${formatFullTime(e.time)}</span>
+      </div>
+    `).join('');
+    if(recentEvents.length === 0) listHtml = `<p style="color:var(--text-muted);">No recent actions.</p>`;
+    
+    window.openModal(`
+      <h3>Recent Actions</h3>
+      <div id="recentActionsList">${listHtml}</div>
+      <button class="btn-cancel" style="width:100%; margin-top:15px;" onclick="closeModal()">Close</button>
+    `);
+  }
+
+  function addEventToTracker(name, action, time) {
+    recentEvents.unshift({name, action, time}); // Add to start
+    if(recentEvents.length > 50) recentEvents.pop(); // Keep array small
+  }
+
+  // ---------------- USERNAME & JOINS ----------------
+  let username = localStorage.getItem("asvm_name") || "Anonymous_" + Math.floor(Math.random()*100);
+  localStorage.setItem("asvm_name", username);
+
+  const sessionId = Math.random().toString(36).substring(2,15);
+  const myJoinRef = ref(db, `rooms/${room}/active/${sessionId}`);
+  set(myJoinRef, { name: username, time: Date.now() });
+  onDisconnect(myJoinRef).remove(); 
+  window.addEventListener("beforeunload", () => remove(myJoinRef));
+
+  // Update Header Live Count
+  onValue(ref(db, `rooms/${room}/active`), snap => {
+    const data = snap.val();
+    const count = data ? Object.keys(data).length : 0;
+    document.getElementById("headerLiveCount").innerText = count;
+  });
+
+  onChildAdded(ref(db, `rooms/${room}/active`), snap => {
+    const data = snap.val();
+    if(data && Date.now() - data.time < 15000) { 
+      addEventToTracker(data.name, "joined the room at", data.time);
+    }
+  });
+
+  onChildRemoved(ref(db, `rooms/${room}/active`), snap => {
+    const data = snap.val();
+    if(data) addEventToTracker(data.name, "left the room at", Date.now());
+  });
+
+  // ---------------- PLAYER & SYNC LOGIC ----------------
+  let plyrInstance = null;
+  let ytPlayer = null;
+  const plyrVideo = document.getElementById("player");
+  const ytWrap = document.getElementById("ytWrapper");
+  const plyrWrap = document.getElementById("plyrWrapper");
+
+  let ytApiReady = false;
+  let pendingYtId = null;
+  let currentSrc = "";
+  let isCurrentYt = false;
+  let ignoreSync = false;
+
+  window.onYouTubeIframeAPIReady = () => { ytApiReady = true; loadYtIfReady(); };
+
+  function emitSync(time, state) {
+    if (ignoreSync) return;
+    update(ref(db, `rooms/${room}/sync`), { time, state, by: username, ts: Date.now() });
+  }
+
+  function loadYtIfReady() {
+    if(!ytApiReady || !pendingYtId) return;
+    if(ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
+      ytPlayer.loadVideoById(pendingYtId);
+    } else {
+      // Fix for YouTube Embedded Black Screen issue
+      ytPlayer = new YT.Player('ytPlayerDiv', {
+        videoId: pendingYtId,
+        playerVars: { 
+          rel: 0, enablejsapi: 1, autoplay: 1, modestbranding: 1, playsinline: 1, origin: window.location.origin 
+        },
+        events: {
+          'onStateChange': (e) => {
+            if(ignoreSync) return;
+            if(e.data === YT.PlayerState.PLAYING) emitSync(ytPlayer.getCurrentTime(), 'play');
+            if(e.data === YT.PlayerState.PAUSED) emitSync(ytPlayer.getCurrentTime(), 'pause');
+          }
+        }
+      });
+    }
+  }
+
+  onValue(ref(db, "rooms/"+room), snap => {
+    const data = snap.val(); if(!data || !data.src) return;
+    const url = atob(data.src);
+    if(currentSrc === url) return;
+    currentSrc = url;
+
+    if (url.includes("youtube.com") || url.includes("youtu.be")) {
+      isCurrentYt = true;
+      plyrWrap.style.display = "none"; ytWrap.style.display = "block";
+      if(plyrInstance) plyrInstance.pause();
+      pendingYtId = url.match(/((youtu.be\/)|(v=))([^#&?]*)/)[4];
+      loadYtIfReady();
+    } else {
+      isCurrentYt = false;
+      ytWrap.style.display = "none"; plyrWrap.style.display = "block";
+      if(ytPlayer && ytPlayer.pauseVideo) ytPlayer.pauseVideo();
+      
+      if(!plyrInstance) {
+        plyrInstance = new Plyr(plyrVideo, { controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'] });
+        plyrVideo.addEventListener('play', () => emitSync(plyrVideo.currentTime, 'play'));
+        plyrVideo.addEventListener('pause', () => emitSync(plyrVideo.currentTime, 'pause'));
+        plyrVideo.addEventListener('seeked', () => emitSync(plyrVideo.currentTime, plyrVideo.paused ? 'pause' : 'play'));
+      }
+
+      if(url.includes(".m3u8")) {
+        if(Hls.isSupported()){ const hls=new Hls(); hls.loadSource(url); hls.attachMedia(plyrVideo); }
+      } else {
+        plyrInstance.source = { type:"video", sources:[{ src:url, type:"video/mp4" }] };
+      }
+    }
+  });
+
+  onValue(ref(db, `rooms/${room}/sync`), snap => {
+    const data = snap.val();
+    if(!data || data.by === username || Date.now() - data.ts > 3000) return;
+    ignoreSync = true;
+    const t = data.time;
+
+    if(isCurrentYt && ytPlayer && ytPlayer.seekTo) {
+      if(Math.abs(ytPlayer.getCurrentTime() - t) > 1.5) ytPlayer.seekTo(t, true);
+      if(data.state === 'play') ytPlayer.playVideo(); else ytPlayer.pauseVideo();
+    } else if (!isCurrentYt && plyrVideo) {
+      if(Math.abs(plyrVideo.currentTime - t) > 1.5) plyrVideo.currentTime = t;
+      if(data.state === 'play') plyrVideo.play().catch(()=>{}); else plyrVideo.pause();
+    }
+    setTimeout(() => { ignoreSync = false; }, 1500);
+  });
+
+  // ---------------- CHAT, EMOJIS & TIMESTAMPS ----------------
+  let messagesMap = {}; let replyingTo = null;
+  const msgInput = document.getElementById("msg"); 
+  const msgBoxEl = document.getElementById("messages");
+
+  // EMOJI PICKER
+  const picker = new EmojiButton({ theme: 'dark', position: 'top-start' });
+  const emojiBtn = document.getElementById('emojiButton');
+  picker.on('emoji', emoji => { msgInput.value += emoji; msgInput.focus(); });
+  emojiBtn.addEventListener('click', () => picker.togglePicker(emojiBtn));
+
+  msgInput.addEventListener('keypress', e => { if(e.key==="Enter") window.sendMsg(); });
+
+  window.initReply = id => {
+    const m = messagesMap[id]; if(!m) return; replyingTo = { id, name: m.name, text: m.text };
+    document.getElementById("replyPreview").style.display = "flex";
+    document.getElementById("replyName").innerText = m.name;
+    document.getElementById("replyText").innerText = m.text.substring(0, 30); msgInput.focus();
+  }
+  window.cancelReply = () => { replyingTo = null; document.getElementById("replyPreview").style.display = "none"; }
+
+  window.sendMsg = () => {
+    const text=msgInput.value.trim(); if(!text) return;
+    push(ref(db,"rooms/"+room+"/chat"),{ name:username, text, time:Date.now(), reply: replyingTo });
+    msgInput.value=""; cancelReply();
+  }
+
+  onChildAdded(ref(db,"rooms/"+room+"/chat"), snap => {
+    const m = snap.val(); messagesMap[snap.key] = m;
+    
+    // Add to recent tracker
+    if(Date.now() - m.time < 15000) {
+      addEventToTracker(m.name, "messaged at", m.time);
+    }
+
+    const div = document.createElement("div"); 
+    const isMe = m.name === username;
+    div.className = "msg " + (isMe ? "right" : "left");
+    
+    const timeStr = formatFullTime(m.time);
+    let quoteHTML = m.reply ? `<div class="quote-block"><div class="quote-name">${m.reply.name}</div><div>${m.reply.text}</div></div>` : "";
+    
+    div.innerHTML = `
+      <div class="msg-content-wrapper">
+        <div class="msgBox">
+          ${quoteHTML}
+          <div class="name">${m.name}</div>
+          ${m.text}
+          <div class="msg-timestamp">${timeStr}</div>
+        </div>
+        <button class="reply-btn" onclick="initReply('${snap.key}')" title="Reply">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path></svg>
+        </button>
+      </div>
+    `;
+    msgBoxEl.appendChild(div);
+    msgBoxEl.scrollTop = msgBoxEl.scrollHeight;
+  });
+
+  // ---------------- RESIZER LOGIC ----------------
+  const resizer = document.getElementById("resizer");
+  const playerContainer = document.getElementById("playerContainer");
+  const mainContainer = document.querySelector(".main-container");
+  let isResizing = false;
+  resizer.addEventListener("mousedown", initDrag);
+  resizer.addEventListener("touchstart", initDrag, {passive: false});
+  function initDrag() { isResizing = true; document.documentElement.addEventListener("mousemove", doDrag); document.documentElement.addEventListener("touchmove", doDrag, {passive: false}); document.documentElement.addEventListener("mouseup", stopDrag); document.documentElement.addEventListener("touchend", stopDrag); }
+  function doDrag(e) {
+    if (!isResizing) return;
+    let clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+    let newHeight = clientY - playerContainer.getBoundingClientRect().top;
+    if (newHeight >= 100 && newHeight <= mainContainer.clientHeight - 150) playerContainer.style.height = newHeight + "px";
+  }
+  function stopDrag() { isResizing = false; }
 }
-function stopDrag() { isResizing = false; }
 </script>
 </body>
 </html>
