@@ -1,0 +1,356 @@
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@3.0.3/dist/index.min.js"></script>
+
+<!-- Google Translate Initialization Script -->
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en', autoDisplay: false}, 'google_translate_element');
+}
+</script>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<script type="module">
+import {db, ref, set, push, update, onValue, onChildAdded} from "./firebase.js";
+import { onDisconnect, remove, onChildRemoved } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const params = new URLSearchParams(location.search);
+let room = params.get("room");
+
+// ---------------- COOKIE HELPERS ----------------
+function setCookie(name, value, days = 365) {
+  const d = new Date(); d.setTime(d.getTime() + (days*24*60*60*1000));
+  document.cookie = `${name}=${encodeURIComponent(value)};expires=${d.toUTCString()};path=/`;
+}
+function getCookie(name) {
+  const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+  return v ? decodeURIComponent(v[2]) : null;
+}
+
+// ---------------- CHECK ROOM ID LOGIC ----------------
+if(!room || room.trim() === "" || room.toLowerCase() === "default") {
+  document.getElementById("missingRoom").style.display = "flex";
+} else {
+  document.getElementById("mainApp").style.display = "flex";
+  initRoomLogic();
+}
+
+// ---------------- GOOGLE TRANSLATOR LOGIC ----------------
+window.toggleLangMenu = () => {
+  const menu = document.getElementById("langMenu");
+  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+}
+
+window.changeLanguage = (langCode, langName) => {
+  document.getElementById("currentLangLabel").innerText = langName;
+  document.getElementById("langMenu").style.display = "none";
+  
+  const triggerTranslation = () => {
+    let selectField = document.querySelector(".goog-te-combo");
+    if(selectField) {
+      selectField.value = langCode;
+      selectField.dispatchEvent(new Event('change'));
+    }
+  };
+  
+  triggerTranslation();
+  setTimeout(triggerTranslation, 1000); // Retry fallback
+}
+
+window.addEventListener('click', (e) => {
+  if(!e.target.closest('.lang-dropdown-wrapper')) {
+    const menu = document.getElementById("langMenu");
+    if(menu) menu.style.display = 'none';
+  }
+});
+
+function initRoomLogic() {
+  // ---------------- CUSTOM MODALS UI LOGIC ----------------
+  const modal = document.getElementById("customModal");
+  const modalContent = document.getElementById("modalContent");
+
+  window.openModal = function(html) {
+    modalContent.innerHTML = html;
+    modal.style.display = 'flex';
+    setTimeout(() => modal.style.opacity = '1', 10);
+    window.toggleSidebar(true);
+  }
+  window.closeModal = () => {
+    modal.style.opacity = '0';
+    setTimeout(() => modal.style.display = 'none', 200);
+  }
+
+  window.toggleSidebar = (forceClose = false) => {
+    const sb = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    if(sb.style.right === '0px' || forceClose === true) {
+      sb.style.right = '-300px'; overlay.style.opacity = '0';
+      setTimeout(() => overlay.style.display = 'none', 300);
+    } else {
+      overlay.style.display = 'block'; setTimeout(() => overlay.style.opacity = '1', 10);
+      sb.style.right = '0px';
+    }
+  }
+
+  // SIDEBAR ACTIONS
+  window.shareRoom = () => {
+    const url = window.location.href;
+    if(navigator.share) navigator.share({title:'ASVM', url});
+    else { navigator.clipboard.writeText(url); alert("Link Copied!"); }
+    window.toggleSidebar(true);
+  }
+  window.openChangeName = () => {
+    window.openModal(`
+      <h3>Change Name</h3>
+      <input type="text" id="newNameInput" placeholder="Enter your name..." value="${username}">
+      <div>
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" onclick="changeNameExec()">Save</button>
+      </div>
+    `);
+  }
+  window.changeNameExec = () => {
+    const val = document.getElementById('newNameInput').value.trim();
+    if(!val) return;
+    username = val;
+    setCookie('asvm_name', username);
+    update(myJoinRef, { name: username });
+    closeModal();
+  }
+  window.openChangeId = () => {
+    window.openModal(`
+      <h3>Change Room ID</h3>
+      <input type="text" id="newIdInput" placeholder="Enter new Room ID...">
+      <div>
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" onclick="changeIdExec()">Join Room</button>
+      </div>
+    `);
+  }
+  window.changeIdExec = () => {
+    const val = document.getElementById('newIdInput').value.trim();
+    if(val) window.location.href = "?room=" + val;
+  }
+  window.clearChatUI = () => {
+    document.getElementById("messages").innerHTML = "";
+    window.toggleSidebar(true);
+  }
+
+  // ---------------- RECENT ACTIONS TRACKER ----------------
+  let recentEvents = [];
+  function formatFullTime(ts) {
+    return new Date(ts).toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit', second:'2-digit', hour12:true});
+  }
+
+  const avatarPalette = ['#00dc82', '#0ea5e9', '#f59e0b', '#ec4899', '#8b5cf6', '#ef4444', '#14b8a6', '#f97316'];
+  function avatarColor(name) {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+    return avatarPalette[Math.abs(hash) % avatarPalette.length];
+  }
+
+  const icons = {
+    joined: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>',
+    left: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>',
+    messaged: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>'
+  };
+  function actionMeta(action) {
+    if (action.includes('joined')) return { icon: icons.joined, color: '#00dc82', label: 'joined' };
+    if (action.includes('left')) return { icon: icons.left, color: '#ef4444', label: 'left' };
+    return { icon: icons.messaged, color: '#0ea5e9', label: 'sent a message' };
+  }
+
+  window.openRecentActions = () => {
+    let listHtml = recentEvents.map(e => {
+      const meta = actionMeta(e.action);
+      const initial = (e.name || '?').trim().charAt(0).toUpperCase();
+      return `
+      <div style="display:flex; align-items:center; gap:10px; padding:10px; background:rgba(255,255,255,0.05); border-radius:8px; border-left:3px solid ${meta.color}; margin-bottom:8px;">
+        <div style="width:32px; height:32px; border-radius:50%; background:${avatarColor(e.name)}; color:#fff; display:flex; align-items:center; justify-content:center; font-weight:bold; flex-shrink:0;">${initial}</div>
+        <div style="flex:1; text-align:left;">
+          <div style="font-size:13px;"><strong>${e.name}</strong> <span style="color:var(--text-muted);">${meta.label}</span></div>
+          <div style="font-size:11px; color:var(--text-muted); opacity:0.8; margin-top:2px;">${formatFullTime(e.time)}</div>
+        </div>
+        <div style="width:20px; height:20px; color:${meta.color};">${meta.icon}</div>
+      </div>
+    `;
+    }).join('');
+    if(recentEvents.length === 0) listHtml = `<p style="color:var(--text-muted); text-align:center; padding:10px 0;">No recent actions.</p>`;
+    
+    window.openModal(`
+      <h3 style="margin-bottom:10px;">Recent Actions</h3>
+      <div style="display:flex; justify-content:center; align-items:center; gap:6px; margin-bottom:15px; font-size:13px; color:var(--text-muted);">
+        <div class="live-dot-header"></div>
+        <span><strong>${liveCount}</strong> live right now</span>
+      </div>
+      <div id="recentActionsList" style="max-height: 250px; overflow-y: auto;">${listHtml}</div>
+      <button class="btn-cancel" style="width:100%; margin-top:15px;" onclick="closeModal()">Close</button>
+    `);
+  }
+
+  function addEventToTracker(name, action, time) {
+    recentEvents.unshift({name, action, time}); // Add to start
+    if(recentEvents.length > 50) recentEvents.pop(); // Keep array small
+  }
+
+  // ---------------- USERNAME & JOINS ----------------
+  let username = getCookie("asvm_name") || "Anonymous_" + Math.floor(Math.random()*100);
+  setCookie("asvm_name", username);
+
+  const sessionId = Math.random().toString(36).substring(2,15);
+  const myJoinRef = ref(db, `rooms/${room}/active/${sessionId}`);
+  set(myJoinRef, { name: username, time: Date.now() });
+  onDisconnect(myJoinRef).remove(); 
+  window.addEventListener("beforeunload", () => remove(myJoinRef));
+
+  // Update Header Live Count
+  let liveCount = 0;
+  onValue(ref(db, `rooms/${room}/active`), snap => {
+    const data = snap.val();
+    liveCount = data ? Object.keys(data).length : 0;
+    document.getElementById("headerLiveCount").innerText = liveCount;
+  });
+
+  onChildAdded(ref(db, `rooms/${room}/active`), snap => {
+    const data = snap.val();
+    if(data && Date.now() - data.time < 15000) { 
+      addEventToTracker(data.name, "joined the room at", data.time);
+    }
+  });
+
+  onChildRemoved(ref(db, `rooms/${room}/active`), snap => {
+    const data = snap.val();
+    if(data) addEventToTracker(data.name, "left the room at", Date.now());
+  });
+
+  // ---------------- PLAYER LOGIC (NO SYNC - INDEPENDENT CONTROL) ----------------
+  let plyrInstance = null;
+  const plyrVideo = document.getElementById("player");
+  let currentSrc = "";
+
+  function ensurePlyr() {
+    if (plyrInstance) return plyrInstance;
+    plyrInstance = new Plyr(plyrVideo, {
+      controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
+      settings: ['quality', 'speed'],
+      youtube: { noCookie: false, rel: 0, showinfo: 0, iv_load_policy: 3, modestbranding: 1 }
+    });
+    return plyrInstance;
+  }
+
+  onValue(ref(db, "rooms/"+room), snap => {
+    const data = snap.val(); if(!data || !data.src) return;
+    const url = atob(data.src);
+    if(currentSrc === url) return;
+    currentSrc = url;
+
+    const p = ensurePlyr();
+
+    if (url.includes("youtube.com") || url.includes("youtu.be")) {
+      const ytId = url.match(/((youtu.be\/)|(v=))([^#&?]*)/)[4];
+      p.source = { type: 'video', sources: [{ src: ytId, provider: 'youtube' }] };
+    } else if (url.includes(".m3u8")) {
+      p.source = { type: 'video', sources: [{ src: '', type: 'video/mp4' }] };
+      setTimeout(() => {
+        const mediaEl = p.media;
+        if (Hls.isSupported()) {
+          const hls = new Hls();
+          hls.loadSource(url);
+          hls.attachMedia(mediaEl);
+        } else if (mediaEl.canPlayType('application/vnd.apple.mpegurl')) {
+          mediaEl.src = url;
+        }
+      }, 60);
+    } else {
+      p.source = { type: 'video', sources: [{ src: url, type: 'video/mp4' }] };
+    }
+  });
+
+  // ---------------- CHAT, EMOJIS & TIMESTAMPS ----------------
+  let messagesMap = {}; let replyingTo = null;
+  const msgInput = document.getElementById("msg"); 
+  const msgBoxEl = document.getElementById("messages");
+
+  // EMOJI PICKER
+  const picker = new EmojiButton({ theme: 'dark', position: 'top-start' });
+  const emojiBtn = document.getElementById('emojiButton');
+  picker.on('emoji', emoji => { msgInput.value += emoji; msgInput.focus(); });
+  emojiBtn.addEventListener('click', () => picker.togglePicker(emojiBtn));
+
+  msgInput.addEventListener('keypress', e => { if(e.key==="Enter") window.sendMsg(); });
+
+  window.initReply = id => {
+    const m = messagesMap[id]; if(!m) return; replyingTo = { id, name: m.name, text: m.text };
+    document.getElementById("replyPreview").style.display = "flex";
+    document.getElementById("replyName").innerText = m.name;
+    document.getElementById("replyText").innerText = m.text.substring(0, 30); msgInput.focus();
+  }
+  window.cancelReply = () => { replyingTo = null; document.getElementById("replyPreview").style.display = "none"; }
+
+  window.scrollToMessage = (id) => {
+    const el = document.getElementById('msg-' + id);
+    if(!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.remove('highlighted');
+    void el.offsetWidth; 
+    el.classList.add('highlighted');
+    setTimeout(() => el.classList.remove('highlighted'), 1600);
+  }
+
+  window.sendMsg = () => {
+    const text=msgInput.value.trim(); if(!text) return;
+    push(ref(db,"rooms/"+room+"/chat"),{ name:username, text, time:Date.now(), reply: replyingTo });
+    msgInput.value=""; cancelReply();
+  }
+
+  onChildAdded(ref(db,"rooms/"+room+"/chat"), snap => {
+    const m = snap.val(); messagesMap[snap.key] = m;
+    
+    // Add to recent tracker
+    if(Date.now() - m.time < 15000) {
+      addEventToTracker(m.name, "messaged at", m.time);
+    }
+
+    const div = document.createElement("div"); 
+    const isMe = m.name === username;
+    div.className = "msg " + (isMe ? "right" : "left");
+    
+    const timeStr = formatFullTime(m.time);
+    let quoteHTML = m.reply ? `<div class="quote-block" onclick="scrollToMessage('${m.reply.id}')"><div class="quote-name">${m.reply.name}</div><div>${m.reply.text}</div></div>` : "";
+    
+    div.innerHTML = `
+      <div class="msg-content-wrapper">
+        <div class="msgBox" id="msg-${snap.key}">
+          ${quoteHTML}
+          <div class="name">${m.name}</div>
+          ${m.text}
+          <div class="msg-timestamp">${timeStr}</div>
+        </div>
+        <button class="reply-btn" onclick="initReply('${snap.key}')" title="Reply">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path></svg>
+        </button>
+      </div>
+    `;
+    msgBoxEl.appendChild(div);
+    msgBoxEl.scrollTop = msgBoxEl.scrollHeight;
+  });
+
+  // ---------------- RESIZER LOGIC ----------------
+  const resizer = document.getElementById("resizer");
+  const playerContainer = document.getElementById("playerContainer");
+  const mainContainer = document.querySelector(".main-container");
+  let isResizing = false;
+  resizer.addEventListener("mousedown", initDrag);
+  resizer.addEventListener("touchstart", initDrag, {passive: false});
+  function initDrag() { isResizing = true; document.documentElement.addEventListener("mousemove", doDrag); document.documentElement.addEventListener("touchmove", doDrag, {passive: false}); document.documentElement.addEventListener("mouseup", stopDrag); document.documentElement.addEventListener("touchend", stopDrag); }
+  function doDrag(e) {
+    if (!isResizing) return;
+    let clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+    let newHeight = clientY - playerContainer.getBoundingClientRect().top;
+    if (newHeight >= 100 && newHeight <= mainContainer.clientHeight - 150) playerContainer.style.height = newHeight + "px";
+  }
+  function stopDrag() { isResizing = false; }
+}
+</script>
+</body>
+</html>
