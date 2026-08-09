@@ -11,17 +11,12 @@
 
 <style>
 /* Modern SaaS Dark Mode Variables */
-* {
-  -webkit-tap-highlight-color: transparent;
-}
-
-*:focus {
-  outline: none;
-}
+* { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+*:focus { outline: none; }
 
 :root {
   --bg-base: #050505;
-  --bg-panel: rgba(24, 24, 27, 0.6);
+  --bg-panel: rgba(24, 24, 27, 0.65);
   --border-color: rgba(255, 255, 255, 0.08);
   --text-main: #f4f4f5;
   --text-muted: #a1a1aa;
@@ -34,377 +29,106 @@
 }
 
 body {
-  margin: 0;
-  font-family: 'Inter', sans-serif;
-  background: var(--bg-base);
-  color: var(--text-main);
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  margin: 0; font-family: 'Inter', sans-serif; background: var(--bg-base); color: var(--text-main);
+  -webkit-font-smoothing: antialiased; overflow-x: hidden;
 }
 
-/* Custom Scrollbar */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
 
 /* Background Glows */
-.ambient-glow {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(120px);
-  z-index: -1;
-  opacity: 0.2;
-  pointer-events: none;
-}
+.ambient-glow { position: absolute; border-radius: 50%; filter: blur(120px); z-index: -1; opacity: 0.2; pointer-events: none; }
 .glow-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--accent-mint); }
 .glow-2 { bottom: 20%; right: -10%; width: 40vw; height: 40vw; background: #3b82f6; }
 
 /* ---------------- HEADER ---------------- */
 .navbar {
-  position: fixed;
-  top: 0; width: 100%;
-  background: rgba(5, 5, 5, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-color);
-  z-index: 1000;
-  box-sizing: border-box;
-  padding: 16px 5%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  position: fixed; top: 0; width: 100%; background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color); z-index: 1000; padding: 16px 5%; display: flex; justify-content: space-between; align-items: center;
 }
-
-.logo {
-  font-size: 24px;
-  font-weight: 800;
-  letter-spacing: 1px;
-}
+.logo { font-size: 24px; font-weight: 800; letter-spacing: 1px; }
 .logo span { color: var(--accent-mint); }
 
-.nav-links { display: flex; gap: 30px; }
-.nav-links a {
-  color: var(--text-muted);
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 15px;
-  transition: color var(--transition);
+.nav-links { display: flex; gap: 20px; align-items: center; }
+
+/* Translator Dropdown */
+.lang-dropdown-wrapper { position: relative; display: inline-block; }
+.lang-btn {
+  background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main);
+  padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s;
 }
-.nav-links a:hover { color: var(--text-main); }
+.lang-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--accent-mint); }
+.lang-menu {
+  position: absolute; right: 0; top: 110%; background: #18181b; border: 1px solid var(--border-color);
+  border-radius: var(--radius-md); box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; flex-direction: column; width: 150px; z-index: 2500; overflow: hidden;
+}
+.lang-menu button {
+  background: transparent; border: none; color: var(--text-main); padding: 12px 16px; text-align: left; font-size: 13px; cursor: pointer; transition: 0.2s; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.02);
+}
+.lang-menu button:hover { background: rgba(0, 220, 130, 0.1); color: var(--accent-mint); }
+
+/* Hide Google Translate Elements */
+#google_translate_element, .goog-te-banner-frame, .goog-te-gadget, .skiptranslate { display: none !important; }
+body { top: 0px !important; }
 
 /* ---------------- HERO SECTION ---------------- */
-.hero {
-  padding: 140px 5% 80px;
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 60px;
-  align-items: center;
-  min-height: 80vh;
-}
+.hero { padding: 140px 5% 80px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 1fr; gap: 60px; align-items: center; min-height: 80vh; }
+.hero-text h1 { font-size: 56px; font-weight: 800; line-height: 1.1; margin: 0 0 20px 0; letter-spacing: -0.03em; }
+.hero-text p { font-size: 18px; color: var(--text-muted); line-height: 1.6; margin: 0 0 30px 0; }
 
-.hero-text h1 {
-  font-size: 56px;
-  font-weight: 800;
-  line-height: 1.1;
-  margin: 0 0 20px 0;
-  letter-spacing: -0.03em;
-}
-.hero-text p {
-  font-size: 18px;
-  color: var(--text-muted);
-  line-height: 1.6;
-  margin: 0 0 30px 0;
-}
-
-/* Streaming Icon Badges */
-.badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 40px;
-}
-.badge {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.1);
-  padding: 8px 16px;
-  border-radius: 30px;
-  font-size: 14px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-main);
-  transition: transform 0.2s, border-color 0.2s;
-}
-.badge:hover {
-  transform: translateY(-2px);
-  border-color: var(--accent-mint);
-  background: rgba(0, 220, 130, 0.05);
-}
-
+.badges { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 40px; }
+.badge { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 30px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 8px; color: var(--text-main); transition: 0.2s; }
+.badge:hover { transform: translateY(-2px); border-color: var(--accent-mint); background: rgba(0, 220, 130, 0.05); }
 .badge.yt svg { color: #ff0000; fill: #ff0000; }
 .badge.mp4 svg { color: #3b82f6; }
 .badge.live svg { color: var(--accent-mint); }
 
 /* Create Card */
-.create-card {
-  background: var(--bg-panel);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--border-color);
-  padding: 40px;
-  border-radius: var(--radius-xl);
-  box-shadow: 0 24px 50px rgba(0,0,0,0.5);
-  text-align: center;
-  position: relative;
-  box-sizing: border-box;
-}
+.create-card { background: var(--bg-panel); backdrop-filter: blur(24px); border: 1px solid var(--border-color); padding: 35px; border-radius: var(--radius-xl); box-shadow: 0 24px 50px rgba(0,0,0,0.5); position: relative; }
+.create-card h2 { margin: 0 0 24px 0; font-size: 24px; text-align: center; }
+.input-wrapper { margin-bottom: 20px; }
+.input-wrapper label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;}
 
-.create-card h2 {
-  margin: 0 0 24px 0;
-  font-size: 24px;
-}
+.create-card input { width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: white; border-radius: var(--radius-lg); font-size: 15px; font-family: inherit; transition: 0.3s; }
+.create-card input:focus { border-color: var(--accent-mint); background: rgba(0, 220, 130, 0.03); box-shadow: 0 0 0 4px rgba(0, 220, 130, 0.1); }
 
-.input-wrapper {
-  position: relative;
-  text-align: left;
-  margin-bottom: 20px;
-}
-.input-wrapper label {
-  display: block;
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-bottom: 8px;
-  font-weight: 500;
-}
+.type-selector { display: flex; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); padding: 4px; gap: 4px; }
+.type-btn { flex: 1; padding: 10px; text-align: center; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: 0.3s; }
+.type-btn.active { background: var(--accent-mint); color: #000; box-shadow: 0 4px 10px rgba(0, 220, 130, 0.3); }
+.type-desc { font-size: 12px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; min-height: 36px; text-align: center; }
 
-.create-card input {
-  width: 100%;
-  padding: 16px;
-  background: rgba(0,0,0,0.4);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: white;
-  border-radius: var(--radius-lg);
-  font-size: 15px;
-  box-sizing: border-box;
-  font-family: inherit;
-  transition: all var(--transition);
-}
-.create-card input:focus {
-  outline: none;
-  border-color: var(--accent-mint);
-  background: rgba(0, 220, 130, 0.05);
-}
+.create-card button.main-btn { margin-top: 10px; width: 100%; padding: 16px; background: var(--accent-mint); border: none; color: #000; font-weight: 700; font-size: 16px; border-radius: var(--radius-lg); cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.3s; }
+.create-card button.main-btn:hover { background: var(--accent-mint-hover); transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0, 220, 130, 0.3); }
 
-/* Room Type Selector */
-.type-selector {
-  display: flex;
-  background: rgba(0,0,0,0.4);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: var(--radius-md);
-  padding: 4px;
-  gap: 4px;
-}
-.type-btn {
-  flex: 1;
-  padding: 10px;
-  text-align: center;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all var(--transition);
-}
-.type-btn.active {
-  background: var(--accent-mint);
-  color: #000;
-  box-shadow: 0 4px 10px rgba(0, 220, 130, 0.2);
-}
-.type-desc {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-top: 10px;
-  line-height: 1.5;
-  min-height: 36px;
-}
+/* History Section */
+.history-section { margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px; display: none; }
+.history-section h3 { font-size: 14px; margin: 0 0 15px 0; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+.history-list { display: flex; flex-direction: column; gap: 10px; }
+.history-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 12px 16px; border-radius: var(--radius-md); transition: 0.2s; }
+.history-item:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); }
+.history-info { display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
+.history-info strong { font-size: 14px; color: var(--text-main); }
+.history-info span { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+.history-actions { display: flex; gap: 8px; align-items: center; }
+.history-actions a { background: rgba(0, 220, 130, 0.1); color: var(--accent-mint); padding: 6px 12px; border-radius: 8px; text-decoration: none; font-size: 12px; font-weight: 600; border: 1px solid rgba(0, 220, 130, 0.2); transition: 0.2s; }
+.history-actions a:hover { background: var(--accent-mint); color: #000; }
+.delete-btn { background: transparent; border: none; color: #ff4444; cursor: pointer; padding: 6px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: 0.2s; opacity: 0.7; }
+.delete-btn:hover { background: rgba(255, 68, 68, 0.1); opacity: 1; transform: scale(1.1); }
 
-.create-card button {
-  margin-top: 10px;
-  width: 100%;
-  padding: 16px;
-  background: var(--accent-mint);
-  border: none;
-  color: #000;
-  font-weight: 700;
-  font-size: 16px;
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  transition: all var(--transition);
-}
-.create-card button:hover {
-  background: var(--accent-mint-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(0, 220, 130, 0.3);
-}
-
-.result-box {
-  margin-top: 20px;
-  background: rgba(0, 220, 130, 0.1);
-  border: 1px dashed rgba(0, 220, 130, 0.4);
-  padding: 16px;
-  border-radius: var(--radius-md);
-  animation: fadeUp 0.4s ease forwards;
-}
-.result-box span {
-  display: block;
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-bottom: 8px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.result-box a {
-  color: var(--accent-mint);
-  font-weight: 600;
-  word-break: break-all;
-  text-decoration: none;
-}
+/* Misc */
+.result-box { margin-top: 20px; background: rgba(0, 220, 130, 0.1); border: 1px dashed rgba(0, 220, 130, 0.4); padding: 16px; border-radius: var(--radius-md); animation: fadeUp 0.4s ease forwards; text-align: center; }
+.result-box span { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+.result-box a { color: var(--accent-mint); font-weight: 600; word-break: break-all; text-decoration: none; }
 .result-box a:hover { text-decoration: underline; }
 
-/* Recent Room Section */
-.recent-room {
-  margin-top: 24px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-color);
-  padding: 16px;
-  border-radius: var(--radius-md);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  animation: fadeUp 0.6s ease forwards;
-}
-.recent-room span {
-  color: var(--text-muted);
-  font-size: 13px;
-  text-align: left;
-}
-.recent-room a {
-  background: rgba(0, 220, 130, 0.1);
-  color: var(--accent-mint);
-  padding: 8px 16px;
-  border-radius: 20px;
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 600;
-  border: 1px solid rgba(0, 220, 130, 0.2);
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-.recent-room a:hover {
-  background: var(--accent-mint);
-  color: #000;
-}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ---------------- SECTIONS ---------------- */
-.section {
-  padding: 100px 5%;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-.section-title {
-  text-align: center;
-  font-size: 40px;
-  font-weight: 800;
-  margin-bottom: 60px;
-}
-
-/* Center Content & Full Width Images */
-.center-section {
-  text-align: center;
-  max-width: 900px; 
-  margin: 0 auto 100px auto;
-}
-
-.center-section h2 {
-  font-size: 36px;
-  margin: 0 0 20px 0;
-  font-weight: 800;
-}
-
-.center-section p {
-  color: var(--text-muted);
-  font-size: 18px;
-  line-height: 1.7;
-  margin-bottom: 40px;
-}
-
-.full-image {
-  width: 100%;
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--border-color);
-  box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-  display: block;
-}
-
-/* Features Grid */
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
-}
-.feature {
-  background: rgba(255,255,255,0.02);
-  border: 1px solid var(--border-color);
-  padding: 40px 30px;
-  border-radius: var(--radius-xl);
-  transition: transform var(--transition);
-}
-.feature:hover { transform: translateY(-5px); background: rgba(255,255,255,0.04); }
-.feature-icon {
-  width: 60px; height: 60px;
-  background: rgba(0, 220, 130, 0.1);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--accent-mint);
-  margin-bottom: 24px;
-}
-.feature h3 { font-size: 22px; margin: 0 0 12px 0; }
-.feature p { color: var(--text-muted); line-height: 1.6; margin: 0; }
-
-/* ---------------- FOOTER ---------------- */
-.footer {
-  background: rgba(255,255,255,0.02);
-  border-top: 1px solid var(--border-color);
-  padding: 40px 5%;
-  text-align: center;
-  margin-top: 80px;
-}
-.footer p { color: var(--text-muted); margin: 0; font-size: 14px; }
-
-/* Animations */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Responsive */
 @media(max-width: 900px) {
-  .hero { grid-template-columns: 1fr; text-align: center; padding-top: 120px; gap: 40px; }
+  .hero { grid-template-columns: 1fr; padding-top: 120px; gap: 40px; text-align: center; }
   .hero-text p { margin: 0 auto 30px auto; }
   .badges { justify-content: center; }
-  .nav-links { display: none; }
-  .create-card { padding: 30px 20px; }
-  .center-section h2 { font-size: 28px; }
-  .center-section p { font-size: 16px; }
+  .create-card { padding: 24px; }
 }
 </style>
 </head>
@@ -414,16 +138,35 @@ body {
 <div class="ambient-glow glow-1"></div>
 <div class="ambient-glow glow-2"></div>
 
-<header class="navbar">
+<!-- Hidden Google Translate Element -->
+<div id="google_translate_element"></div>
+
+<header class="navbar" translate="no">
   <div class="logo">ASVM<span>.</span></div>
   <div class="nav-links">
-    <a href="#formats">Supported Media</a>
-    <a href="#features">Features</a>
+    <!-- Google Translator -->
+    <div class="lang-dropdown-wrapper">
+      <button class="lang-btn" onclick="toggleLangMenu()">
+        🌐 <span id="currentLangLabel">Language</span>
+      </button>
+      <div class="lang-menu" id="langMenu">
+        <button onclick="changeLanguage('en', 'English')">English</button>
+        <button onclick="changeLanguage('hi', 'Hindi')">Hindi</button>
+        <button onclick="changeLanguage('es', 'Spanish')">Spanish</button>
+        <button onclick="changeLanguage('fr', 'French')">French</button>
+        <button onclick="changeLanguage('de', 'German')">German</button>
+        <button onclick="changeLanguage('zh-CN', 'Chinese')">Chinese</button>
+        <button onclick="changeLanguage('ja', 'Japanese')">Japanese</button>
+        <button onclick="changeLanguage('ar', 'Arabic')">Arabic</button>
+        <button onclick="changeLanguage('ru', 'Russian')">Russian</button>
+        <button onclick="changeLanguage('pt', 'Portuguese')">Portuguese</button>
+      </div>
+    </div>
   </div>
 </header>
 
 <section class="hero">
-  <div class="hero-text">
+  <div class="hero-text" translate="no">
     <h1>Host the Ultimate Watch Party.</h1>
     <p>Grab a link, invite your friends, and start watching together. Experience high-quality synchronized streaming with a built-in real-time chat room.</p>
     
@@ -443,7 +186,7 @@ body {
     </div>
   </div>
 
-  <div class="create-card">
+  <div class="create-card" translate="no">
     <h2>Create Room</h2>
     
     <div class="input-wrapper">
@@ -451,7 +194,7 @@ body {
       <input id="video" placeholder="Paste YouTube / .mp4 / .m3u8 link" autocomplete="off">
     </div>
 
-    <!-- NEW: Room Type Selector -->
+    <!-- Room Type Selector -->
     <div class="input-wrapper">
       <label>Select Room Mode</label>
       <div class="type-selector">
@@ -462,122 +205,126 @@ body {
       <div class="type-desc" id="typeDesc">Independent playback. Everyone controls their own video locally.</div>
     </div>
 
-    <!-- NEW: Hidden PIN Input for ComplexP -->
+    <!-- Hidden PIN Input for ComplexP -->
     <div class="input-wrapper" id="pinWrapper" style="display: none;">
       <label>Set 4-Digit Admin PIN</label>
       <input id="roomPin" type="password" maxlength="4" placeholder="e.g. 1234" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
     </div>
 
-    <button onclick="createRoom()">
+    <button class="main-btn" onclick="createRoom()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>
       Generate Private Room
     </button>
     
     <div id="result"></div>
     
-    <div id="recentRoomContainer" class="recent-room" style="display: none;">
-      <span>Last Visited Room:</span>
-      <a id="recentRoomLink" href="#">Join Room</a>
+    <!-- Last 5 Generated Rooms -->
+    <div class="history-section" id="historySection">
+      <h3>Recent Rooms</h3>
+      <div class="history-list" id="historyList"></div>
     </div>
   </div>
 </section>
 
-<section id="formats" class="section">
-  
-  <div class="center-section">
-    <h2>Chat While You Watch</h2>
-    <p>ASVM comes equipped with an ultra-fast, zero-latency real-time chat system. React to plot twists, discuss live events, and share moments with your friends without ever leaving the video screen.</p>
-    <img src="https://www.asvm.fun/20260311_012157.jpg" alt="Chat UI Preview" class="full-image">
-  </div>
-
-  <div class="center-section">
-    <h2>Any Video. Any Format.</h2>
-    <p>We built ASVM to be completely unrestricted. Whether you want to watch the latest YouTube drop, stream a direct MP4 file from your server, or load up an HLS live stream (.m3u8), our advanced embedded player handles it natively.</p>
-    <img src="https://www.asvm.fun/20260311_013356.jpg" alt="Video Player Preview" class="full-image">
-  </div>
-
-</section>
-
-<section id="features" class="section">
-  <h2 class="section-title">Why Choose ASVM?</h2>
-  <div class="features-grid">
-    <div class="feature">
-      <div class="feature-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-      </div>
-      <h3>Real-Time Chat</h3>
-      <p>Engage with your room instantly. Features include reply threading, unread message alerts, and notification sounds.</p>
-    </div>
-    
-    <div class="feature">
-      <div class="feature-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-      </div>
-      <h3>Advanced Playback Modes</h3>
-      <p>Choose between Simple independent streaming, or fully Synchronized Complex rooms hosted by a single user.</p>
-    </div>
-
-    <div class="feature">
-      <div class="feature-icon">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-      </div>
-      <h3>Secure & Private</h3>
-      <p>Your video links are encoded and PIN protections are strictly enforced. All chat data is ephemeral and securely managed.</p>
-    </div>
-  </div>
-</section>
-
-<footer class="footer">
-  <div class="logo" style="margin-bottom: 16px;">ASVM<span>.</span></div>
-  <p>&copy; 2026 ASVM Watch Party Platform. All rights reserved.</p>
-</footer>
+<!-- Google Translate Initialization Script -->
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en', autoDisplay: false}, 'google_translate_element');
+}
+</script>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 <script type="module">
-import {db,ref,set} from "./firebase.js"
+import { db, ref, set } from "./firebase.js";
+import { remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-function setCookie(name, value, days) {
-  let expires = "";
-  if (days) {
-    let date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-    expires = "; expires=" + date.toUTCString();
-  }
-  document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+// ---------------- GOOGLE TRANSLATOR LOGIC ----------------
+window.toggleLangMenu = () => {
+  const menu = document.getElementById("langMenu");
+  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
 }
-
-function getCookie(name) {
-  let nameEQ = name + "=";
-  let ca = document.cookie.split(';');
-  for(let i=0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0)==' ') c = c.substring(1,c.length);
-    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-  }
-  return null;
+window.changeLanguage = (langCode, langName) => {
+  document.getElementById("currentLangLabel").innerText = langName;
+  document.getElementById("langMenu").style.display = "none";
+  const triggerTranslation = () => {
+    let selectField = document.querySelector(".goog-te-combo");
+    if(selectField) {
+      selectField.value = langCode;
+      selectField.dispatchEvent(new Event('change'));
+    }
+  };
+  triggerTranslation();
+  setTimeout(triggerTranslation, 1000); 
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  const lastRoom = getCookie("asvm_last_room");
-  if (lastRoom) {
-    const container = document.getElementById("recentRoomContainer");
-    const linkBtn = document.getElementById("recentRoomLink");
-    linkBtn.href = location.origin + "/room.html?room=" + lastRoom;
-    linkBtn.innerText = "Join " + lastRoom;
-    container.style.display = "flex"; 
+window.addEventListener('click', (e) => {
+  if(!e.target.closest('.lang-dropdown-wrapper')) {
+    const menu = document.getElementById("langMenu");
+    if(menu) menu.style.display = 'none';
   }
 });
 
-// --- Handle Room Type Selection ---
+// ---------------- HISTORY LOGIC (Local Storage) ----------------
+function getHistory() {
+  let hist = localStorage.getItem('asvm_history');
+  return hist ? JSON.parse(hist) : [];
+}
+function saveHistory(history) {
+  localStorage.setItem('asvm_history', JSON.stringify(history));
+}
+function renderHistory() {
+  const history = getHistory();
+  const section = document.getElementById("historySection");
+  const list = document.getElementById("historyList");
+  
+  if (history.length === 0) {
+    section.style.display = "none";
+    return;
+  }
+  
+  section.style.display = "block";
+  list.innerHTML = history.map(room => `
+    <div class="history-item">
+      <div class="history-info">
+        <strong>Room: #${room.id}</strong>
+        <span>Type: ${room.type.toUpperCase()}</span>
+      </div>
+      <div class="history-actions">
+        <a href="${room.link}" target="_blank">Join</a>
+        <button class="delete-btn" onclick="deleteRoomFromDB('${room.id}')" title="Delete Room">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+document.addEventListener("DOMContentLoaded", renderHistory);
+
+// Delete Room entirely from Firebase & UI
+window.deleteRoomFromDB = function(roomId) {
+  if(confirm(`Are you sure you want to permanently delete Room #${roomId}?`)) {
+    // 1. Delete from Firebase
+    remove(ref(db, "rooms/" + roomId)).then(() => {
+      // 2. Remove from Local History array
+      let history = getHistory();
+      history = history.filter(r => r.id !== roomId);
+      saveHistory(history);
+      // 3. Update UI
+      renderHistory();
+    }).catch((error) => {
+      alert("Error deleting room: " + error.message);
+    });
+  }
+}
+
+// ---------------- ROOM CREATION LOGIC ----------------
 window.currentRoomType = 'simple';
 
 window.selectRoomType = function(type, el) {
   window.currentRoomType = type;
-  
-  // Update Active Class
   document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
   el.classList.add('active');
   
-  // Update Descriptions and Inputs
   const desc = document.getElementById("typeDesc");
   const pinWrapper = document.getElementById("pinWrapper");
   
@@ -593,16 +340,14 @@ window.selectRoomType = function(type, el) {
   }
 }
 
-// --- Create Room Function ---
-window.createRoom=function(){
-  const video=document.getElementById("video").value.trim()
+window.createRoom = function() {
+  const video = document.getElementById("video").value.trim();
 
   if(!video){
-    alert("Please enter a valid video link to continue.")
-    return
+    alert("Please enter a valid video link to continue.");
+    return;
   }
   
-  // Handle ComplexP PIN requirement
   let pin = null;
   if (window.currentRoomType === 'complexp') {
     pin = document.getElementById("roomPin").value;
@@ -612,29 +357,43 @@ window.createRoom=function(){
     }
   }
 
-  const room=Math.random().toString(36).substring(2,7)
-  const encoded=btoa(video)
+  const room = Math.random().toString(36).substring(2,7);
+  const encoded = btoa(video);
 
-  // Save structure with new configurations
-  set(ref(db,"rooms/"+room),{
+  // Dynamic Routing Logic
+  let pageName = "room.html";
+  if (window.currentRoomType === "complex") pageName = "complex.html";
+  if (window.currentRoomType === "complexp") pageName = "complexP.html";
+  
+  const link = location.origin + "/" + pageName + "?room=" + room;
+
+  // Save to Firebase
+  set(ref(db, "rooms/" + room), {
     src: encoded,
     type: window.currentRoomType,
     pin: pin,
-    host: null, // Reserved to assign host dynamically on join
+    host: null,
     state: { playing:false, time:0 }
-  })
+  });
 
-  setCookie("asvm_last_room", room, 30)
+  // Save to History (Max 5)
+  let history = getHistory();
+  history = history.filter(r => r.id !== room); // Remove duplicates if any
+  history.unshift({ id: room, type: window.currentRoomType, link: link }); // Add to front
+  if (history.length > 5) history.pop(); // Keep only last 5
+  saveHistory(history);
 
-  const link=location.origin+"/room.html?room="+room
-
-  document.getElementById("result").innerHTML=
-  `<div class="result-box">
-    <span>Room Successfully Created</span>
-    <a href="${link}" target="_blank">${link}</a>
-  </div>`
+  // Render Result & Update List
+  document.getElementById("result").innerHTML = `
+    <div class="result-box">
+      <span>Room Successfully Created</span>
+      <a href="${link}" target="_blank">${link}</a>
+    </div>
+  `;
   
-  document.getElementById("recentRoomContainer").style.display = "none";
+  renderHistory();
+  document.getElementById("video").value = "";
+  if(document.getElementById("roomPin")) document.getElementById("roomPin").value = "";
 }
 </script>
 
