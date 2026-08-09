@@ -51,16 +51,27 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
 
 /* ---------------- REFINED HEADER ---------------- */
-.topbar { background: var(--bg-panel); backdrop-filter: blur(20px); padding: 0 4%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); z-index: 1000; height: 68px; flex-shrink: 0; }
-.logo { font-size: 22px; font-weight: 800; letter-spacing: 1px; color: var(--text-main); display: flex; align-items: center; gap: 6px; }
-.logo span { color: var(--accent-main); }
+.topbar {
+  background: linear-gradient(180deg, rgba(28,28,32,0.85), rgba(12,12,14,0.65));
+  backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+  padding: 0 4%; display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--border-color); position: relative; z-index: 1000; height: 72px; flex-shrink: 0;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+}
+.topbar::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent-main), transparent); opacity: 0.45;
+}
+.logo { font-size: 23px; font-weight: 800; letter-spacing: 0.5px; color: var(--text-main); display: flex; align-items: center; gap: 6px; }
+.logo span { color: var(--accent-main); text-shadow: 0 0 18px var(--accent-dim); }
 
-.topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
 
 /* Live Badge in Header */
 .live-badge {
-  background: rgba(0, 220, 130, 0.1); color: var(--accent-main); padding: 6px 12px; border-radius: 20px;
-  font-size: 13px; font-weight: 700; border: 1px solid rgba(0, 220, 130, 0.2); display: flex; align-items: center; gap: 6px;
+  background: linear-gradient(135deg, rgba(0,220,130,0.14), rgba(0,220,130,0.04)); color: var(--accent-main); padding: 7px 14px; border-radius: 999px;
+  font-size: 13px; font-weight: 700; border: 1px solid rgba(0, 220, 130, 0.25); display: flex; align-items: center; gap: 7px;
+  box-shadow: 0 4px 14px rgba(0,220,130,0.08);
 }
 .live-dot-header { width: 8px; height: 8px; background: var(--accent-main); border-radius: 50%; box-shadow: 0 0 10px var(--accent-main); animation: pulse 2s infinite; }
 
@@ -68,11 +79,13 @@ body {
 .lang-dropdown-wrapper { position: relative; display: inline-block; }
 .lang-btn {
   background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-main);
-  padding: 8px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s;
+  padding: 8px 14px 8px 12px; border-radius: 999px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 7px; transition: 0.2s;
 }
-.lang-btn:hover { background: rgba(255, 255, 255, 0.1); }
+.lang-btn svg { width: 16px; height: 16px; color: var(--text-muted); transition: 0.2s; }
+.lang-btn:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--accent-main); }
+.lang-btn:hover svg { color: var(--accent-main); }
 .lang-menu {
-  position: absolute; right: 0; top: 110%; background: #18181b; border: 1px solid var(--border-color);
+  position: absolute; right: 0; top: 120%; background: #18181b; border: 1px solid var(--border-color);
   border-radius: var(--radius-md); box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; flex-direction: column; width: 140px; z-index: 2500; overflow: hidden;
 }
 .lang-menu button {
@@ -80,9 +93,12 @@ body {
 }
 .lang-menu button:hover { background: var(--accent-dim); color: var(--accent-main); }
 
-.icon-btn { background: transparent; border: none; color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; padding: 5px; }
-.icon-btn svg { width: 24px; height: 24px; }
-.icon-btn:hover { color: var(--accent-main); transform: scale(1.1); }
+.icon-btn {
+  background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-main); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: 0.2s; width: 38px; height: 38px; border-radius: 50%;
+}
+.icon-btn svg { width: 20px; height: 20px; }
+.icon-btn:hover { color: var(--accent-main); border-color: var(--accent-main); background: var(--accent-dim); transform: translateY(-1px); }
 
 /* ---------------- SIDEBAR ---------------- */
 .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 2000; display: none; opacity: 0; transition: opacity 0.3s; }
@@ -109,6 +125,7 @@ body {
 .main-container { max-width: 1000px; width: 100%; margin: 0 auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; flex: 1; min-height: 0; }
 .playerWrap { width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.4); border: 1px solid var(--border-color); flex-shrink: 0; position: relative; }
 #ytWrapper, #plyrWrapper { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+#ytPlayerDiv, #ytWrapper iframe { width: 100% !important; height: 100% !important; position: absolute; top: 0; left: 0; border: 0; }
 .plyr { width: 100%; height: 100%; }
 
 /* Resizer */
@@ -223,9 +240,9 @@ body { top: 0px !important; }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
         Share Room
       </button>
-      <button onclick="openChangeId()">
+      <button onclick="openChangeName()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-        Change Room ID
+        Change Name
       </button>
       <button onclick="openRecentActions()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
@@ -250,7 +267,8 @@ body { top: 0px !important; }
       <!-- Google Translator 10 Languages Dropdown -->
       <div class="lang-dropdown-wrapper">
         <button class="lang-btn" onclick="toggleLangMenu()">
-          🌐 <span id="currentLangLabel">Language</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+          <span id="currentLangLabel">Language</span>
         </button>
         <div class="lang-menu" id="langMenu">
           <button onclick="changeLanguage('en', 'English')">English</button>
@@ -335,6 +353,16 @@ import { onDisconnect, remove, onChildRemoved } from "https://www.gstatic.com/fi
 const params = new URLSearchParams(location.search);
 let room = params.get("room");
 
+// ---------------- COOKIE HELPERS ----------------
+function setCookie(name, value, days = 365) {
+  const d = new Date(); d.setTime(d.getTime() + (days*24*60*60*1000));
+  document.cookie = `${name}=${encodeURIComponent(value)};expires=${d.toUTCString()};path=/`;
+}
+function getCookie(name) {
+  const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+  return v ? decodeURIComponent(v[2]) : null;
+}
+
 // ---------------- CHECK ROOM ID LOGIC ----------------
 if(!room || room.trim() === "" || room.toLowerCase() === "default") {
   document.getElementById("missingRoom").style.display = "flex";
@@ -408,19 +436,23 @@ function initRoomLogic() {
     else { navigator.clipboard.writeText(url); alert("Link Copied!"); }
     window.toggleSidebar(true);
   }
-  window.openChangeId = () => {
+  window.openChangeName = () => {
     window.openModal(`
-      <h3>Change Room ID</h3>
-      <input type="text" id="newIdInput" placeholder="Enter new Room ID...">
+      <h3>Change Name</h3>
+      <input type="text" id="newNameInput" placeholder="Enter your name..." value="${username}">
       <div>
         <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-        <button class="btn-primary" onclick="changeIdExec()">Join Room</button>
+        <button class="btn-primary" onclick="changeNameExec()">Save</button>
       </div>
     `);
   }
-  window.changeIdExec = () => {
-    const val = document.getElementById('newIdInput').value.trim();
-    if(val) window.location.href = "?room=" + val;
+  window.changeNameExec = () => {
+    const val = document.getElementById('newNameInput').value.trim();
+    if(!val) return;
+    username = val;
+    setCookie('asvm_name', username);
+    update(myJoinRef, { name: username });
+    closeModal();
   }
   window.clearChatUI = () => {
     document.getElementById("messages").innerHTML = "";
@@ -453,8 +485,8 @@ function initRoomLogic() {
   }
 
   // ---------------- USERNAME & JOINS ----------------
-  let username = localStorage.getItem("asvm_name") || "Anonymous_" + Math.floor(Math.random()*100);
-  localStorage.setItem("asvm_name", username);
+  let username = getCookie("asvm_name") || "Anonymous_" + Math.floor(Math.random()*100);
+  setCookie("asvm_name", username);
 
   const sessionId = Math.random().toString(36).substring(2,15);
   const myJoinRef = ref(db, `rooms/${room}/active/${sessionId}`);
@@ -506,13 +538,16 @@ function initRoomLogic() {
     if(ytPlayer && typeof ytPlayer.loadVideoById === 'function') {
       ytPlayer.loadVideoById(pendingYtId);
     } else {
-      // Fix for YouTube Embedded Black Screen issue
+      // Fix for YouTube Embedded Black Screen issue - force full width/height
       ytPlayer = new YT.Player('ytPlayerDiv', {
         videoId: pendingYtId,
+        width: '100%',
+        height: '100%',
         playerVars: { 
           rel: 0, enablejsapi: 1, autoplay: 1, modestbranding: 1, playsinline: 1, origin: window.location.origin 
         },
         events: {
+          'onReady': (e) => { e.target.playVideo(); },
           'onStateChange': (e) => {
             if(ignoreSync) return;
             if(e.data === YT.PlayerState.PLAYING) emitSync(ytPlayer.getCurrentTime(), 'play');
